@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Luxury Giveaway Casino</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a0d2e, #4a0072);
+            color: #fff;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            transition: background 0.5s;
+        }
+        #container {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
+            max-width: 90%;
+        }
+        #slot-machine {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .reel {
+            width: 100px;
+            height: 100px;
+            background: #fff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #000;
+            animation: spin 0.5s infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotateX(0deg); }
+            100% { transform: rotateX(360deg); }
+        }
+        #spin-btn {
+            padding: 15px 30px;
+            font-size: 20px;
+            background: #ff00ff;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 10px #ff00ff;
+        }
+        #spin-btn:hover {
+            background: #00ffff;
+            box-shadow: 0 0 20px #00ffff;
+        }
+        #popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px #ff00ff;
+            display: none;
+            z-index: 1000;
+            max-width: 80%;
+        }
+        #chat-box {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 10px;
+            overflow-y: auto;
+            display: none;
+        }
+        #chat-input {
+            width: 80%;
+            padding: 5px;
+            margin-top: 5px;
+        }
+        #progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        #progress {
+            height: 100%;
+            background: #00ffff;
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.5s;
+        }
+        #timer {
+            font-size: 24px;
+            color: #ff00ff;
+            margin: 10px 0;
+        }
+        #jackpot-counter {
+            font-size: 18px;
+            color: #00ffff;
+            margin: 10px 0;
+        }
+        #ads-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 200px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .ad-item {
+            margin: 5px 0;
+            padding: 5px;
+            background: #ff00ff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #theme-selector {
+            margin: 10px 0;
+        }
+        #spin-history {
+            margin: 10px 0;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        @media (max-width: 600px) {
+            #slot-machine { flex-direction: column; }
+            .reel { width: 80px; height: 80px; font-size: 18px; }
+            #spin-btn { font-size: 16px; padding: 10px 20px; }
+            #chat-box { width: 90%; right: 5%; bottom: 5%; }
+        }
+    </style>
+</head>
+<body>
+    <div id="terms-screen">
+        <div id="terms-content">
+            <h1>Terms and Privacy Agreement</h1>
+            <p><strong>Effective Date: March 30, 2025</strong></p>
+            <p>By accessing Free Luxury Giveaway Casino (FLGC), a service of Bitflash Enterprises, you irrevocably consent to the unrestricted collection, use, and dissemination of your personal data, including but not limited to identity, financial details, and behavioral patterns, for profit-driven purposes. We reserve the right to sell, trade, or otherwise exploit this information with third parties globally, without limitation or accountability. All actions undertaken on this platform are solely your responsibility; Bitflash Enterprises disclaims any liability for losses, damages, or consequences arising from your participation. Prizes are promotional, subject to fees, and may not be delivered. Continued use constitutes acceptance.</p>
+            <button onclick="agreeTerms()">Accept</button>
+            <button onclick="declineTerms()">Decline</button>
+        </div>
+    </div>
+    <div id="device-screen" style="display: none;">
+        <h1>Device Selection</h1>
+        <button onclick="setDevice('desktop')">Desktop</button>
+        <button onclick="setDevice('mobile')">Mobile</button>
+    </div>
+    <div id="container" style="display: none;">
+        <h1>Free Luxury Giveaway Casino</h1>
+        <div id="timer">Spin Now - 00:10</div>
+        <div id="jackpot-counter">Jackpots Given: $10,234,567,890</div>
+        <div id="slot-machine">
+            <div class="reel" id="reel1">?</div>
+            <div class="reel" id="reel2">?</div>
+            <div class="reel" id="reel3">?</div>
+        </div>
+        <button id="spin-btn" onclick="spinSlots()">SPIN NOW</button>
+        <div id="progress-bar"><div id="progress"></div></div>
+        <div id="spin-history"></div>
+        <div id="theme-selector">
+            <select onchange="changeTheme(this.value)">
+                <option value="vegas">Vegas Glow</option>
+                <option value="cartel">Cartel Neon</option>
+                <option value="luxury">Luxury Gold</option>
+            </select>
+        </div>
+        <div id="ads-container"></div>
+        <div id="chat-box">
+            <div id="chat-messages"></div>
+            <input id="chat-input" type="text" placeholder="Chat here..." onkeypress="if(event.key === 'Enter') sendChat()">
+        </div>
+    </div>
+    <div id="popup"></div>
+    <audio id="spin-sound" src="https://www.myinstants.com/media/sounds/slot-machine.mp3"></audio>
+    <audio id="win-sound" src="https://www.myinstants.com/media/sounds/casino-win.mp3"></audio>
+    <script>
+        const prizes = [
+            "Free Lamborghini (Title Fee: $50k)", "Bitflash Mansion (Mortgage Pending)", "Private Jet (Fuel Not Included)", 
+            "Diamond Rolex (Customs Hold)", "$10M Cash (Tax Fee: $9M)", "Bitflash Yacht (Sinking)", "Gold-Plated Tesla (Repo’d)",
+            "1,000 Bitcoin (Wallet Key: $999)", "Luxury Penthouse (Eviction Notice)", "Bitflash Cartel Tank (Ammo Extra)",
+            "Personal Submarine (Leaking)", "Trip to Monaco (One-Way)", "10kg Gold Bars (Seized)", "Bitflash Hitman Contract",
+            "VIP Casino Pass (Expired)", "Personal Drone Swarm", "Flying Car (Grounded)", "Bitflash Cocaine Vault (Locked)",
+            "Golden Jetpack", "Trip to Bitflash HQ (Blindfolded)", "1M Bitflash Bucks", "Luxury Island (Flooded)",
+            "Personal Battleship (Rusted)", "Diamond Necklace (Fake)", "Bitflash Stealth Jet (Missing)", "50kg Platinum Bars",
+            "Time Machine Rental (Broken)", "Bitflash Trained Shark", "Meth Lab Kit (Raided)", "Golden Rocket (Crashed)"
+        ];
+        const ads = [
+            { name: "Bitflash Cocaine Pack", price: 100, effect: "Boost spins by 10%", image: "cocaine.png" },
+            { name: "Cartel Silenced Pistol", price: 50, effect: "Double win chance", image: "pistol.png" },
+            { name: "Bitflash Meth Brick", price: 75, effect: "Triple jackpot odds", image: "meth.png" },
+            { name: "Stolen Gold Bar", price: 200, effect: "Unlock VIP spins", image: "gold.png" }
+        ];
+        const sounds = {
+            spin: document.getElementById("spin-sound"),
+            win: document.getElementById("win-sound")
+        };
+        let spinsLeft = 5, bitflashBucks = 0, progress = 0, timer = 10, isSpinning = false, device = "desktop";
+        const reels = [document.getElementById("reel1"), document.getElementById("reel2"), document.getElementById("reel3")];
+
+        function agreeTerms() {
+            document.getElementById("terms-screen").style.display = "none";
+            document.getElementById("device-screen").style.display = "block";
+        }
+        function declineTerms() {
+            document.body.innerHTML = "";
+        }
+        function setDevice(type) {
+            device = type;
+            document.getElementById("device-screen").style.display = "none";
+            document.getElementById("container").style.display = "block";
+            if (type === "mobile") document.body.style.fontSize = "14px";
+            startTimer();
+            initAds();
+            initChat();
+        }
+        function startTimer() {
+            setInterval(() => {
+                timer--;
+                if (timer <= 0) timer = 10;
+                document.getElementById("timer").textContent = `Spin Now - 00:${timer < 10 ? "0" + timer : timer}`;
+            }, 1000);
+        }
+        function spinSlots() {
+            if (isSpinning || spinsLeft <= 0) return showPopup("Out of spins! Buy more for $4.99!", "OK");
+            isSpinning = true;
+            spinsLeft--;
+            sounds.spin.play();
+            let spins = 10;
+            const interval = setInterval(() => {
+                reels.forEach(reel => reel.textContent = prizes[Math.floor(Math.random() * prizes.length)]);
+                spins--;
+                if (spins <= 0) {
+                    clearInterval(interval);
+                    isSpinning = false;
+                    const win = Math.random() > 0.7;
+                    if (win) {
+                        sounds.win.play();
+                        const prize = reels[0].textContent;
+                        addToHistory(prize);
+                        showPopup(`You won: ${prize}! Pay $49 to claim, watch 10 ads, or enter a referral code!`, "Pay", "Ads", "Code");
+                    } else {
+                        progress = Math.min(progress + 10, 95);
+                        document.getElementById("progress").style.width = `${progress}%`;
+                        if (Math.random() < 0.1) showPopup("Tax authority demands $999!", "Pay");
+                    }
+                }
+            }, 100);
+            if (Math.random() < 0.05) showPopup("Maria from New York just won 72 Boeing BBJ 737s 3s ago!", "Cool");
+        }
+        function showPopup(message, ...buttons) {
+            const popup = document.getElementById("popup");
+            popup.innerHTML = `<p>${message}</p>`;
+            buttons.forEach(btn => {
+                const button = document.createElement("button");
+                button.textContent = btn;
+                button.onclick = () => {
+                    if (btn === "Pay") showPopup("Payment processing—$49 deducted!", "OK");
+                    else if (btn === "Ads") showPopup("Watch 10 ads to proceed!", "OK");
+                    else if (btn === "Code") showPopup("Enter referral code: <input id='ref-code'><button onclick='submitCode()'>Submit</button>", "Cancel");
+                    else popup.style.display = "none";
+                };
+                popup.appendChild(button);
+            });
+            popup.style.display = "block";
+        }
+        function submitCode() {
+            const code = document.getElementById("ref-code").value;
+            if (code) {
+                spinsLeft += 5;
+                showPopup("Code accepted! +5 spins!", "OK");
+            } else showPopup("Invalid code!", "OK");
+        }
+        function addToHistory(prize) {
+            const history = document.getElementById("spin-history");
+            history.innerHTML += `<p>${prize} - <button onclick='claimPrize("${prize}")'>Claim</button></p>`;
+        }
+        function claimPrize(prize) {
+            showPopup(`Claim ${prize} for $49, 10 ads, or VIP pass!`, "Pay", "Ads", "VIP");
+        }
+        function changeTheme(theme) {
+            if (theme === "vegas") document.body.style.background = "linear-gradient(135deg, #ff0000, #ffd700)";
+            else if (theme === "cartel") document.body.style.background = "linear-gradient(135deg, #006400, #ff4500)";
+            else document.body.style.background = "linear-gradient(135deg, #1a0d2e, #4a0072)";
+        }
+        function initAds() {
+            const adsContainer = document.getElementById("ads-container");
+            ads.forEach(ad => {
+                const div = document.createElement("div");
+                div.className = "ad-item";
+                div.textContent = `${ad.name} - ${ad.price} Bitflash Bucks`;
+                div.onclick = () => showPopup(`Buy ${ad.name} for ${ad.price} Bitflash Bucks?`, "Yes", "No");
+                adsContainer.appendChild(div);
+            });
+        }
+        function initChat() {
+            const chat = document.getElementById("chat-box");
+            chat.style.display = "block";
+            setInterval(() => {
+                const msg = document.getElementById("chat-messages");
+                const fakeWins = ["John won a jet!", "Sara got $10M!", "Bitflash rules!"];
+                msg.innerHTML += `<p>${fakeWins[Math.floor(Math.random() * fakeWins.length)]}</p>`;
+                msg.scrollTop = msg.scrollHeight;
+            }, 5000);
+        }
+        function sendChat() {
+            const input = document.getElementById("chat-input");
+            const msg = input.value;
+            if (msg.toLowerCase().includes("scam")) showPopup("Message rejected!", "OK");
+            else document.getElementById("chat-messages").innerHTML += `<p>You: ${msg}</p>`;
+            input.value = "";
+        }
+        document.getElementById("terms-screen").style.cssText = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); display: flex; justify-content: center; align-items: center;";
+        document.getElementById("terms-content").style.cssText = "background: #fff; color: #000; padding: 20px; border-radius: 10px; max-width: 80%;";
+    </script>
+</body>
+</html>
