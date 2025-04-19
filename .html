@@ -177,6 +177,83 @@
             box-shadow: 0 0 30px #00ffff;
             text-align: center;
         }
+        #jackpot-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.98);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 25000;
+    transition: opacity 0.5s ease;
+}
+#jackpot-popup.active {
+    display: flex;
+}
+
+#jackpot-popup-content {
+    background: rgba(0, 0, 0, 0.95);
+    padding: 40px;
+    border-radius: 25px;
+    box-shadow: 0 0 50px #ff00ff;
+    text-align: center;
+    color: #fff;
+    max-width: 600px;
+    transform: scale(0.9);
+    opacity: 0;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+#jackpot-popup.active #jackpot-popup-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+#new-jackpot-wheel-container {
+    width: 350px;
+    height: 350px;
+    background: conic-gradient(
+        #ff00ff 0% 10%, #00ffff 10% 20%, #ff00ff 20% 30%, #00ffff 30% 40%,
+        #ff00ff 40% 50%, #00ffff 50% 60%, #ff00ff 60% 70%, #00ffff 70% 80%,
+        #ff00ff 80% 90%, #00ffff 90% 100%
+    );
+    border-radius: 50%;
+    margin: 30px auto;
+    position: relative;
+    transition: transform 4s ease-out;
+}
+
+#new-jackpot-spin-btn {
+    padding: 20px 50px;
+    font-size: 28px;
+    background: #ff00ff;
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 0 20px #ff00ff;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+
+#new-jackpot-spin-btn:hover {
+    background: #00ffff;
+    transform: scale(1.1);
+    box-shadow: 0 0 35px #00ffff;
+}
+
+#new-jackpot-spin-btn:disabled {
+    background: #555;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+#jackpot-result {
+    color: #00ffff;
+    font-weight: bold;
+}
         #jackpot-counter {
             font-size: 28px;
             color: #00ffff;
@@ -215,26 +292,19 @@
             0% { transform: rotateX(0deg); }
             100% { transform: rotateX(360deg); }
         }
-        #wheel-container, #jackpot-wheel-container {
-            width: 300px;
-            height: 300px;
-            background: conic-gradient(#ff00ff 0% 20%, #00ffff 20% 40%, #ff00ff 40% 60%, #00ffff 60% 80%, #ff00ff 80% 100%);
-            border-radius: 50%;
-            margin: 30px auto;
-            position: relative;
-            transition: transform 3s ease-out;
-        }
-        #wheel-pointer, #jackpot-wheel-pointer {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 20px solid #fff;
-        }
+        #wheel-container {
+    width: 300px;
+    height: 300px;
+    background: conic-gradient(
+        #ff00ff 0% 10%, #00ffff 10% 20%, #ff5555 20% 30%, #55ff55 30% 40%,
+        #5555ff 40% 50%, #ffff55 50% 60%, #ff55ff 60% 70%, #55ffff 70% 80%,
+        #ffaa55 80% 90%, #55aaff 90% 100%
+    );
+    border-radius: 50%;
+    margin: 30px auto;
+    position: relative;
+    transition: transform 3s ease-out;
+}
         #crash-graph {
             width: 400px;
             height: 200px;
@@ -249,7 +319,7 @@
             bottom: 0;
             left: 0;
             width: 0%;
-            height: 2px;
+            height: 3px;
             background: #ff00ff;
             transition: width 0.1s linear;
         }
@@ -446,7 +516,7 @@
         }
         #notification-section {
             position: fixed;
-            bottom: 20px;
+            bottom: 115px;
             left: 20px;
             width: 300px;
             max-height: 400px;
@@ -460,7 +530,7 @@
         }
         #notification-section h2 { font-size: 20px; margin-bottom: 15px; }
         .notification-item { padding: 10px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; margin: 10px 0; }
-        #notification-btn { position: fixed; bottom: 20px; left: 20px; }
+        #notification-btn { position: fixed; bottom: 60px; left: 20px; }
         #notification-count { position: absolute; top: -5px; right: -5px; background: #ff00ff; border-radius: 50%; width: 20px; height: 20px; line-height: 20px; text-align: center; font-size: 12px; }
         #rewards-section {
             padding: 25px;
@@ -564,7 +634,7 @@
             height: 100%;
             background: linear-gradient(90deg, #ff00ff, #00ffff);
             width: 0%;
-            transition: width 3s linear;
+            transition: width 300ms linear;
         }
         #ad-skip-btn {
             padding: 15px 30px;
@@ -795,12 +865,12 @@
     <div id="setup-content">
         <h1>Setup Your Experience</h1>
         <div id="setup-step-1">
-            <button id="info-btn">Device/Network Info</button>
+            <button id="info-btn">Device Info</button>
             <p>Enter your name and location for chat and wins.</p>
             <label>Name:</label>
             <input id="setup-name" type="text" placeholder="Your Name" value="">
             <label>Location:</label>
-            <input id="setup-location" type="text" placeholder="Your Location/City" value="Unknown">
+            <input id="setup-location" type="text" placeholder="Your Location/City" value="">
             <button class="setup-btn" onclick="nextSetupStep()">Next</button>
             <button class="setup-btn" onclick="skipSetup()">Skip</button>
             <button class="setup-btn" style="position: absolute; top: 20px; right: 20px;" onclick="loadSavedDataPrompt()">Login</button>
@@ -811,7 +881,7 @@
     <button id="raw-device-back-btn">Back</button>
 </div>
 <div id="info-popup">
-    <h2>Device & Network Info</h2>
+    <h2>Device Info</h2>
     <div id="info-content"></div>
     <button id="more-device-btn">More Device Info</button>
     <button id="info-back-btn">Back</button>
@@ -829,7 +899,7 @@
         </div>
         <div id="setup-notification-types" style="display: none;">
             <p>Select notification types:</p>
-            <label><input type="checkbox" id="notify-ads"> Ads</label><br>
+            <label><input type="checkbox" id="notify-ads" checked> Ads</label><br>
             <label><input type="checkbox" id="notify-wins" checked> Wins</label><br>
             <button class="setup-btn" onclick="sendTestNotification()">Next</button>
         </div>
@@ -854,36 +924,21 @@
     <div id="admin-screen" style="display: none;">
         <div id="admin-content">
             <h1>Admin Mode</h1>
-<button id="info-btn" style="margin-bottom: 20px;">Device/Network Info</button>
             <p>Customize FLGC settings below.</p>
             <label>Admin Password:</label>
             <input id="admin-password-setting" type="text" value="5820320">
             <label>Win Chance (0-1):</label>
-            <input id="admin-win-chance" type="number" step="0.1" min="0" max="1" value="0.45">
+            <input id="admin-win-chance" type="number" step="0.1" min="0" max="1" value="0.40">
             <label>Bitflash Bucks:</label>
             <input id="admin-bucks" type="number" value="0">
             <label>Spins Left:</label>
             <input id="admin-spins" type="number" value="3">
-            <label>Spins Today:</label>
-            <input id="admin-spins-today" type="number" value="0">
             <label>Default Prize Spins Gain:</label>
             <input id="admin-prize-spins" type="number" value="5">
             <label>Default Prize Bucks Gain:</label>
             <input id="admin-prize-bucks" type="number" value="25">
-            <label>Spin Timer (seconds):</label>
-            <input id="admin-spin-timer" type="number" value="10">
-            <label>Claim Timer (seconds):</label>
-            <input id="admin-claim-timer" type="number" value="180">
-            <label>Event Timer (seconds):</label>
-            <input id="admin-event-timer" type="number" value="3600">
-            <label>VIP Timer (seconds):</label>
-            <input id="admin-vip-timer" type="number" value="30">
-            <label>Daily Timer (seconds):</label>
-            <input id="admin-daily-timer" type="number" value="86400">
-            <label>Ten-Minute Spin Timer (seconds):</label>
-            <input id="admin-ten-minute-timer" type="number" value="600">
             <label>Prizes Search:</label>
-            <input id="admin-prizes-search" type="text" placeholder="e.g., meth">
+            <input id="admin-prizes-search" type="text" placeholder="e.g., cartel">
             <div id="admin-prizes-list" class="editable-list"></div>
             <div id="admin-prizes-add">
                 <input id="admin-prize-name" type="text" placeholder="Prize Name">
@@ -915,8 +970,6 @@
                 <input id="admin-reward-type" type="text" placeholder="Type">
                 <button class="admin-btn" onclick="addReward()">Add</button>
             </div>
-            <label>Popup Messages (one per line):</label>
-            <textarea id="admin-popups"></textarea>
             <label>Custom Game Creator - EXPERIMENTAL:</label>
             <input id="admin-game-name" type="text" placeholder="Game Name">
             <select id="admin-game-type">
@@ -925,6 +978,12 @@
                 <option value="crash">Crash</option>
             </select>
             <textarea id="admin-game-prizes" placeholder="Prizes (one per line)"></textarea>
+            <hr style="margin-top: 40px; border: 1px solid #888;">
+<h2>Script Injector</h2>
+<p>Paste custom JS code</p>
+<textarea id="custom-js-code" placeholder="JavaScript here..." style="width:100%;height:150px;background:#111;color:#0f0;padding:10px;border-radius:10px;border:none;font-family:monospace;"></textarea>
+<p id="js-output" style="font-size:14px;margin-top:10px;color:#000000;"></p>
+<button class="admin-btn" onclick="runCustomJS()">Run Script</button>
             <button class="admin-btn" onclick="createCustomGame()">Create Game</button>
             <button class="admin-btn" onclick="saveAdminSettings()">Save</button>
             <button class="admin-btn" onclick="exitAdminMode()">Back</button>
@@ -953,20 +1012,18 @@
         <div id="vip-content">
             <h1>VIP Membership</h1>
             <p>Upgrade your experience:</p>
-            <div>Level 1: Skip Ads, 5 Spins/10min, Auto-Spin ($4.99 or 200 Bucks)</div>
-            <div>Level 2: Disable Popups, 10 Spins/10min ($9.99 or 500 Bucks)</div>
-            <div>Level 3: 20 Spins/10min, +20% Win Chance, Faster Jackpot ($19.99 or 1000 Bucks)</div>
-            <div>VIP Max: 40 Spins/10min, +40% Win Chance, Max Jackpot ($49.99 or 2500 Bucks)</div>
+            <div>Level 1: Skip Ads, Auto-Spin (200 Bucks)</div>
+            <div>Level 2: +20% Win Chance, Faster Jackpot (1,000 Bucks)</div>
+            <div>VIP Max: 100% Win Chance, Max Jackpot (10,000 Bucks)</div>
             <select id="vip-level">
-                <option value="1">Level 1</option>
-                <option value="2">Level 2</option>
-                <option value="3">Level 3</option>
+                <option value="1">VIP 1</option>
+                <option value="2">VIP 2</option>
                 <option value="4">VIP Max</option>
             </select>
             <button class="vip-btn" onclick="confirmVIPUpgrade()">Buy with Bucks</button>
             <button class="vip-btn" onclick="toggleAdPopups()">Toggle Ad Popups</button>
             <button class="vip-btn" onclick="closeVIPMenu()">Close</button>
-        </div>
+      </div>
     </div>
     <div id="main-container">
         <div id="header">
@@ -979,21 +1036,21 @@
             <button id="auto-spin-settings-btn" onclick="openAutoSpinSettings()">Auto-Spin Settings</button>
         </div>
         <div id="game-section">
-            <div id="jackpot-counter">Jackpots Given: $17,492,261,893</div>
+            <div id="jackpot-counter">Jackpots Given: $24,728,219,613</div>
             <div id="slots-game">
                 <div id="slots-machine">
                     <div class="reel" id="reel1">?</div>
                     <div class="reel" id="reel2">?</div>
                     <div class="reel" id="reel3">?</div>
                 </div>
-                <button id="spin-btn" onclick="spinSlots()">SPIN NOW</button>
+                <button id="spin-btn" onclick="spinSlots()">SPIN</button>
                 <button id="auto-spin-btn" onclick="toggleAutoSpin()">Auto-Spin</button>
                 <button id="notification-btn" onclick="toggleNotifications()">Notifications <span id="notification-count">0</span></button>
                 <button id="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
             </div>
             <div id="wheel-game">
                 <div id="wheel-container"><div id="wheel-pointer"></div></div>
-                <button id="wheel-spin-btn" onclick="spinWheel()">SPIN WHEEL</button>
+                <button id="wheel-spin-btn" onclick="spinWheel()">SPIN</button>
                 <button id="auto-spin-btn" onclick="toggleAutoSpin()">Auto-Spin</button>
                 <button id="notification-btn" onclick="toggleNotifications()">Notifications <span id="notification-count">0</span></button>
                 <button id="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
@@ -1003,7 +1060,7 @@
                     <div id="crash-line"></div>
                     <div id="crash-multiplier">1.00x</div>
                 </div>
-                <button id="crash-bet-btn" onclick="startCrash()">BET NOW</button>
+                <button id="crash-bet-btn" onclick="startCrash()">BET</button>
                 <button id="auto-spin-btn" onclick="toggleAutoSpin()">Auto-Spin</button>
                 <button id="notification-btn" onclick="toggleNotifications()">Notifications <span id="notification-count">0</span></button>
                 <button id="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
@@ -1013,6 +1070,17 @@
                 <button id="jackpot-spin-btn" onclick="spinJackpot()">SPIN JACKPOT</button>
             </div>
         </div>
+        <div id="jackpot-popup" style="display: none;">
+    <div id="jackpot-popup-content">
+        <h1>Jackpot Wheel!</h1>
+        <p>Spin for 100–2000 Bucks & 10–200 Spins!</p>
+        <div id="new-jackpot-wheel-container">
+            <div id="new-jackpot-wheel-pointer"></div>
+        </div>
+        <button id="new-jackpot-spin-btn" onclick="spinNewJackpot()">SPIN JACKPOT</button>
+        <div id="jackpot-result" style="font-size: 22px; margin-top: 20px;"></div>
+    </div>
+</div>
         <div id="progress-section">
             <div class="progress-container">
                 <div class="progress-label">Jackpot Progress</div>
@@ -1070,17 +1138,17 @@
         
         let ipapiData = null; // Cache ipapi data
 function updateUserLocation() {
-    fetch("https://ipapi.co/json/")
+    fetch("")
         .then(response => response.json())
         .then(data => {
-            userLocation = data.city || "Unknown";
+            userLocation = data.city || "";
             ipapiData = data; // Store full data
             console.log("City fetched:", userLocation);
             const locationInput = document.getElementById("setup-location");
             if (locationInput) locationInput.value = userLocation;
         })
         .catch(error => {
-            userLocation = "Unknown";
+            userLocation = "";
             ipapiData = null;
             console.log("IPAPI error:", error);
             const locationInput = document.getElementById("setup-location");
@@ -1089,6 +1157,15 @@ function updateUserLocation() {
 }
 updateUserLocation();
 
+function runCustomJS() {
+    const code = document.getElementById("custom-js-code").value;
+    try {
+        const result = eval(code);
+        document.getElementById("js-output").innerText = `Output: ${result ?? '[No return]'}`;
+    } catch (err) {
+        document.getElementById("js-output").innerText = `Error: ${err.message}`;
+    }
+}
 function getDeviceInfo() {
     const ua = navigator.userAgent;
     let os = "Unknown";
@@ -1125,20 +1202,15 @@ function showInfoPopup() {
     if (!popup || !content) return;
 
     const deviceInfo = getDeviceInfo();
-    let networkInfo = ipapiData || { error: "Failed to obtain network info" };
+    let networkInfo = ipapiData || { error: "" };
 
     content.innerHTML = `
         <strong>Device Info:</strong><br>
         OS: ${deviceInfo.os}<br>
         Browser: ${deviceInfo.browser}<br><br>
-        <strong>Network Info:</strong><br>
+        <strong></strong><br>
         ${networkInfo.error ? networkInfo.error : `
-            City: ${networkInfo.city || "Unknown"}<br>
-            Country: ${networkInfo.country || "Unknown"}<br>
-            IP: ${networkInfo.ip || "Unknown"}<br>
-            Subnet: ${networkInfo.network || "Unknown"}<br>
-            IP Protocol: ${networkInfo.version || "Unknown"}<br>
-            ISP: ${networkInfo.org || "Unknown"}<br>
+            
         `}
     `;
 
@@ -2389,8 +2461,7 @@ document.getElementById("info-back-btn")?.addEventListener("click", hideInfoPopu
             { name: "Bitflash Meth Brick", price: 75, effect: "Triple Jackpot Odds", desc: "Cook up jackpots!" },
         ];
         let rewards = [
-            { name: "Daily Spin Boost", cost: 0, effect: "+5 Spins", type: "daily" },
-            { name: "Spin Frenzy", cost: 1, effect: "+5 Spins", type: "ad" }
+            { name: "Spin Frenzy", cost: 1, effect: "+2 Spins", type: "ad" },
         ];
         let adContent = [
             "Bitflash Cocaine: Snort your way to riches!",
@@ -2449,7 +2520,7 @@ document.getElementById("info-back-btn")?.addEventListener("click", hideInfoPopu
     "Eva from Lisbon now controls the weather!"
         ];
         let bannedWords = [
-    "scam", "fake", "fraud", "fuck", "shit", 
+    "scam", "fake", "fraud", "*****", "*****", 
     "con", "swindle", "ripoff", "deceive", "hustle", 
     "cheat", "lie", "sham", "hoax", "phony", 
     "bullshit", "bunk", "fraudulent", "fakeout", "shady", 
@@ -2484,7 +2555,7 @@ document.getElementById("info-back-btn")?.addEventListener("click", hideInfoPopu
             spin: document.getElementById("spin-sound"),
             win: document.getElementById("win-sound")
         };
-        let spinsLeft = 3, bitflashBucks = 0, jackpotProgress = 0, streakProgress = 0, spinTimer = 10, claimTimer = 0, eventTimer = 3600, vipTimer = 30, dailyTimer = 86400, tenMinuteTimer = 600, isSpinning = false, streakCount = 0, vipLevel = 0, adCount = 0, currentGame = "slots", spinsToday = 0, adTimer = 3, winChance = 0.45, defaultPrizeSpins = 5, defaultPrizeBucks = 25, userName = "", userLocation = "Unknown", autoSpin = false, autoSpinDelay = 1000, autoSpinSkipPrize = false, notifications = [], notificationCount = 0, popupDisabled = false, adPopupsEnabled = true, adminPassword = "5820320", soundEnabled = true, notificationPreference = "popup";
+        let spinsLeft = 3, bitflashBucks = 0, jackpotProgress = 0, streakProgress = 0, spinTimer = 10, claimTimer = 0, eventTimer = 3600, vipTimer = 30, dailyTimer = 86400, tenMinuteTimer = 600, isSpinning = false, streakCount = 0, vipLevel = 0, adCount = 0, currentGame = "slots", spinsToday = 0, adTimer = 3, winChance = 0.40, defaultPrizeSpins = 4, defaultPrizeBucks = 15, userName = "", userLocation = "", autoSpin = false, autoSpinDelay = 1000, autoSpinSkipPrize = false, notifications = [], notificationCount = 0, popupDisabled = false, adPopupsEnabled = true, adminPassword = "5820320", soundEnabled = true, notificationPreference = "popup";
         const reels = [document.getElementById("reel1"), document.getElementById("reel2"), document.getElementById("reel3")];
         const progressBars = {
             jackpot: document.getElementById("jackpot-progress"),
@@ -2578,13 +2649,13 @@ function verifyTestCode() {
         }
         function nextSetupStep() {
     userName = document.getElementById("setup-name").value || "";
-    userLocation = document.getElementById("setup-location").value || "Unknown";
+    userLocation = document.getElementById("setup-location").value || "";
     hideScreen("setup-step-1");
     initScreen("setup-notifications");
 }
         function skipSetup() {
     userName = document.getElementById("setup-name").value || "";
-    userLocation = document.getElementById("setup-location").value || "Unknown";
+    userLocation = document.getElementById("setup-location").value || "";
     finalizeSetup();
 }
         function previewTheme(theme) {
@@ -2679,12 +2750,12 @@ function sendNotification(title, body, type) {
     claimTimer = data.claimTimer || 180;
     eventTimer = data.eventTimer || 3600;
     vipTimer = data.vipTimer || 30;
-    dailyTimer = data.dailyTimer || 86400;
+    dailyTimer = data.dailyTimer || 20;
     tenMinuteTimer = data.tenMinuteTimer || 600;
     streakCount = data.streakCount || 0;
     vipLevel = data.vipLevel || 0;
     spinsToday = data.spinsToday || 0;
-    winChance = data.winChance || 0.45;
+    winChance = data.winChance || 0.40;
     defaultPrizeSpins = data.defaultPrizeSpins || 5;
     defaultPrizeBucks = data.defaultPrizeBucks || 25;
     userName = data.userName || "";
@@ -2937,11 +3008,11 @@ function spinSlots() {
         jackpotProgress = Math.min(jackpotProgress + (vipLevel === 3 ? 10 : vipLevel === 4 ? 15 : 5), 100);
         const prizeMessage = `You won ${prize}! +${bucksWon} Bucks, +${Math.floor(defaultPrizeSpins * spinsBoost)} Spins!`;
         if (autoSpin && autoSpinSkipPrize) {
-            addNotification(prizeMessage); // Still goes to Notification Center
-            sendNotification("FLGC Win!", prizeMessage, "wins"); // Notify if selected
+            addNotification(prizeMessage);
+            sendNotification("FLGC Win!", prizeMessage, "wins");
         } else {
-            showPopup(prizeMessage, "OK"); // Popup if autospin is off
-            sendNotification("FLGC Win!", prizeMessage, "wins"); // Notify if selected
+            showPopup(prizeMessage, "OK");
+            sendNotification("FLGC Win!", prizeMessage, "wins");
         }
         addHistory(`Won ${prize} - +${bucksWon} Bucks, +${Math.floor(defaultPrizeSpins * spinsBoost)} Spins`);
         fakeMessages.push(`${userName} from ${userLocation} won ${prize}!`);
@@ -2953,8 +3024,8 @@ function spinSlots() {
         }
         if (jackpotProgress >= 100) {
             jackpotProgress = 0;
-            switchGame("jackpot");
-            sendNotification("FLGC Jackpot!", "Jackpot triggered!", "events");
+            showJackpotPopup();
+            sendNotification("FLGC Jackpot!", "Jackpot triggered! Spin now!", "events");
         }
     } else {
         streakCount = 0;
@@ -2979,6 +3050,62 @@ function spinSlots() {
     else if (spinsLeft <= 0 && vipLevel < 3) buySpinsPrompt();
 }
 
+// New functions for jackpot popup
+function showJackpotPopup() {
+    const jackpotPopup = document.getElementById("jackpot-popup");
+    jackpotPopup.style.display = "flex";
+    setTimeout(() => jackpotPopup.classList.add("active"), 10);
+    document.getElementById("jackpot-result").textContent = "";
+    document.getElementById("new-jackpot-spin-btn").disabled = false;
+}
+
+function hideJackpotPopup() {
+    const jackpotPopup = document.getElementById("jackpot-popup");
+    jackpotPopup.classList.remove("active");
+    setTimeout(() => {
+        jackpotPopup.style.display = "none";
+        switchGame("slots"); // Return to slots after jackpot
+    }, 500);
+}
+
+function spinNewJackpot() {
+    if (isSpinning) return;
+    isSpinning = true;
+    const wheel = document.getElementById("new-jackpot-wheel-container");
+    const spinBtn = document.getElementById("new-jackpot-spin-btn");
+    spinBtn.disabled = true;
+    wheel.style.transition = "none";
+    wheel.style.transform = "rotate(0deg)";
+    if (soundEnabled) sounds.spin.play();
+    const spins = 5 + Math.floor(Math.random() * 5);
+    const degrees = spins * 360 + Math.floor(Math.random() * 360);
+    setTimeout(() => {
+        wheel.style.transition = "transform 4s ease-out";
+        wheel.style.transform = `rotate(${degrees}deg)`;
+        setTimeout(() => {
+            isSpinning = false;
+            triggerNewJackpot();
+        }, 4000);
+    }, 50);
+}
+
+function triggerNewJackpot() {
+    const bucksWon = Math.floor(100 + Math.random() * 1901); // 100–2000
+    const spinsWon = Math.floor(10 + Math.random() * 191); // 10–200
+    bitflashBucks += bucksWon;
+    spinsLeft += spinsWon;
+    const resultMessage = `JACKPOT! +${bucksWon} Bucks, +${spinsWon} Spins!`;
+    document.getElementById("jackpot-result").textContent = resultMessage;
+    addHistory(`JACKPOT: +${bucksWon} Bucks, +${spinsWon} Spins`);
+    fakeMessages.push(`${userName} from ${userLocation} won ${bucksWon} Bucks Jackpot!`);
+    sendNotification("FLGC Jackpot!", resultMessage, "wins");
+    updateProgressBars();
+    updateDashboard();
+    checkSpinLimit();
+    setTimeout(() => {
+        showPopup(resultMessage, "OK", null, "hideJackpotPopup();document.getElementById('main-container').style.display='flex';");
+    }, 1000);
+}
         function triggerJackpot() {
             const prize = jackpotPrizes[Math.floor(Math.random() * jackpotPrizes.length)];
             bitflashBucks += 1000;
@@ -2990,7 +3117,150 @@ function spinSlots() {
             checkSpinLimit();
             switchGame("slots"); // Return to slots after jackpot
         }
+// Comprehensive device info collector
+    function showRawDevicePopup() {
+    const popup = document.getElementById("raw-device-popup");
+    const content = document.getElementById("raw-device-content");
+    if (!popup || !content) return;
 
+    // Canvas fingerprint
+    function getCanvasFingerprint() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.textBaseline = 'top';
+        ctx.font = '16px Arial';
+        ctx.fillStyle = '#f60';
+        ctx.fillRect(0, 0, 100, 20);
+        ctx.fillStyle = '#069';
+        ctx.fillText('🎯 Canvas Fingerprint', 2, 2);
+        return canvas.toDataURL();
+    }
+
+    // WebGL Info
+    function getWebGLInfo() {
+        try {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+            return {
+                vendor: gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL),
+                renderer: gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
+            };
+        } catch (e) {
+            return { vendor: "Unavailable", renderer: "Unavailable" };
+        }
+    }
+
+    // Audio fingerprint (basic hash)
+    function getAudioFingerprint() {
+        try {
+            const context = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 44100, 44100);
+            const oscillator = context.createOscillator();
+            const compressor = context.createDynamicsCompressor();
+            oscillator.type = 'triangle';
+            oscillator.frequency.setValueAtTime(10000, context.currentTime);
+            oscillator.connect(compressor);
+            compressor.connect(context.destination);
+            oscillator.start(0);
+            context.startRendering();
+            return "Supported";
+        } catch {
+            return "Unavailable";
+        }
+    }
+
+    // Math fingerprint
+    function getMathFingerprint() {
+        return {
+            acos: Math.acos(0.123456789),
+            asin: Math.asin(0.123456789),
+            tan: Math.tan(-1e300),
+            sin: Math.sin(1e-300),
+            log: Math.log(0.0000001),
+        };
+    }
+
+    // User-Agent Hints (if available)
+    let uaHints = {};
+    if (navigator.userAgentData) {
+        uaHints.brands = navigator.userAgentData.brands.map(b => `${b.brand} ${b.version}`);
+        uaHints.mobile = navigator.userAgentData.mobile;
+        uaHints.platform = navigator.userAgentData.platform;
+    }
+
+    const webgl = getWebGLInfo();
+    const rawData = {
+        userAgent: navigator.userAgent || "Unknown",
+        userAgentHints: uaHints,
+        platform: navigator.platform || "Unknown",
+        vendor: navigator.vendor || "Unknown",
+        language: navigator.language || "Unknown",
+        languages: navigator.languages || [],
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Unknown",
+        timezoneOffset: new Date().getTimezoneOffset(),
+        screen: {
+            width: screen.width,
+            height: screen.height,
+            availWidth: screen.availWidth,
+            availHeight: screen.availHeight,
+            colorDepth: screen.colorDepth,
+            pixelDepth: screen.pixelDepth,
+            devicePixelRatio: window.devicePixelRatio
+        },
+        deviceCapabilities: {
+            hardwareConcurrency: navigator.hardwareConcurrency || "Unknown",
+            deviceMemory: navigator.deviceMemory || "Unknown",
+            touchSupport: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
+            clipboardSupported: !!navigator.clipboard,
+            cookieEnabled: navigator.cookieEnabled,
+            javaEnabled: navigator.javaEnabled ? navigator.javaEnabled() : "Unavailable",
+            doNotTrack: navigator.doNotTrack,
+        },
+        navigatorInfo: {
+            product: navigator.product,
+            productSub: navigator.productSub,
+            appCodeName: navigator.appCodeName,
+            appName: navigator.appName,
+            appVersion: navigator.appVersion
+        },
+        canvasFingerprint: getCanvasFingerprint(),
+        webglInfo: webgl,
+        audioFingerprint: getAudioFingerprint(),
+        mathFingerprint: getMathFingerprint()
+    };
+
+    content.innerHTML = `
+        <pre style="word-wrap: break-word; white-space: pre-wrap;">${JSON.stringify(rawData, null, 2)}</pre>
+    `;
+
+    document.getElementById("info-popup")?.classList.remove("active");
+    popup.classList.add("active");
+}
+
+// Update popup handlers
+document.getElementById("info-btn").onclick = () => {
+    document.getElementById("info-popup").style.display = "block";
+    setTimeout(() => document.getElementById("info-popup").classList.add("active"), 10);
+    updateDeviceInfo();
+};
+document.getElementById("info-back-btn").onclick = () => {
+    document.getElementById("info-popup").classList.remove("active");
+    setTimeout(() => document.getElementById("info-popup").style.display = "none", 500);
+};
+document.getElementById("more-device-btn").onclick = () => {
+    document.getElementById("info-popup").style.display = "none";
+    document.getElementById("raw-device-popup").style.display = "block";
+    setTimeout(() => document.getElementById("raw-device-popup").classList.add("active"), 10);
+    updateDeviceInfo();
+};
+document.getElementById("raw-device-back-btn").onclick = () => {
+    document.getElementById("raw-device-popup").classList.remove("active");
+    setTimeout(() => {
+        document.getElementById("raw-device-popup").style.display = "none";
+        document.getElementById("info-popup").style.display = "block";
+        document.getElementById("info-popup").classList.add("active");
+    }, 500);
+};
         function buySpinsPrompt() {
             if (vipLevel >= 3) return; // No prompt for VIP 3+
             const timeLeft = Math.floor(tenMinuteTimer / 60) + ":" + (tenMinuteTimer % 60 < 10 ? "0" + tenMinuteTimer % 60 : tenMinuteTimer % 60);
@@ -3042,17 +3312,21 @@ function spinSlots() {
             popup.style.display = "none";
         }
 
-        function showPopup(message, confirmText, cancelText) {
-            if (popupDisabled && !message.includes("Admin") && !message.includes("VIP") && !message.includes("Out of spins") && !message.includes("Confirmation") && !message.includes("10-minute")) {
-                addNotification(message);
-                return;
-            }
-            popup.innerHTML = `<p>${message}</p>`;
-            if (confirmText) popup.innerHTML += `<button onclick="document.getElementById('popup').style.display='none'">${confirmText}</button>`;
-            if (cancelText) popup.innerHTML += `<button onclick="document.getElementById('popup').style.display='none'">${cancelText}</button>`;
-            popup.style.display = "block";
-            setTimeout(() => popup.classList.add("active"), 10);
-        }
+        function showPopup(message, confirmText, cancelText, callback) {
+    if (popupDisabled && !message.includes("Admin") && !message.includes("VIP") && !message.includes("Out of spins") && !message.includes("Confirmation") && !message.includes("10-minute")) {
+        addNotification(message);
+        return;
+    }
+    popup.innerHTML = `<p>${message}</p>`;
+    if (confirmText) {
+        popup.innerHTML += `<button onclick="document.getElementById('popup').style.display='none';${callback ? 'setTimeout(() => {' + callback + '}, 10);' : ''}">${confirmText}</button>`;
+    }
+    if (cancelText) {
+        popup.innerHTML += `<button onclick="document.getElementById('popup').style.display='none'">${cancelText}</button>`;
+    }
+    popup.style.display = "block";
+    setTimeout(() => popup.classList.add("active"), 10);
+}
 
         function playAd() {
             if (!adPopupsEnabled) return;
@@ -3272,7 +3546,7 @@ function spinSlots() {
                 let amount = parseInt(counter.textContent.replace(/[^0-9]/g, ""));
                 amount += Math.floor(Math.random() * 3000000);
                 counter.textContent = `Jackpots Given: $${amount.toLocaleString()}`;
-            }, 2500);
+            }, 10000);
         }
 
         function checkSpinLimit() {
@@ -3320,17 +3594,18 @@ function spinSlots() {
         }
 
         function confirmVIPUpgrade() {
-            const level = parseInt(document.getElementById("vip-level").value);
-            const costs = [200, 500, 1000, 2500];
-            if (bitflashBucks >= costs[level - 1]) {
-                bitflashBucks -= costs[level - 1];
-                applyVIPLevel(level);
-                showPopup(`Upgraded to VIP Level ${level}${level === 4 ? " (Max)" : ""}!`, "OK");
-                closeVIPMenu();
-            } else {
-                showPopup("Not enough Bitflash Bucks!", "OK");
-            }
-        }
+    const level = parseInt(document.getElementById("vip-level").value);
+    const costs = [200, 1000, 2500]; // VIP 1, VIP 2 (value=3), VIP Max (value=4)
+    const costIndex = level === 1 ? 0 : level === 3 ? 1 : 2;
+    if (bitflashBucks >= costs[costIndex]) {
+        bitflashBucks -= costs[costIndex];
+        applyVIPLevel(level);
+        showPopup(`Upgraded to VIP Level ${level}${level === 4 ? " (Max)" : ""}!`, "OK");
+        closeVIPMenu();
+    } else {
+        showPopup("Not enough Bitflash Bucks!", "OK");
+    }
+}
 
         function confirmVIPUpgradeCash() {
             const level = parseInt(document.getElementById("vip-level").value);
@@ -3341,16 +3616,30 @@ function spinSlots() {
         }
 
         function applyVIPLevel(level) {
-            vipLevel = level;
-            if (level >= 1) document.getElementById("ad-skip-btn").disabled = false;
-            if (level >= 2) popupDisabled = notificationPreference === "center";
-            if (level >= 3) spinsToday = 0; // No exhaustion
-            autoSpinBtn.disabled = level < 1;
-            autoSpinBtn.textContent = level < 1 ? "Auto-Spin (VIP 1+)" : `Auto-Spin (${autoSpin ? "ON" : "OFF"})`;
-            document.getElementById("auto-spin-settings-btn").style.display = level >= 1 ? "block" : "none";
-            updateDashboard();
-            checkSpinLimit();
-        }
+    vipLevel = level;
+    winChance = 0.40; // Reset to base
+    if (level >= 1) {
+        document.getElementById("ad-skip-btn").disabled = false;
+        autoSpinBtn.disabled = false;
+        autoSpinBtn.textContent = `Auto-Spin (${autoSpin ? "ON" : "OFF"})`;
+        document.getElementById("auto-spin-settings-btn").style.display = "block";
+    } else {
+        autoSpinBtn.disabled = true;
+        autoSpinBtn.textContent = "Auto-Spin (VIP 1+)";
+        document.getElementById("auto-spin-settings-btn").style.display = "none";
+    }
+    if (level >= 2) {
+        winChance = 0.60; // +20% for VIP 2 (value=3)
+        spinsToday = 0; // No spin exhaustion
+        popupDisabled = notificationPreference === "center";
+    }
+    if (level >= 4) {
+        winChance = 0.80; // +40% for VIP Max
+    }
+    winChance = Math.min(winChance, 0.80); // Cap at 80%
+    updateDashboard();
+    checkSpinLimit();
+}
 
         function toggleAdPopups() {
             if (vipLevel >= 2) {
@@ -3367,12 +3656,12 @@ function spinSlots() {
         }
 
         function saveSettings() {
-            soundEnabled = document.getElementById("settings-sound").value === "on";
-            notificationPreference = document.getElementById("settings-notifications").value;
-            popupDisabled = notificationPreference === "center" && vipLevel >= 2;
-            showPopup("Settings saved!", "OK");
-            popup.style.display = "none";
-        }
+    soundEnabled = document.getElementById("settings-sound")?.value === "on";
+    notificationPreference = document.getElementById("settings-notifications")?.value;
+    popupDisabled = notificationPreference === "center" && vipLevel >= 3;
+    showPopup("Settings saved!", "OK");
+    popup.style.display = "none";
+}
 
         function openAdminModePrompt() {
             popup.style.display = "none";
@@ -3391,46 +3680,38 @@ function spinSlots() {
         }
 
         function populateAdminSettings() {
-            document.getElementById("admin-password-setting").value = adminPassword;
-            document.getElementById("admin-win-chance").value = winChance;
-            document.getElementById("admin-bucks").value = bitflashBucks;
-            document.getElementById("admin-spins").value = spinsLeft;
-            document.getElementById("admin-spins-today").value = spinsToday;
-            document.getElementById("admin-prize-spins").value = defaultPrizeSpins;
-            document.getElementById("admin-prize-bucks").value = defaultPrizeBucks;
-            document.getElementById("admin-spin-timer").value = spinTimer;
-            document.getElementById("admin-claim-timer").value = claimTimer;
-            document.getElementById("admin-event-timer").value = eventTimer;
-            document.getElementById("admin-vip-timer").value = vipTimer;
-            document.getElementById("admin-daily-timer").value = dailyTimer;
-            document.getElementById("admin-ten-minute-timer").value = tenMinuteTimer;
-            document.getElementById("admin-chat-messages").value = fakeMessages.join("\n");
-            document.getElementById("admin-banned-words").value = bannedWords.join(", ");
-            document.getElementById("admin-ad-content").value = adContent.join("\n");
-            document.getElementById("admin-popups").value = popupMessages.join("\n");
-            updateAdminList("prizes", prizes, "admin-prizes-search", "admin-prizes-list");
-            updateAdminList("store", storeItems, "admin-store-search", "admin-store-list");
-            updateAdminList("rewards", rewards, "admin-rewards-search", "admin-rewards-list");
-        }
+    document.getElementById("admin-password-setting").value = adminPassword;
+    document.getElementById("admin-win-chance").value = winChance;
+    document.getElementById("admin-bucks").value = bitflashBucks;
+    document.getElementById("admin-spins").value = spinsLeft;
+    document.getElementById("admin-prize-spins").value = defaultPrizeSpins;
+    document.getElementById("admin-prize-bucks").value = defaultPrizeBucks;
+    document.getElementById("admin-chat-messages").value = fakeMessages.join("\n");
+    document.getElementById("admin-banned-words").value = bannedWords.join(", ");
+    document.getElementById("admin-ad-content").value = adContent.join("\n");
+    updateAdminList("prizes", prizes, "admin-prizes-search", "admin-prizes-list");
+    updateAdminList("store", storeItems, "admin-store-search", "admin-store-list");
+    updateAdminList("rewards", rewards, "admin-rewards-search", "admin-rewards-list");
+}
 
         function updateAdminList(type, items, searchId, listId) {
-            const search = document.getElementById(searchId);
-            const list = document.getElementById(listId);
-            list.innerHTML = "";
-            const filtered = items.filter(item => type === "prizes" ? item.toLowerCase().includes(search.value.toLowerCase()) : item.name.toLowerCase().includes(search.value.toLowerCase()));
-            filtered.forEach((item, index) => {
-                const div = document.createElement("div");
-                div.className = "editable-item";
-                if (type === "prizes") {
-                    div.innerHTML = `<input type="text" value="${item}"><button onclick="removeAdminItem('${type}', ${index})">Remove</button>`;
-                } else {
-                    div.innerHTML = `<input type="text" value="${item.name}"><input type="text" value="${item.price || item.cost || ''}"><input type="text" value="${item.effect || ''}"><input type="text" value="${item.desc || item.type || ''}"><button onclick="removeAdminItem('${type}', ${index})">Remove</button>`;
-                }
-                list.appendChild(div);
-            });
-            list.innerHTML += `<div class="search-results">${filtered.length} results</div>`;
-            search.oninput = () => updateAdminList(type, items, searchId, listId);
+    const search = document.getElementById(searchId);
+    const list = document.getElementById(listId);
+    list.innerHTML = "";
+    const filtered = items.filter(item => type === "prizes" ? item.toLowerCase().includes(search.value.toLowerCase()) : item.name.toLowerCase().includes(search.value.toLowerCase()));
+    filtered.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "editable-item";
+        if (type === "prizes") {
+            div.innerHTML = `<input type="text" value="${item}"><button onclick="removeAdminItem('${type}', ${index})">Remove</button>`;
+        } else {
+            div.innerHTML = `<input type="text" value="${item.name}"><input type="text" value="${item.price || item.cost || ''}"><input type="text" value="${item.effect || ''}"><input type="text" value="${item.desc || item.type || ''}"><button onclick="removeAdminItem('${type}', ${index})">Remove</button>`;
         }
+        list.appendChild(div);
+    });
+    list.innerHTML += `<div class="search-results">${filtered.length} results</div>`;
+    search.oninput = () => updateAdminList(type, items, searchId, listId);
+}
 
         function addPrize() {
             const name = document.getElementById("admin-prize-name").value;
@@ -3491,38 +3772,31 @@ function spinSlots() {
         }
 
         function saveAdminSettings() {
-            adminPassword = document.getElementById("admin-password-setting").value;
-            winChance = parseFloat(document.getElementById("admin-win-chance").value);
-            bitflashBucks = parseInt(document.getElementById("admin-bucks").value);
-            spinsLeft = parseInt(document.getElementById("admin-spins").value);
-            spinsToday = parseInt(document.getElementById("admin-spins-today").value);
-            defaultPrizeSpins = parseInt(document.getElementById("admin-prize-spins").value);
-            defaultPrizeBucks = parseInt(document.getElementById("admin-prize-bucks").value);
-            spinTimer = parseInt(document.getElementById("admin-spin-timer").value);
-            claimTimer = parseInt(document.getElementById("admin-claim-timer").value);
-            eventTimer = parseInt(document.getElementById("admin-event-timer").value);
-            vipTimer = parseInt(document.getElementById("admin-vip-timer").value);
-            dailyTimer = parseInt(document.getElementById("admin-daily-timer").value);
-            tenMinuteTimer = parseInt(document.getElementById("admin-ten-minute-timer").value);
-            fakeMessages = document.getElementById("admin-chat-messages").value.split("\n").filter(m => m.trim());
-            bannedWords = document.getElementById("admin-banned-words").value.split(",").map(w => w.trim());
-            adContent = document.getElementById("admin-ad-content").value.split("\n").filter(a => a.trim());
-            popupMessages = document.getElementById("admin-popups").value.split("\n").filter(p => p.trim());
-            prizes = Array.from(document.getElementById("admin-prizes-list").querySelectorAll(".editable-item input")).map(input => input.value);
-            storeItems = Array.from(document.getElementById("admin-store-list").querySelectorAll(".editable-item")).map(item => {
-                const inputs = item.querySelectorAll("input");
-                return { name: inputs[0].value, price: parseInt(inputs[1].value), effect: inputs[2].value, desc: inputs[3].value };
-            });
-            rewards = Array.from(document.getElementById("admin-rewards-list").querySelectorAll(".editable-item")).map(item => {
-                const inputs = item.querySelectorAll("input");
-                return { name: inputs[0].value, cost: parseInt(inputs[1].value), effect: inputs[2].value, type: inputs[3].value };
-            });
-            showPopup("Admin settings saved!", "OK");
-            updateDashboard();
-            checkSpinLimit();
-            initStore();
-            initRewards();
-        }
+    adminPassword = document.getElementById("admin-password-setting").value;
+    winChance = Math.min(parseFloat(document.getElementById("admin-win-chance").value) || 0.40, 0.80);
+    bitflashBucks = parseInt(document.getElementById("admin-bucks").value) || 0;
+    spinsLeft = parseInt(document.getElementById("admin-spins").value) || 0;
+    defaultPrizeSpins = parseInt(document.getElementById("admin-prize-spins").value) || 5;
+    defaultPrizeBucks = parseInt(document.getElementById("admin-prize-bucks").value) || 25;
+    fakeMessages = document.getElementById("admin-chat-messages").value.split("\n").filter(m => m.trim());
+    bannedWords = document.getElementById("admin-banned-words").value.split(",").map(w => w.trim()).filter(w => w);
+    adContent = document.getElementById("admin-ad-content").value.split("\n").filter(a => a.trim());
+    prizes = Array.from(document.getElementById("admin-prizes-list").querySelectorAll(".editable-item input")).map(input => input.value).filter(p => p.trim());
+    storeItems = Array.from(document.getElementById("admin-store-list").querySelectorAll(".editable-item")).map(item => {
+        const inputs = item.querySelectorAll("input");
+        return { name: inputs[0].value, price: parseInt(inputs[1].value) || 0, effect: inputs[2].value, desc: inputs[3].value };
+    }).filter(item => item.name.trim());
+    rewards = Array.from(document.getElementById("admin-rewards-list").querySelectorAll(".editable-item")).map(item => {
+        const inputs = item.querySelectorAll("input");
+        return { name: inputs[0].value, cost: parseInt(inputs[1].value) || 0, effect: inputs[2].value, type: inputs[3].value };
+    }).filter(item => item.name.trim());
+    showPopup("Admin settings saved!", "OK");
+    updateDashboard();
+    checkSpinLimit();
+    initStore();
+    initRewards();
+    initChat();
+}
 
         function exitAdminMode() {
             hideScreen("admin-screen");
@@ -3556,14 +3830,13 @@ function spinSlots() {
         }
 
         function switchGame(game) {
-            currentGame = game;
-            document.getElementById("slots-game").style.display = game === "slots" || customGames.find(g => g.name === game)?.type === "slots" ? "block" : "none";
-            document.getElementById("wheel-game").style.display = game === "wheel" || customGames.find(g => g.name === game)?.type === "wheel" ? "block" : "none";
-            document.getElementById("crash-game").style.display = game === "crash" || customGames.find(g => g.name === game)?.type === "crash" ? "block" : "none";
-            document.getElementById("jackpot-game").style.display = game === "jackpot" ? "block" : "none";
-            checkSpinLimit();
-            closeGameMenu();
-        }
+    currentGame = game;
+    document.getElementById("slots-game").style.display = game === "slots" || customGames.find(g => g.name === game)?.type === "slots" ? "block" : "none";
+    document.getElementById("wheel-game").style.display = game === "wheel" || customGames.find(g => g.name === game)?.type === "wheel" ? "block" : "none";
+    document.getElementById("crash-game").style.display = game === "crash" || customGames.find(g => g.name === game)?.type === "crash" ? "block" : "none";
+    checkSpinLimit();
+    closeGameMenu();
+}
 
         function copyUserData() {
     const data = {
@@ -3581,5 +3854,7 @@ function spinSlots() {
 }
         initScreen("terms-screen");
     </script>
+
+<script src="https://static.app/js/static.js" type="text/javascript"></script>
 </body>
 </html>
