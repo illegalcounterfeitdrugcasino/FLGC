@@ -352,7 +352,7 @@
             cursor: not-allowed;
             box-shadow: none;
         }
-        #auto-spin-btn, #notification-btn {
+        #auto-spin-btn, #notification-btn, #buy-spins-btn {
             padding: 10px 20px;
             font-size: 16px;
             background: #00ffff;
@@ -363,7 +363,7 @@
             cursor: pointer;
             transition: background 0.3s, transform 0.2s;
         }
-        #auto-spin-btn:hover, #notification-btn:hover { background: #ff00ff; transform: scale(1.05); }
+        #auto-spin-btn:hover, #notification-btn:hover, #buy-spins-btn:hover { background: #ff00ff; transform: scale(1.05); }
         #auto-spin-btn:disabled { background: #555; cursor: not-allowed; }
         #game-switch-btn {
             padding: 12px 25px;
@@ -839,7 +839,7 @@
             <h1>Welcome to Free Luxury Giveaway Casino</h1>
             <p><strong>Effective Date: April 10, 2025</strong></p>
             <p>
-  Welcome to FLGC, operated by <a href="https://sites.google.com/view/bitflash-home/" target="_blank">Bitflash Enterprises</a>. Before proceeding, please review and accept our Terms of Service and Privacy Policy. <a href="https://flgc.netlify.app/prizes" target="_blank">FLGC Prize Library</a> /
+  Welcome to FLGC, operated by <a href="https://sites.google.com/view/bitflash-home/" target="_blank">Bitflash Enterprises</a>. Before proceeding, please review and accept our Terms of Service and Privacy Policy. <a href="https://flgc.netlify.app/prizes" target="_blank">FLGC Prize Library</a> │
   <a href="https://forms.gle/XAsvp2gBDeMyPy8i8" target="_blank">Bitflash Support</a>
 </p>
             <button class="terms-btn" onclick="showTOS()">Terms of Service</button>
@@ -1047,6 +1047,7 @@
                     <div class="reel" id="reel3">?</div>
                 </div>
                 <button id="spin-btn" onclick="spinSlots()">SPIN</button>
+                <button id="buy-spins-btn" onclick="buySpinsPrompt()">Buy Spins</button>
                 <button id="auto-spin-btn" onclick="toggleAutoSpin()">Auto-Spin</button>
                 <button id="notification-btn" onclick="toggleNotifications()">Notifications <span id="notification-count">0</span></button>
                 <button id="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
@@ -1054,6 +1055,7 @@
             <div id="wheel-game">
                 <div id="wheel-container"><div id="wheel-pointer"></div></div>
                 <button id="wheel-spin-btn" onclick="spinWheel()">SPIN</button>
+                <button id="buy-spins-btn" onclick="buySpinsPrompt()">Buy Spins</button>
                 <button id="auto-spin-btn" onclick="toggleAutoSpin()">Auto-Spin</button>
                 <button id="notification-btn" onclick="toggleNotifications()">Notifications <span id="notification-count">0</span></button>
                 <button id="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
@@ -1064,6 +1066,7 @@
                     <div id="crash-multiplier">1.00x</div>
                 </div>
                 <button id="crash-bet-btn" onclick="startCrash()">BET</button>
+                <button id="buy-spins-btn" onclick="buySpinsPrompt()">Buy Spins</button>
                 <button id="auto-spin-btn" onclick="toggleAutoSpin()">Auto-Spin</button>
                 <button id="notification-btn" onclick="toggleNotifications()">Notifications <span id="notification-count">0</span></button>
                 <button id="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
@@ -3265,9 +3268,8 @@ document.getElementById("raw-device-back-btn").onclick = () => {
     }, 500);
 };
         function buySpinsPrompt() {
-            if (vipLevel >= 3) return; // No prompt for VIP 3+
             const timeLeft = Math.floor(tenMinuteTimer / 60) + ":" + (tenMinuteTimer % 60 < 10 ? "0" + tenMinuteTimer % 60 : tenMinuteTimer % 60);
-            showPopup(`Out of spins! Watch ads for more or buy spins:<br><input id='buy-spins-amount' type='number' min='1' value='5'> Spins for <span id='buy-spins-cost'>50</span> Bucks<button onclick='buySpins()'>Buy</button>`, "Cancel");
+            showPopup(`Buy spins:<br><input id='buy-spins-amount' type='number' min='1' value='1'> Spins for <span id='buy-spins-cost'>10</span> Bucks<button onclick='buySpins()'>Buy</button>`, "Cancel");
             document.getElementById("buy-spins-amount").addEventListener("input", updateBuySpinsCost);
         }
 
