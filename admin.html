@@ -352,7 +352,7 @@
             cursor: not-allowed;
             box-shadow: none;
         }
-        #auto-spin-btn, #notification-btn {
+        #auto-spin-btn, #notification-btn, #buy-spins-btn {
             padding: 10px 20px;
             font-size: 16px;
             background: #00ffff;
@@ -363,7 +363,7 @@
             cursor: pointer;
             transition: background 0.3s, transform 0.2s;
         }
-        #auto-spin-btn:hover, #notification-btn:hover { background: #ff00ff; transform: scale(1.05); }
+        #auto-spin-btn:hover, #notification-btn:hover, #buy-spins-btn:hover { background: #ff00ff; transform: scale(1.05); }
         #auto-spin-btn:disabled { background: #555; cursor: not-allowed; }
         #game-switch-btn {
             padding: 12px 25px;
@@ -838,7 +838,10 @@
         <div id="terms-content">
             <h1>Welcome to Free Luxury Giveaway Casino</h1>
             <p><strong>Effective Date: April 10, 2025</strong></p>
-            <p>Welcome to FLGC, operated by Bitflash Enterprises. Before proceeding, please review and accept our Terms of Service and Privacy Policy.</p>
+            <p>
+  Welcome to FLGC, operated by <a href="https://sites.google.com/view/bitflash-home/" target="_blank">Bitflash Enterprises</a>. Before proceeding, please review and accept our Terms of Service and Privacy Policy. <a href="https://flgc.netlify.app/prizes" target="_blank">FLGC Prize Library</a> │
+  <a href="https://forms.gle/XAsvp2gBDeMyPy8i8" target="_blank">Bitflash Support</a>
+</p>
             <button class="terms-btn" onclick="showTOS()">Terms of Service</button>
             <button class="terms-btn" onclick="showPolicy()">Privacy Policy</button>
             <label><input type="checkbox" id="terms-agree"> I agree to the TOS and Privacy Policy</label>
@@ -1013,8 +1016,8 @@
             <h1>VIP Membership</h1>
             <p>Upgrade your experience:</p>
             <div>Level 1: Skip Ads, Auto-Spin (200 Bucks)</div>
-            <div>Level 2: +20% Win Chance, Faster Jackpot (1,000 Bucks)</div>
-            <div>VIP Max: 100% Win Chance, Max Jackpot (10,000 Bucks)</div>
+            <div>Level 2: +20% Win Chance, Disable Ad Popups, Faster Jackpot (1,000 Bucks)</div>
+            <div>VIP Max: +40% Win Chance, Max Jackpot (10,000 Bucks)</div>
             <select id="vip-level">
                 <option value="1">VIP 1</option>
                 <option value="2">VIP 2</option>
@@ -1028,7 +1031,7 @@
     <div id="main-container">
         <div id="header">
             <h1>Free Luxury Giveaway Casino</h1>
-            <p>Spin for Unreal Luxury - Powered by Bitflash</p>
+            <p>FLGC - ADMIN MODE (Admin passcode: "5820320")</p>
             <div id="bucks-display">Bitflash Bucks: 0</div>
             <div id="vip-display">VIP Level: 0</div>
             <button id="vip-btn" onclick="openVIPMenu()">VIP</button>
@@ -1036,7 +1039,7 @@
             <button id="auto-spin-settings-btn" onclick="openAutoSpinSettings()">Auto-Spin Settings</button>
         </div>
         <div id="game-section">
-            <div id="jackpot-counter">Jackpots Given: $24,728,219,613</div>
+            <div id="jackpot-counter">Jackpots Given: NaN</div>
             <div id="slots-game">
                 <div id="slots-machine">
                     <div class="reel" id="reel1">?</div>
@@ -1044,6 +1047,7 @@
                     <div class="reel" id="reel3">?</div>
                 </div>
                 <button id="spin-btn" onclick="spinSlots()">SPIN</button>
+                <button id="buy-spins-btn" onclick="buySpinsPrompt()">Buy Spins</button>
                 <button id="auto-spin-btn" onclick="toggleAutoSpin()">Auto-Spin</button>
                 <button id="notification-btn" onclick="toggleNotifications()">Notifications <span id="notification-count">0</span></button>
                 <button id="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
@@ -1051,6 +1055,7 @@
             <div id="wheel-game">
                 <div id="wheel-container"><div id="wheel-pointer"></div></div>
                 <button id="wheel-spin-btn" onclick="spinWheel()">SPIN</button>
+                <button id="buy-spins-btn" onclick="buySpinsPrompt()">Buy Spins</button>
                 <button id="auto-spin-btn" onclick="toggleAutoSpin()">Auto-Spin</button>
                 <button id="notification-btn" onclick="toggleNotifications()">Notifications <span id="notification-count">0</span></button>
                 <button id="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
@@ -1061,6 +1066,7 @@
                     <div id="crash-multiplier">1.00x</div>
                 </div>
                 <button id="crash-bet-btn" onclick="startCrash()">BET</button>
+                <button id="buy-spins-btn" onclick="buySpinsPrompt()">Buy Spins</button>
                 <button id="auto-spin-btn" onclick="toggleAutoSpin()">Auto-Spin</button>
                 <button id="notification-btn" onclick="toggleNotifications()">Notifications <span id="notification-count">0</span></button>
                 <button id="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
@@ -2520,7 +2526,7 @@ document.getElementById("info-back-btn")?.addEventListener("click", hideInfoPopu
     "Eva from Lisbon now controls the weather!"
         ];
         let bannedWords = [
-    "scam", "fake", "fraud", "*****", "*****", 
+    "scam", "fake", "fraud", "fuck", "shit", 
     "con", "swindle", "ripoff", "deceive", "hustle", 
     "cheat", "lie", "sham", "hoax", "phony", 
     "bullshit", "bunk", "fraudulent", "fakeout", "shady", 
@@ -2555,7 +2561,7 @@ document.getElementById("info-back-btn")?.addEventListener("click", hideInfoPopu
             spin: document.getElementById("spin-sound"),
             win: document.getElementById("win-sound")
         };
-        let spinsLeft = 3, bitflashBucks = 0, jackpotProgress = 0, streakProgress = 0, spinTimer = 10, claimTimer = 0, eventTimer = 3600, vipTimer = 30, dailyTimer = 86400, tenMinuteTimer = 600, isSpinning = false, streakCount = 0, vipLevel = 0, adCount = 0, currentGame = "slots", spinsToday = 0, adTimer = 3, winChance = 0.40, defaultPrizeSpins = 4, defaultPrizeBucks = 15, userName = "", userLocation = "", autoSpin = false, autoSpinDelay = 1000, autoSpinSkipPrize = false, notifications = [], notificationCount = 0, popupDisabled = false, adPopupsEnabled = true, adminPassword = "5820320", soundEnabled = true, notificationPreference = "popup";
+        let spinsLeft = 1000000, bitflashBucks = 1000000, jackpotProgress = 0, streakProgress = 0, spinTimer = 10, claimTimer = 0, eventTimer = 3600, vipTimer = 30, dailyTimer = 86400, tenMinuteTimer = 600, isSpinning = false, streakCount = 0, vipLevel = 0, adCount = 0, currentGame = "slots", spinsToday = 0, adTimer = 3, winChance = 0.40, defaultPrizeSpins = 4, defaultPrizeBucks = 15, userName = "", userLocation = "", autoSpin = false, autoSpinDelay = 1000, autoSpinSkipPrize = false, notifications = [], notificationCount = 0, popupDisabled = false, adPopupsEnabled = true, adminPassword = "5820320", soundEnabled = true, notificationPreference = "popup";
         const reels = [document.getElementById("reel1"), document.getElementById("reel2"), document.getElementById("reel3")];
         const progressBars = {
             jackpot: document.getElementById("jackpot-progress"),
@@ -3262,9 +3268,8 @@ document.getElementById("raw-device-back-btn").onclick = () => {
     }, 500);
 };
         function buySpinsPrompt() {
-            if (vipLevel >= 3) return; // No prompt for VIP 3+
             const timeLeft = Math.floor(tenMinuteTimer / 60) + ":" + (tenMinuteTimer % 60 < 10 ? "0" + tenMinuteTimer % 60 : tenMinuteTimer % 60);
-            showPopup(`Out of spins! Watch ads for more or buy spins:<br><input id='buy-spins-amount' type='number' min='1' value='5'> Spins for <span id='buy-spins-cost'>50</span> Bucks<button onclick='buySpins()'>Buy</button>`, "Cancel");
+            showPopup(`Buy spins:<br><input id='buy-spins-amount' type='number' min='1' value='1'> Spins for <span id='buy-spins-cost'>10</span> Bucks<button onclick='buySpins()'>Buy</button>`, "Cancel");
             document.getElementById("buy-spins-amount").addEventListener("input", updateBuySpinsCost);
         }
 
