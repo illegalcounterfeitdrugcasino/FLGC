@@ -1178,7 +1178,7 @@ document.getElementById("install-button").addEventListener("click", async () => 
     console.log("User choice:", result.outcome);
     hideInstallBanner();
   } else {
-    alert("To install FLGC:\n1. Tap Share (⬆️)\n2. Add to Home Screen");
+    alert("To install FLGC:\n1. Tap Share (⬆️)\n2. Add to Home Screen/Dock");
   }
 });
 
@@ -1247,7 +1247,7 @@ function getDeviceInfo() {
     else if (ua.includes("Mac OS")) os = "macOS";
     else if (ua.includes("Linux")) os = "Linux";
     else if (ua.includes("CrOS")) os = "ChromeOS";
-    else if (ua.includes("Android")) os = "Android";
+    else if (ua.includes("Linux; Android")) os = "Android";
 
     // Device detection (basic)
     if (ua.includes("Mobile")) device = "Mobile Device";
