@@ -436,7 +436,7 @@
             position: fixed;
             top: 20px;
             right: 0;
-            width: 350px;
+            width: 320px;
             padding: 25px;
             background: rgba(0, 0, 0, 0.95);
             border-radius: 25px 0 0 25px;
@@ -831,6 +831,18 @@
     </style>
 </head>
 <body>
+<div id="install-banner" style="display: none; position: fixed; bottom: -100; left: 0; width: 100%; background: #1a0d2e; color: #fff; padding: 20px; box-shadow: 0 -5px 20px #ff00ff; z-index: 99999; text-align: center;">
+  <span id="install-text" style="font-size: 18px;">Want FLGC as a real app?</span>
+  <button id="install-button" style="margin-left: 20px; padding: 10px 20px; background: #ff00ff; border: none; border-radius: 8px; color: #fff; cursor: pointer;">Install</button>
+  <button onclick="hideInstallBanner()" style="margin-left: 10px; background: transparent; border: none; color: #aaa; font-size: 20px;">×</button>
+</div>
+    <div id="restore-screen" style="display: none;">
+      <div id="restore-content">
+          <h1>Restore Your Game?</h1>
+          <p>We found saved data, bro. Want to pick up where you left off?</p>
+          <button class="restore-btn" onclick="restoreGameData()">Yes, Load It</button>
+          <button class="restore-btn" onclick="startFresh()">No, Start Fresh</button>
+      </div>
   </div>
     <div id="terms-screen">
         <div id="terms-content">
@@ -872,8 +884,8 @@
             <input id="setup-name" type="text" placeholder="Your Name" value="">
             <label>Location:</label>
             <input id="setup-location" type="text" placeholder="Your Location/City" value="">
-            <button class="setup-btn" onclick="nextSetupStep()">Create Profile</button>
-            <button class="setup-btn" onclick="skipSetup()">Continue as Guest</button>
+            <button class="setup-btn" onclick="nextSetupStep()">Next</button>
+            <button class="setup-btn" onclick="skipSetup()">Skip</button>
             <button class="setup-btn" style="position: absolute; top: 20px; right: 20px;" onclick="loadSavedDataPrompt()">Login</button>
         </div>
         <div id="raw-device-popup">
@@ -1013,9 +1025,9 @@
         <div id="vip-content">
             <h1>VIP Membership</h1>
             <p>Upgrade your experience:</p>
-            <div>Level 1: Skip Ads, Auto-Spin - 160 Bucks (-20%)</div>
-            <div>Level 2: +20% Win Chance, Disable Ad Popups, Faster Jackpot - 800 Bucks (-20%)</div>
-            <div>VIP Max: +40% Win Chance, Max Jackpot - 8,000 Bucks (-20%)</div>
+            <div>Level 1: Skip Ads, Auto-Spin (200 Bucks)</div>
+            <div>Level 2: +20% Win Chance, Disable Ad Popups, Faster Jackpot (1,000 Bucks)</div>
+            <div>VIP Max: +40% Win Chance, Max Jackpot (10,000 Bucks)</div>
             <select id="vip-level">
                 <option value="1">VIP 1</option>
                 <option value="2">VIP 2</option>
@@ -1100,7 +1112,7 @@
             <div id="spin-history"></div>
         </div>
         <div id="store-section">
-            <h2>Bitflash Black Market (-20%)</h2>
+            <h2>Bitflash Black Market</h2>
             <div id="store-list"></div>
             <div id="store-toggle" onclick="toggleStore()"><<</div>
         </div>
@@ -1134,12 +1146,53 @@
             <div id="loading-ball"></div>
         </div>
     </div>
+    <audio id="spin-sound" src="https://www.myinstants.com/instant/slot-machine-44998"></audio>
+    <audio id="win-sound" src="https://www.myinstants.com/media/sounds/casino-win.mp3"></audio>
     <script>
         if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js');
 }
 
-      let notificationPrefs = { ads: false, wins: false, daily: false, events: false
+        let deferredPrompt = null;
+
+// Detect Chrome/Edge/Android that supports PWA install prompt
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallBanner("Install the New FLGC App and get Exclusive Discounts and Benefits");
+});
+
+document.getElementById("install-button").addEventListener("click", async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    console.log("User choice:", result.outcome);
+    hideInstallBanner();
+  } else {
+    alert("To install FLGC for Apple Devices:\n1. ⚠️IMPORTANT⚠️ Go to flgc.netlify.app/app\n2. In /app Tap Share (⬆️)\n3. Add to Home Screen/Dock");
+  }
+});
+
+// Detect iOS/iPadOS Safari
+const isIos = /iphone|ipad/.test(navigator.userAgent.toLowerCase());
+const isStandalone = window.navigator.standalone === true;
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+if (isIos && !isStandalone && isSafari) {
+  setTimeout(() => {
+    showInstallBanner("Install the FLGC App! Tap Share → Add to Home Screen to install FLGC");
+  }, 3000);
+}
+
+// Safari on macOS: show basic install suggestion
+const isMacSafari = navigator.platform.includes("Mac") && isSafari;
+if (isMacSafari) {
+  setTimeout(() => {
+    showInstallBanner("Install the FLGC App!");
+  }, 3000);
+}
+
+        let notificationPrefs = { ads: false, wins: false, daily: false, events: false
         };
         
         let ipapiData = null; // Cache ipapi data
@@ -1193,7 +1246,13 @@ function getDeviceInfo() {
     else if (ua.includes("iPhone")) device = "iPhone";
     else if (ua.includes("iPad")) device = "iPad";
 
-    return { os, };
+    // Browser detection
+    if (ua.includes("Chrome")) browser = "Chrome";
+    else if (ua.includes("Firefox")) browser = "Firefox";
+    else if (ua.includes("Safari")) browser = "Safari";
+    else if (ua.includes("Edge")) browser = "Edge";
+
+    return { os };
 }
 
 function showInfoPopup() {
@@ -1207,7 +1266,7 @@ function showInfoPopup() {
     content.innerHTML = `
         <strong>Device Info:</strong><br>
         OS: ${deviceInfo.os}<br>
-        App Version: ASWA-21425<br><br>
+        App Version: ASWA21425<br><br>
         <strong></strong><br>
         ${networkInfo.error ? networkInfo.error : `
             
@@ -2457,8 +2516,8 @@ document.getElementById("info-back-btn")?.addEventListener("click", hideInfoPopu
             "Private Jet", "$100M Cash", "Luxury Yacht", "Diamond Vault", "Cartel Mansion"
         ];
         let storeItems = [
-            { name: "Bitflash Cocaine Pack", price: 80, effect: "+10 Spins", desc: "Boost your spins!" },
-            { name: "Bitflash Meth Brick", price: 60, effect: "Triple Jackpot Odds", desc: "Cook up jackpots!" },
+            { name: "Bitflash Cocaine Pack", price: 100, effect: "+10 Spins", desc: "Boost your spins!" },
+            { name: "Bitflash Meth Brick", price: 75, effect: "Triple Jackpot Odds", desc: "Cook up jackpots!" },
         ];
         let rewards = [
             { name: "Spin Frenzy", cost: 1, effect: "+2 Spins", type: "ad" },
@@ -2597,12 +2656,12 @@ function enableNotifications(allow) {
                     hideScreen("setup-notifications");
                     initScreen("setup-notification-types");
                 } else {
-                    showPopup("Notifications blocked! Skipping...");
+                    showPopup("Notifications blocked! Skipping...", "OK");
                     finalizeSetup();
                 }
             });
         } else {
-            showPopup("Notification Error! Skipping...");
+            showPopup("Your browser doesn’t support notifications!", "OK");
             finalizeSetup();
         }
     } else {
@@ -2616,6 +2675,7 @@ function sendTestNotification() {
     if (Notification.permission === "granted") {
         new Notification("FLGC Test Notification", {
             body: `Hi ${userName}! Enter this code to continue: ${testCode}`,
+            icon: "path/to/icon.png" // Optional, add later
         });
         hideScreen("setup-notification-types");
         initScreen("setup-verify-code");
@@ -2653,8 +2713,8 @@ function verifyTestCode() {
     initScreen("setup-notifications");
 }
         function skipSetup() {
-    userName = document.getElementById("setup-name").value || "Guest";
-    userLocation = document.getElementById("setup-location").value || "Unknown";
+    userName = document.getElementById("setup-name").value || "";
+    userLocation = document.getElementById("setup-location").value || "";
     finalizeSetup();
 }
         function previewTheme(theme) {
@@ -3549,9 +3609,9 @@ document.getElementById("raw-device-back-btn").onclick = () => {
 
         function checkSpinLimit() {
     const btn = currentGame === "slots" ? spinBtn : currentGame === "wheel" ? document.getElementById("wheel-spin-btn") : currentGame === "crash" ? document.getElementById("crash-bet-btn") : document.getElementById("jackpot-spin-btn");
-    if (spinsLeft <= 0 ) {
+    if (spinsLeft <= 0 && vipLevel < 3) {
         btn.disabled = true;
-        btn.textContent = "OUT OF SPINS";
+        btn.textContent = "SPINS EXHAUSTED";
     } else {
         btn.disabled = isSpinning; // Only disable during active spin, ignore spinTimer unless spinning
         btn.textContent = `SPIN NOW (${spinsLeft} left)`;
@@ -3593,7 +3653,7 @@ document.getElementById("raw-device-back-btn").onclick = () => {
 
         function confirmVIPUpgrade() {
     const level = parseInt(document.getElementById("vip-level").value);
-    const costs = [160, 800, 8000]; // VIP 1, VIP 2 (value=3), VIP Max (value=4)
+    const costs = [200, 1000, 10000]; // VIP 1, VIP 2 (value=3), VIP Max (value=4)
     const costIndex = level === 1 ? 0 : level === 3 ? 1 : 2;
     if (bitflashBucks >= costs[costIndex]) {
         bitflashBucks -= costs[costIndex];
