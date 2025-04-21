@@ -849,7 +849,7 @@
             <h1>Welcome to Free Luxury Giveaway Casino</h1>
             <p><strong>Effective Date: April 10, 2025</strong></p>
             <p>
-  Welcome to FLGC, operated by <a href="https://sites.google.com/view/bitflash-home/" target="_blank">Bitflash Enterprises</a>. Before proceeding, please review and accept our Terms of Service and Privacy Policy. <a href="https://sites.google.com/view/flgcapp/" target="_blank">FLGC App</a> │ <a href="https://flgc.netlify.app/prizes" target="_blank">FLGC Prize Library</a> │
+  Welcome to FLGC, operated by <a href="https://sites.google.com/view/bitflash-home/" target="_blank">Bitflash Enterprises</a>. Before proceeding, please review and accept our Terms of Service and Privacy Policy. <a href="https://flgc.netlify.app/prizes" target="_blank">FLGC Prize Library</a> │
   <a href="https://forms.gle/XAsvp2gBDeMyPy8i8" target="_blank">Bitflash Support</a>
 </p>
             <button class="terms-btn" onclick="showTOS()">Terms of Service</button>
@@ -1168,7 +1168,7 @@ function hideInstallBanner() {
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  showInstallBanner("Install FLGC to your Home Screen for full-screen mode");
+  showInstallBanner("Install the New FLGC App and get Exclusive Discounts and Benefits");
 });
 
 document.getElementById("install-button").addEventListener("click", async () => {
@@ -1178,7 +1178,7 @@ document.getElementById("install-button").addEventListener("click", async () => 
     console.log("User choice:", result.outcome);
     hideInstallBanner();
   } else {
-    alert("To install FLGC:\n1. Tap Share (⬆️)\n2. Add to Home Screen/Dock");
+    alert("To install FLGC for Apple Devices:\n1. ⚠️IMPORTANT⚠️ Go to flgc.netlify.app/aswa\\n2. In /aswa Tap Share (⬆️)\n3. Add to Home Screen/Dock");
   }
 });
 
@@ -1189,7 +1189,7 @@ const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
 if (isIos && !isStandalone && isSafari) {
   setTimeout(() => {
-    showInstallBanner("Install the FLGC App! Tap Share → Add to Home Screen to install FLGC");
+    showInstallBanner("Install the FLGC App and get Exclusive Discounts and Benefits! Tap Share → Add to Home Screen to install FLGC");
   }, 3000);
 }
 
@@ -1197,7 +1197,7 @@ if (isIos && !isStandalone && isSafari) {
 const isMacSafari = navigator.platform.includes("Mac") && isSafari;
 if (isMacSafari) {
   setTimeout(() => {
-    showInstallBanner("Install the FLGC App! Click the Share icon → Add to Dock for FLGC");
+    showInstallBanner("Install the FLGC App and get Exclusive Discounts and Benefits! Click the Share icon → Add to Dock for FLGC");
   }, 3000);
 }
 
@@ -3662,7 +3662,7 @@ document.getElementById("raw-device-back-btn").onclick = () => {
 
         function confirmVIPUpgrade() {
     const level = parseInt(document.getElementById("vip-level").value);
-    const costs = [200, 1000, 2500]; // VIP 1, VIP 2 (value=3), VIP Max (value=4)
+    const costs = [200, 1000, 10000]; // VIP 1, VIP 2 (value=3), VIP Max (value=4)
     const costIndex = level === 1 ? 0 : level === 3 ? 1 : 2;
     if (bitflashBucks >= costs[costIndex]) {
         bitflashBucks -= costs[costIndex];
