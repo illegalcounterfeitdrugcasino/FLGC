@@ -1178,7 +1178,7 @@ document.getElementById("install-button").addEventListener("click", async () => 
     console.log("User choice:", result.outcome);
     hideInstallBanner();
   } else {
-    alert("To install FLGC for Apple Devices:\n1. ⚠️IMPORTANT⚠️ Go to flgc.netlify.app/aswa\\n2. In /aswa Tap Share (⬆️)\n3. Add to Home Screen/Dock");
+    alert("To install FLGC for Apple Devices:\n1. ⚠️IMPORTANT⚠️ Go to flgc.netlify.app/app\n2. In /aswa Tap Share (⬆️)\n3. Add to Home Screen/Dock");
   }
 });
 
@@ -1189,7 +1189,7 @@ const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
 if (isIos && !isStandalone && isSafari) {
   setTimeout(() => {
-    showInstallBanner("Install the FLGC App and get Exclusive Discounts and Benefits! Tap Share → Add to Home Screen to install FLGC");
+    showInstallBanner("Install the NEW FLGC App!");
   }, 3000);
 }
 
@@ -1197,7 +1197,7 @@ if (isIos && !isStandalone && isSafari) {
 const isMacSafari = navigator.platform.includes("Mac") && isSafari;
 if (isMacSafari) {
   setTimeout(() => {
-    showInstallBanner("Install the FLGC App and get Exclusive Discounts and Benefits! Click the Share icon → Add to Dock for FLGC");
+    showInstallBanner("Install the NEW FLGC App!");
   }, 3000);
 }
 
