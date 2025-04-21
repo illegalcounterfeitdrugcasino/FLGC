@@ -3649,7 +3649,7 @@ document.getElementById("raw-device-back-btn").onclick = () => {
 
         function updateDashboard() {
             document.getElementById("bucks-display").textContent = `Bitflash Bucks: ${bitflashBucks}`;
-            document.getElementById("vip-display").textContent = `VIP Level: ${vipLevel}${vipLevel === 4 ? " (Max)" : ""}`;
+            document.getElementById("vip-display").textContent = `VIP Level: ${vipLevel === 4 ? "Max" : vipLevel}`;
         }
 
         function openVIPMenu() {
@@ -3665,7 +3665,7 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         function confirmVIPUpgrade() {
     const level = parseInt(document.getElementById("vip-level").value);
     const costs = [200, 1000, 10000]; // VIP 1, VIP 2 (value=3), VIP Max (value=4)
-    const costIndex = level === 1 ? 0 : level === 3 ? 1 : 2;
+    const costIndex = level === 1 ? 0 : level === 2 ? 1 : 2;
     if (bitflashBucks >= costs[costIndex]) {
         bitflashBucks -= costs[costIndex];
         applyVIPLevel(level);
