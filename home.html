@@ -831,6 +831,11 @@
     </style>
 </head>
 <body>
+<div id="install-banner" style="display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #1a0d2e; color: #fff; padding: 20px; box-shadow: 0 -5px 20px #ff00ff; z-index: 99999; text-align: center;">
+  <span id="install-text" style="font-size: 18px;">Want FLGC as a real app?</span>
+  <button id="install-button" style="margin-left: 20px; padding: 10px 20px; background: #ff00ff; border: none; border-radius: 8px; color: #fff; cursor: pointer;">Install</button>
+  <button onclick="hideInstallBanner()" style="margin-left: 10px; background: transparent; border: none; color: #aaa; font-size: 20px;">×</button>
+</div>
     <div id="restore-screen" style="display: none;">
       <div id="restore-content">
           <h1>Restore Your Game?</h1>
@@ -1144,6 +1149,54 @@
     <audio id="spin-sound" src="https://www.myinstants.com/instant/slot-machine-44998"></audio>
     <audio id="win-sound" src="https://www.myinstants.com/media/sounds/casino-win.mp3"></audio>
     <script>
+        let deferredPrompt = null;
+
+function showInstallBanner(text = "Install this app") {
+  document.getElementById("install-text").innerText = text;
+  document.getElementById("install-banner").style.display = "block";
+}
+
+function hideInstallBanner() {
+  document.getElementById("install-banner").style.display = "none";
+}
+
+// Detect Chrome/Edge/Android that supports PWA install prompt
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallBanner("Install FLGC to your Home Screen for full-screen mode");
+});
+
+document.getElementById("install-button").addEventListener("click", async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    console.log("User choice:", result.outcome);
+    hideInstallBanner();
+  } else {
+    alert("To install FLGC:\n1. Tap Share (⬆️)\n2. Add to Home Screen");
+  }
+});
+
+// Detect iOS/iPadOS Safari
+const isIos = /iphone|ipad/.test(navigator.userAgent.toLowerCase());
+const isStandalone = window.navigator.standalone === true;
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+if (isIos && !isStandalone && isSafari) {
+  setTimeout(() => {
+    showInstallBanner("💡 Tap Share → Add to Home Screen to install FLGC");
+  }, 3000);
+}
+
+// Safari on macOS: show basic install suggestion
+const isMacSafari = navigator.platform.includes("Mac") && isSafari;
+if (isMacSafari) {
+  setTimeout(() => {
+    showInstallBanner("💡 In Safari, click the Share icon → Add to Dock for FLGC");
+  }, 3000);
+}
+
         let notificationPrefs = { ads: false, wins: false, daily: false, events: false
         };
         
