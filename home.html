@@ -1149,6 +1149,10 @@
     <audio id="spin-sound" src="https://www.myinstants.com/instant/slot-machine-44998"></audio>
     <audio id="win-sound" src="https://www.myinstants.com/media/sounds/casino-win.mp3"></audio>
     <script>
+        if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+
         let deferredPrompt = null;
 
 function showInstallBanner(text = "Install this app") {
