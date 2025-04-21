@@ -1189,7 +1189,7 @@ const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
 if (isIos && !isStandalone && isSafari) {
   setTimeout(() => {
-    showInstallBanner("💡 Tap Share → Add to Home Screen to install FLGC");
+    showInstallBanner("Install the FLGC App! Tap Share → Add to Home Screen to install FLGC");
   }, 3000);
 }
 
@@ -1197,10 +1197,16 @@ if (isIos && !isStandalone && isSafari) {
 const isMacSafari = navigator.platform.includes("Mac") && isSafari;
 if (isMacSafari) {
   setTimeout(() => {
-    showInstallBanner("💡 In Safari, click the Share icon → Add to Dock for FLGC");
+    showInstallBanner("Install the FLGC App! Click the Share icon → Add to Dock for FLGC");
   }, 3000);
 }
 
+const isInApp =
+  window.matchMedia('(display-mode: standalone)').matches ||
+  window.navigator.standalone === true;
+
+if (isInApp) hideInstallBanner();
+}
         let notificationPrefs = { ads: false, wins: false, daily: false, events: false
         };
         
@@ -1247,7 +1253,7 @@ function getDeviceInfo() {
     else if (ua.includes("Mac OS")) os = "macOS";
     else if (ua.includes("Linux")) os = "Linux";
     else if (ua.includes("CrOS")) os = "ChromeOS";
-    else if (ua.includes("Android")) os = "Android";
+    else if (ua.includes("Linux; Android")) os = "Android";
 
     // Device detection (basic)
     if (ua.includes("Mobile")) device = "Mobile Device";
