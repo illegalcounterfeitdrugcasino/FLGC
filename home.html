@@ -831,7 +831,7 @@
     </style>
 </head>
 <body>
-<div id="install-banner" style="display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #1a0d2e; color: #fff; padding: 20px; box-shadow: 0 -5px 20px #ff00ff; z-index: 99999; text-align: center;">
+<div id="install-banner" style="display: none; position: fixed; top: 0; left: 0; width: 100%; background: #1a0d2e; color: #fff; padding: 20px; box-shadow: 0 -5px 20px #ff00ff; z-index: 99999; text-align: center;">
   <span id="install-text" style="font-size: 18px;">Want FLGC as a real app?</span>
   <button id="install-button" style="margin-left: 20px; padding: 10px 20px; background: #ff00ff; border: none; border-radius: 8px; color: #fff; cursor: pointer;">Install</button>
   <button onclick="hideInstallBanner()" style="margin-left: 10px; background: transparent; border: none; color: #aaa; font-size: 20px;">×</button>
@@ -1178,7 +1178,7 @@ document.getElementById("install-button").addEventListener("click", async () => 
     console.log("User choice:", result.outcome);
     hideInstallBanner();
   } else {
-    alert("To install FLGC for Apple Devices:\n1. ⚠️IMPORTANT⚠️ Go to flgc.netlify.app/app\n2. In /aswa Tap Share (⬆️)\n3. Add to Home Screen/Dock");
+    alert("To install FLGC for Apple Devices:\n1. ⚠️IMPORTANT⚠️ Go to flgc.netlify.app/app\n2. In /app Tap Share (⬆️)\n3. Add to Home Screen/Dock");
   }
 });
 
