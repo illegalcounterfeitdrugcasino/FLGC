@@ -370,6 +370,14 @@
             cursor: pointer;
             transition: background 0.3s, transform 0.2s;
         }
+        #notification-btn {
+  background: #ff3333 !important;
+  color: white !important;
+}
+
+#notification-btn:hover {
+  background: #ff0000 !important;
+}
         #auto-spin-btn:hover, #notification-btn:hover, #buy-spins-btn:hover { background: #ff00ff; transform: scale(1.05); }
         #auto-spin-btn:disabled { background: #555; cursor: not-allowed; }
         #game-switch-btn {
@@ -1070,7 +1078,7 @@
                 <button id="spin-btn" onclick="spinSlots()">SPIN</button>
                 <button id="buy-spins-btn" onclick="buySpinsPrompt()">Buy Spins</button>
                 <button id="auto-spin-btn" onclick="toggleAutoSpin()">Auto-Spin</button>
-                <button id="notification-btn" onclick="toggleNotifications()">Notifications <span id="notification-count">0</span></button>
+                <button id="notification-btn" onclick="showResetWarning()">RESET</button>
                 <button id="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
             </div>
             <div id="wheel-game">
@@ -1078,7 +1086,7 @@
                 <button id="wheel-spin-btn" onclick="spinWheel()">SPIN</button>
                 <button id="buy-spins-btn" onclick="buySpinsPrompt()">Buy Spins</button>
                 <button id="auto-spin-btn" onclick="toggleAutoSpin()">Auto-Spin</button>
-                <button id="notification-btn" onclick="toggleNotifications()">Notifications <span id="notification-count">0</span></button>
+                <button id="notification-btn" onclick="showResetWarning()">RESET</button>
                 <button id="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
             </div>
             <div id="crash-game">
@@ -1089,7 +1097,7 @@
                 <button id="crash-bet-btn" onclick="startCrash()">BET</button>
                 <button id="buy-spins-btn" onclick="buySpinsPrompt()">Buy Spins</button>
                 <button id="auto-spin-btn" onclick="toggleAutoSpin()">Auto-Spin</button>
-                <button id="notification-btn" onclick="toggleNotifications()">Notifications <span id="notification-count">0</span></button>
+                <button id="notification-btn" onclick="showResetWarning()">RESET</button>
                 <button id="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
             </div>
             <div id="jackpot-game">
@@ -1160,6 +1168,28 @@
     <audio id="spin-sound" src="https://www.myinstants.com/instant/slot-machine-44998"></audio>
     <audio id="win-sound" src="https://www.myinstants.com/media/sounds/casino-win.mp3"></audio>
     <script>
+function showResetWarning() {
+  const popup = document.getElementById("popup");
+  popup.innerHTML = `
+    <h2 style="margin-bottom: 20px;">⚠️ Reset Warning</h2>
+    <p style="margin-bottom: 25px;">Resetting will permanently delete all local game data.<br><br><strong>Copy your Login Key first</strong> or you will lose all progress.</p>
+    <button onclick="hideResetWarning()" style="padding: 12px 20px; margin-right: 10px; background: #555; border: none; border-radius: 8px; color: white; font-size: 16px;">Go Back</button>
+    <button onclick="confirmReset()" style="padding: 12px 20px; background: #ff3333; border: none; border-radius: 8px; color: white; font-size: 16px;">Reset Now</button>
+  `;
+  popup.style.display = "block";
+  popup.classList.add("active");
+}
+
+function hideResetWarning() {
+  const popup = document.getElementById("popup");
+  popup.classList.remove("active");
+  setTimeout(() => popup.style.display = "none", 300);
+}
+
+function confirmReset() {
+  localStorage.clear();
+  location.reload();
+}
 // === Light Mode Toggle Button ===
 const lightToggle = document.createElement('button');
 lightToggle.innerText = 'Light Mode';
