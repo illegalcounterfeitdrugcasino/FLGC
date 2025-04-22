@@ -1160,6 +1160,90 @@
     <audio id="spin-sound" src="https://www.myinstants.com/instant/slot-machine-44998"></audio>
     <audio id="win-sound" src="https://www.myinstants.com/media/sounds/casino-win.mp3"></audio>
     <script>
+// === Light Mode Toggle Button ===
+const lightToggle = document.createElement('button');
+lightToggle.innerText = 'Light Mode';
+lightToggle.style.position = 'fixed';
+lightToggle.style.top = '15px';
+lightToggle.style.left = '15px';
+lightToggle.style.zIndex = '99999';
+lightToggle.style.padding = '5px 10px';
+lightToggle.style.background = '#ff00ff';
+lightToggle.style.color = '#fff';
+lightToggle.style.border = 'none';
+lightToggle.style.borderRadius = '10px';
+lightToggle.style.fontSize = '14px';
+lightToggle.style.cursor = 'pointer';
+lightToggle.style.boxShadow = '0 0 15px #ff00ff';
+lightToggle.style.transition = 'background 0.3s, transform 0.2s';
+
+lightToggle.addEventListener('mouseenter', () => {
+  lightToggle.style.background = '#00ffff';
+});
+lightToggle.addEventListener('mouseleave', () => {
+  lightToggle.style.background = '#ff00ff';
+});
+
+lightToggle.onclick = () => {
+  document.body.classList.toggle('light-mode');
+  lightToggle.innerText = document.body.classList.contains('light-mode') ? 'Dark Mode' : 'Light Mode';
+};
+document.body.appendChild(lightToggle);
+
+// === Light Mode CSS Injection ===
+const style = document.createElement('style');
+style.innerHTML = `
+  body.light-mode {
+    background: linear-gradient(135deg, #ffffff, #e4e4e4) !important;
+    color: #111 !important;
+  }
+
+  body.light-mode #main-container,
+  body.light-mode #game-section,
+  body.light-mode #history-section,
+  body.light-mode #store-section,
+  body.light-mode #chat-section,
+  body.light-mode #notification-section,
+  body.light-mode #rewards-section,
+  body.light-mode #popup,
+  body.light-mode #ad-player,
+  body.light-mode #admin-screen,
+  body.light-mode #setup-screen,
+  body.light-mode #vip-menu,
+  body.light-mode #game-menu,
+  body.light-mode #terms-screen,
+  body.light-mode #tos-screen,
+  body.light-mode #policy-screen {
+    background: rgba(255, 255, 255, 0.92) !important;
+    color: #000 !important;
+  }
+
+  body.light-mode .reel,
+  body.light-mode .timer-box,
+  body.light-mode .store-item,
+  body.light-mode .reward-item,
+  body.light-mode .history-item {
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: 0 0 15px #00ffff !important;
+  }
+
+  body.light-mode input,
+  body.light-mode textarea,
+  body.light-mode select,
+  body.light-mode button {
+    background: #f0f0f0 !important;
+    color: #000 !important;
+    border: 1px solid #ccc !important;
+  }
+
+  body.light-mode button:hover {
+    background: #ddd !important;
+    color: #000 !important;
+  }
+`;
+document.head.appendChild(style);
+
         if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js');
 }
