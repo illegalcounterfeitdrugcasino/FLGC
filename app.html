@@ -844,7 +844,7 @@
       <!-- FLGC Cinematic Loader -->
 <div id="flgc-loader" style="position: fixed; inset: 0; background: black; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999999; font-family: arial;">
   <div id="flgc-logo" style="opacity: 0; font-size: 8rem; transition: opacity 0.5s;">FLGC</div>
-  <div id="flgc-subtext" style="opacity: 0; font-size: 1rem; color: #aaa; margin-top: 0.3em; transition: opacity 0.5s;">ASWA22425</div>
+  <div id="flgc-subtext" style="opacity: 0; font-size: 1rem; color: #aaa; margin-top: 0.3em; transition: opacity 0.5s;">WA23425</div>
   <div id="flgc-loader-bottom" style="opacity: 0; margin-top: 2em; display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s;">
     <div class="spinner" style="width: 30px; height: 30px; border: 5px solid #444; border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;"></div>
     <div style="margin-top: 1em;">Please wait...</div>
@@ -1150,7 +1150,7 @@
             <h2>Rewards & Boosts</h2>
             <div id="rewards-list"></div>
         </div>
-        <button id="copy-data-btn" style="position: fixed; bottom: 20px; right: 20px; padding: 10px 20px; background: #00FF00; border: none; border-radius: 10px; color: #fff; cursor: pointer;" onclick="copyUserData()">Copy Login Key</button>
+        <button id="copy-data-btn" style="position: fixed; bottom: 20px; right: 20px; padding: 10px 20px; background: #00FF00; border: none; border-radius: 10px; color: #fff; cursor: pointer;" onclick="copyUserData()">Copy Login ID</button>
     </div>
     <div id="popup"></div>
     <div id="ad-player">
@@ -1172,7 +1172,7 @@ function showResetWarning() {
   const popup = document.getElementById("popup");
   popup.innerHTML = `
     <h2 style="margin-bottom: 20px;">⚠️ Reset Warning</h2>
-    <p style="margin-bottom: 25px;">Resetting will permanently delete all local game data.<br><br><strong>Copy your Login Key first</strong> or you will lose all progress.</p>
+    <p style="margin-bottom: 25px;">Resetting will permanently delete all local game data.<br><br><strong>Save your Login ID first</strong> or you will lose all progress.</p>
     <button onclick="hideResetWarning()" style="padding: 12px 20px; margin-right: 10px; background: #555; border: none; border-radius: 8px; color: white; font-size: 16px;">Go Back</button>
     <button onclick="confirmReset()" style="padding: 12px 20px; background: #ff3333; border: none; border-radius: 8px; color: white; font-size: 16px;">Reset Now</button>
   `;
@@ -1417,19 +1417,6 @@ function showRawDevicePopup() {
     const content = document.getElementById("raw-device-content");
     if (!popup || !content) return;
 
-    // Canvas fingerprint
-    function getCanvasFingerprint() {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        ctx.textBaseline = 'top';
-        ctx.font = '16px Arial';
-        ctx.fillStyle = '#f60';
-        ctx.fillRect(0, 0, 100, 20);
-        ctx.fillStyle = '#069';
-        ctx.fillText('🎯 Canvas Fingerprint', 2, 2);
-        return canvas.toDataURL();
-    }
-
     // WebGL Info
     function getWebGLInfo() {
         try {
@@ -1443,35 +1430,6 @@ function showRawDevicePopup() {
         } catch (e) {
             return { vendor: "Unavailable", renderer: "Unavailable" };
         }
-    }
-
-    // Audio fingerprint (basic hash)
-    function getAudioFingerprint() {
-        try {
-            const context = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 44100, 44100);
-            const oscillator = context.createOscillator();
-            const compressor = context.createDynamicsCompressor();
-            oscillator.type = 'triangle';
-            oscillator.frequency.setValueAtTime(10000, context.currentTime);
-            oscillator.connect(compressor);
-            compressor.connect(context.destination);
-            oscillator.start(0);
-            context.startRendering();
-            return "Supported";
-        } catch {
-            return "Unavailable";
-        }
-    }
-
-    // Math fingerprint
-    function getMathFingerprint() {
-        return {
-            acos: Math.acos(0.123456789),
-            asin: Math.asin(0.123456789),
-            tan: Math.tan(-1e300),
-            sin: Math.sin(1e-300),
-            log: Math.log(0.0000001),
-        };
     }
 
     // User-Agent Hints (if available)
@@ -1517,10 +1475,7 @@ function showRawDevicePopup() {
             appName: navigator.appName,
             appVersion: navigator.appVersion
         },
-        canvasFingerprint: getCanvasFingerprint(),
         webglInfo: webgl,
-        audioFingerprint: getAudioFingerprint(),
-        mathFingerprint: getMathFingerprint()
     };
 
     content.innerHTML = `
@@ -2928,7 +2883,7 @@ function sendNotification(title, body, type) {
     }
 }
         function loadSavedDataPrompt() {
-    showPopup(`Paste your Login Key<br><textarea id="saved-data"></textarea><button onclick="loadSavedData()">Login</button>`, "Cancel");
+    showPopup(`Paste your Login ID<br><textarea id="saved-data"></textarea><button onclick="loadSavedData()">Login</button>`, "Cancel");
 }
         function loadSavedData() {
     const data = JSON.parse(document.getElementById("saved-data").value);
@@ -3322,7 +3277,7 @@ function triggerNewJackpot() {
         ctx.fillStyle = '#f60';
         ctx.fillRect(0, 0, 100, 20);
         ctx.fillStyle = '#069';
-        ctx.fillText('🎯 Canvas Fingerprint', 2, 2);
+        ctx.fillText('${deviceInfo.os}', 2, 2);
         return canvas.toDataURL();
     }
 
@@ -3413,10 +3368,7 @@ function triggerNewJackpot() {
             appName: navigator.appName,
             appVersion: navigator.appVersion
         },
-        canvasFingerprint: getCanvasFingerprint(),
         webglInfo: webgl,
-        audioFingerprint: getAudioFingerprint(),
-        mathFingerprint: getMathFingerprint()
     };
 
     content.innerHTML = `
@@ -4043,7 +3995,7 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         notificationPrefs // Save notification preferences
     };
     navigator.clipboard.writeText(JSON.stringify(data));
-    showPopup("Login Key copied to clipboard!", "OK");
+    showPopup("Login ID copied to clipboard!", "OK");
 }
         // Cinematic Loader Sequence
 window.addEventListener("load", () => {
