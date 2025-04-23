@@ -1064,7 +1064,7 @@
             <div id="bucks-display">Bitflash Bucks: 0</div>
             <div id="vip-display">VIP Level: 0</div>
             <button id="vip-btn" onclick="openVIPMenu()">VIP</button>
-            <button id="settings-btn" onclick="openSettings()">Settings</button>
+            <button id="settings-btn" onclick="openSettings()">More</button>
             <button id="auto-spin-settings-btn" onclick="openAutoSpinSettings()">Auto-Spin Settings</button>
         </div>
         <div id="game-section">
@@ -3840,9 +3840,13 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         }
 
         function openSettings() {
-            showPopup(`<br>
-                <button onclick='openAdminModePrompt()'>Admin Mode</button>`, "Close");
-        }
+    showPopup(`
+        <br>
+        <button onclick="window.open('https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/23/16/20250423161704-XGJNS7MN.json', '_blank')">Support Chat</button>
+        <br>
+        <button onclick="openAdminModePrompt()">Admin Mode</button>
+    `, "Close");
+}
 
         function saveSettings() {
     soundEnabled = document.getElementById("settings-sound")?.value === "on";
