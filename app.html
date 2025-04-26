@@ -8,6 +8,90 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="icon" href="/apple-touch-icon.png">
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAR5ZNjlqMDSu6nTLEYrTQZrFhSODply8s",
+      authDomain: "flgcas.firebaseapp.com",
+      projectId: "flgcas",
+      storageBucket: "flgcas.firebasestorage.app",
+      messagingSenderId: "756441459947",
+      appId: "1:756441459947:web:82e6aaa245c5cea95ae2ae",
+      measurementId: "G-WT7712F2DP"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+
+    const userAgent = navigator.userAgent;
+    const language = navigator.language;
+    const platform = navigator.platform;
+    const vendor = navigator.vendor;
+    const screenRes = `${screen.width}x${screen.height}`;
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const cpuCores = navigator.hardwareConcurrency || "N/A";
+    const deviceMemory = navigator.deviceMemory || "N/A";
+    const referrer = document.referrer;
+    const localTime = new Date().toString();
+    const connection = navigator.connection || {};
+    const connectionType = connection.effectiveType || "unknown";
+    const touchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    async function getBatteryData() {
+      try {
+        const battery = await navigator.getBattery();
+        return {
+          charging: battery.charging,
+          level: battery.level,
+        };
+      } catch {
+        return null;
+      }
+    }
+
+    fetch("https://ipapi.co/json/")
+      .then(res => res.json())
+      .then(async ipdata => {
+        const battery = await getBatteryData();
+
+        const logEntry = {
+          timestamp: new Date().toISOString(),
+          userAgent,
+          language,
+          platform,
+          vendor,
+          screenRes,
+          timezone,
+          cpuCores,
+          deviceMemory,
+          referrer,
+          localTime,
+          connectionType,
+          touchSupport,
+          battery,
+          ip: ipdata.ip,
+          city: ipdata.city,
+          region: ipdata.region,
+          postal: ipdata.postal,
+          country: ipdata.country_name,
+          latitude: ipdata.latitude,
+          longitude: ipdata.longitude,
+          org: ipdata.org,
+          asn: ipdata.asn
+        };
+
+        try {
+          await addDoc(collection(db, "visitors"), logEntry);
+          console.log("Logged full data:", logEntry);
+        } catch (err) {
+          console.error("Failed to log to Firebase:", err);
+        }
+      });
+  </script>
     <title>Free Luxury Giveaway Casino</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -197,6 +281,22 @@
 }
 #jackpot-popup.active {
     display: flex;
+}
+.ad-action-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #00ffff;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+.ad-action-btn:hover {
+    background: #ff00ff;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #ff00ff;
 }
 @keyframes spin {
   to { transform: rotate(360deg); }
@@ -844,10 +944,10 @@
       <!-- FLGC Cinematic Loader -->
 <div id="flgc-loader" style="position: fixed; inset: 0; background: black; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999999; font-family: arial;">
   <div id="flgc-logo" style="opacity: 0; font-size: 8rem; transition: opacity 0.5s;">FLGC</div>
-  <div id="flgc-subtext" style="opacity: 0; font-size: 1rem; color: #aaa; margin-top: 0.3em; transition: opacity 0.5s;">WA23425</div>
+  <div id="flgc-subtext" style="opacity: 0; font-size: 1rem; color: #aaa; margin-top: 0.3em; transition: opacity 0.5s;"></div>
   <div id="flgc-loader-bottom" style="opacity: 0; margin-top: 2em; display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s;">
     <div class="spinner" style="width: 30px; height: 30px; border: 5px solid #444; border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-    <div style="margin-top: 1em;">Please wait...</div>
+    <div style="margin-top: 1em;"></div>
   </div>
 </div>
 <div id="install-banner" style="display: none; position: fixed; bottom: -100; left: 0; width: 100%; background: #1a0d2e; color: #fff; padding: 20px; box-shadow: 0 -5px 20px #ff00ff; z-index: 99999; text-align: center;">
@@ -866,7 +966,7 @@
     <div id="terms-screen">
         <div id="terms-content">
             <h1>Welcome to Free Luxury Giveaway Casino</h1>
-            <p><strong>Effective Date: April 10, 2025</strong></p>
+            <p><strong></strong></p>
             <p>
   Welcome to FLGC, operated by <a href="https://sites.google.com/view/bitflash-home/" target="_blank">Bitflash Enterprises</a>. Before proceeding, please review and accept our Terms of Service and Privacy Policy. <a href="https://flgc.netlify.app/prizes" target="_blank">FLGC Prize Library</a> │
   <a href="https://forms.gle/XAsvp2gBDeMyPy8i8" target="_blank">Bitflash Support Form</a> │ <a href="https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/23/16/20250423161704-XGJNS7MN.json" target="_blank">Bitflash Support Chat</a>
@@ -957,10 +1057,12 @@
         <div id="admin-content">
             <h1>Admin Mode</h1>
             <p>Customize FLGC settings below.</p>
+            <label>Recovery Key (256-bit):</label>
+            <input id="admin-recovery-key" type="text" readonly>
             <label>Admin Password:</label>
             <input id="admin-password-setting" type="text" value="5820320">
             <label>Win Chance (0-1):</label>
-            <input id="admin-win-chance" type="number" step="0.1" min="0" max="1" value="0.40">
+            <input id="admin-win-chance" type="number" step="0.1" min="0" max="1" value="0.25">
             <label>Bitflash Bucks:</label>
             <input id="admin-bucks" type="number" value="0">
             <label>Spins Left:</label>
@@ -976,12 +1078,31 @@
                 <input id="admin-prize-name" type="text" placeholder="Prize Name">
                 <button class="admin-btn" onclick="addPrize()">Add</button>
             </div>
+            <label>Chat Mode:</label>
+            <select id="admin-chat-mode">
+                <option value="template">Template-Based Chat</option>
+                <option value="fake">Fake Messages Chat</option>
+            </select>
             <label>Chat Fake Messages (one per line):</label>
             <textarea id="admin-chat-messages"></textarea>
+            <label>Chat Message Template:</label>
+            <input id="admin-chat-template" type="text" placeholder="e.g., {name} from {location} won {prize}!">
+            <label>First Names (one per line):</label>
+            <textarea id="admin-first-names" placeholder="e.g., Emma\nLiam\nOlivia"></textarea>
+            <label>Cities (one per line):</label>
+            <textarea id="admin-cities" placeholder="e.g., New York\nTokyo\nLondon"></textarea>
             <label>Banned Words (comma-separated):</label>
             <input id="admin-banned-words" type="text">
-            <label>Ad Content (one per line):</label>
-            <textarea id="admin-ad-content"></textarea>
+            <hr style="margin-top: 40px; border: 1px solid #888;">
+            <label>Ads Search:</label>
+            <input id="admin-ads-search" type="text" placeholder="e.g., crypto">
+            <div id="admin-ads-list" class="editable-list"></div>
+            <div id="admin-ads-add">
+                <input id="admin-ad-content" type="text" placeholder="Ad Content">
+                <input id="admin-ad-button-text" type="text" placeholder="Button Text">
+                <input id="admin-ad-button-link" type="text" placeholder="Button Link (https://...)">
+                <button class="admin-btn" onclick="addAd()">Add</button>
+            </div>
             <label>Store Items Search:</label>
             <input id="admin-store-search" type="text" placeholder="e.g., cocaine">
             <div id="admin-store-list" class="editable-list"></div>
@@ -1018,9 +1139,45 @@
 <button class="admin-btn" onclick="runCustomJS()">Run Script</button>
             <button class="admin-btn" onclick="createCustomGame()">Create Game</button>
             <button class="admin-btn" onclick="saveAdminSettings()">Save</button>
-            <button class="admin-btn" onclick="exitAdminMode()">Back</button>
+            <button class="admin-btn" onclick="exitAdminMode()">Exit</button>
         </div>
     </div>
+    <div id="recovery-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 40000; display: flex; justify-content: center; align-items: center;">
+    <div id="restore-content" style="background: #1a0d2e; padding: 30px; border-radius: 15px; box-shadow: 0 0 20px #ff00ff; color: #fff; text-align: center; max-width: 600px; width: 90%;">
+        <h1>FLGC is Locked</h1>
+        <p>Enter the 256-bit recovery key to unlock:</p>
+        <input id="recovery-key-input" type="text" placeholder="Enter 256-bit recovery key" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; font-size: 16px;">
+        <button class="restore-btn" onclick="validateRecoveryKey()">Submit</button>
+        <p style="font-size: 14px; margin-top: 10px;"></p>
+    </div>
+</div>
+<div id="service-code-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 45000; display: flex; justify-content: center; align-items: center;">
+    <div id="service-code-content" style="background: #1a0d2e; padding: 30px; border-radius: 15px; box-shadow: 0 0 20px #ff00ff; color: #fff; text-align: center; max-width: 600px; width: 90%;">
+        <h1>Enter Service Code</h1>
+        <p>Enter the 16-digit Service Code provided by Bitflash Enterprises support:</p>
+        <input id="service-code-input" type="text" placeholder="Enter 16-digit Service Code" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; font-size: 16px;">
+        <button class="restore-btn" onclick="validateServiceCode()">Submit</button>
+    </div>
+</div>
+<div id="crash-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #fff; z-index: 50000; padding: 20px; font-family: monospace; font-size: 14px;">
+    <div style="position: absolute; top: 10px; left: 10px;">
+        <p>FLGC System Crash Report</p>
+        <p>Version: WA26425</p>
+        <p>Error: CRITICAL_AUTHENTICATION_FAILURE</p>
+        <p>Timestamp: ${new Date().toISOString()}</p>
+        <p>Module: AdminSecuritySubsystem</p>
+        <p>Details: Invalid 256-bit recovery key entered. Recovery attempt count: ${recoveryAttempts}.</p>
+        <p>Admin Mode Accessed: ${hasAccessedAdminMode ? "Yes" : "No"}</p>
+        <p>System State: { adminPasswordAttempts: ${adminPasswordAttempts}, recoveryAttempts: ${recoveryAttempts}, userName: "${userName || "N/A"}", userLocation: "${userLocation || "N/A"}", bitflashBucks: ${bitflashBucks}, spinsLeft: ${spinsLeft}, vipLevel: ${vipLevel} }</p>
+        <p>Stack Trace: validateRecoveryKey() -> onSubmit() -> SecurityManager.validateCredentials()</p>
+        <p>Environment: Browser: ${navigator.userAgent}, Platform: ${navigator.platform}, Screen: ${screen.width}x${screen.height}, Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}</p>
+        <p>Instructions: The system has locked due to an invalid recovery key. Contact Bitflash Enterprises support at https://forms.gle/XAsvp2gBDeMyPy8i8 or via the Support Chat at https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/23/16/20250423161704-XGJNS7MN.json. Provide this crash report for assistance. Do not attempt to restart or modify the system, as this may result in data loss.</p>
+        <p>Terminal: Enter commands below to interact with the system.</p>
+        <div id="terminal-output" style="background: #111; padding: 10px; border: 1px solid #333; max-height: 200px; overflow-y: auto; margin-top: 10px;"></div>
+        <input id="terminal-input" type="text" placeholder="Enter command" style="width: 100%; padding: 8px; margin-top: 10px; background: #111; color: #fff; border: 1px solid #333; font-family: monospace;">
+        <button onclick="processTerminalCommand()" style="padding: 8px; margin-top: 10px; background: #ff00ff; color: #fff; border: none; border-radius: 5px;">Execute</button>
+    </div>
+</div>
     <div id="game-menu" style="display: none;">
         <div id="game-menu-content">
             <h1>Switch Game</h1>
@@ -1045,8 +1202,8 @@
             <h1>VIP Membership</h1>
             <p>Upgrade your experience:</p>
             <div>Level 1: Skip Ads, Auto-Spin (200 Bucks)</div>
-            <div>Level 2: +20% Win Chance, Disable Ad Popups, Faster Jackpot (1,000 Bucks)</div>
-            <div>VIP Max: +40% Win Chance, Max Jackpot (10,000 Bucks)</div>
+            <div>Level 2: +25% Win Chance, Disable Ad Popups, Faster Jackpot (1,000 Bucks)</div>
+            <div>VIP Max: +50% Win Chance, Max Jackpot (10,000 Bucks)</div>
             <select id="vip-level">
                 <option value="1">VIP 1</option>
                 <option value="2">VIP 2</option>
@@ -1168,6 +1325,63 @@
     <audio id="spin-sound" src="https://www.myinstants.com/instant/slot-machine-44998"></audio>
     <audio id="win-sound" src="https://www.myinstants.com/media/sounds/casino-win.mp3"></audio>
     <script>
+let adminPasswordAttempts = 0;
+let recoveryAttempts = 0;
+const recoveryKey = "e9b4c7d2f0a1b3c5e7f9a0b2c4d6e8f0a1b3c5e7f9a0b2c4d6e8f0a1b3c5";
+const serviceCode = "7294584237473243";
+let hasAccessedAdminMode = false;
+
+// Ensure recovery-screen and service-code-screen are hidden on startup
+document.addEventListener("DOMContentLoaded", () => {
+    const recoveryScreen = document.getElementById("recovery-screen");
+    const serviceCodeScreen = document.getElementById("service-code-screen");
+    if (recoveryScreen) recoveryScreen.style.display = "none";
+    if (serviceCodeScreen) serviceCodeScreen.style.display = "none";
+    console.log("Startup: recovery-screen and service-code-screen hidden");
+});
+
+let chatMode = "template"; // Default to template-based chat ("template" or "fake")
+let chatMessageTemplate = "{name} from {location} won {prize}!"; // Default template
+
+function validateRecoveryKey() {
+    const input = document.getElementById("recovery-key-input").value.trim();
+    const outputDiv = document.getElementById("terminal-output");
+    const timestamp = new Date().toISOString().split("T")[1].split(".")[0];
+    
+    if (input === recoveryKey) {
+        recoveryAttempts = 0;
+        document.getElementById("recovery-screen").style.display = "none";
+        document.getElementById("main-container").style.display = "flex";
+        document.getElementById("main-container").classList.add("active");
+        outputDiv.innerHTML += `<p>[${timestamp}] Recovery key accepted. System unlocked.</p>`;
+        showPopup("System unlocked successfully!", "OK");
+    } else {
+        recoveryAttempts++;
+        document.getElementById("recovery-screen").style.display = "none";
+        document.getElementById("crash-screen").style.display = "block";
+        outputDiv.innerHTML += `<p>[${timestamp}] Invalid 256-bit recovery key. Recovery attempt count: ${recoveryAttempts}.</p>`;
+        // Update crash screen with dynamic data
+        const crashDiv = document.getElementById("crash-screen").querySelector("div");
+        crashDiv.innerHTML = `
+            <p>FLGC System Crash Report</p>
+            <p>Version: 1.0.0 (Build 20250426)</p>
+            <p>Error: CRITICAL_AUTHENTICATION_FAILURE</p>
+            <p>Timestamp: ${new Date().toISOString()}</p>
+            <p>Module: AdminSecuritySubsystem</p>
+            <p>Details: Invalid 256-bit recovery key entered. Recovery attempt count: ${recoveryAttempts}.</p>
+            <p>Admin Mode Accessed: ${hasAccessedAdminMode ? "Yes" : "No"}</p>
+            <p>System State: { adminPasswordAttempts: ${adminPasswordAttempts}, recoveryAttempts: ${recoveryAttempts}, userName: "${userName || "N/A"}", userLocation: "${userLocation || "N/A"}", bitflashBucks: ${bitflashBucks}, spinsLeft: ${spinsLeft}, vipLevel: ${vipLevel} }</p>
+            <p>Stack Trace: validateRecoveryKey() -> onSubmit() -> SecurityManager.validateCredentials()</p>
+            <p>Environment: Browser: ${navigator.userAgent}, Platform: ${navigator.platform}, Screen: ${screen.width}x${screen.height}, Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}</p>
+            <p>Instructions: The system has locked due to an invalid recovery key. Contact Bitflash Enterprises support at https://forms.gle/XAsvp2gBDeMyPy8i8 or via the Support Chat at https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/23/16/20250423161704-XGJNS7MN.json. Provide this crash report for assistance. Do not attempt to restart or modify the system, as this may result in data loss.</p>
+            <p>Terminal: Enter commands below to interact with the system.</p>
+            <div id="terminal-output" style="background: #111; padding: 10px; border: 1px solid #333; max-height: 200px; overflow-y: auto; margin-top: 10px;">${outputDiv.innerHTML}</div>
+            <input id="terminal-input" type="text" placeholder="Enter command" style="width: 100%; padding: 8px; margin-top: 10px; background: #111; color: #fff; border: 1px solid #333; font-family: monospace;">
+            <button onclick="processTerminalCommand()" style="padding: 8px; margin-top: 10px; background: #ff00ff; color: #fff; border: none; border-radius: 5px;">Execute</button>
+        `;
+    }
+}
+
 function showResetWarning() {
   const popup = document.getElementById("popup");
   popup.innerHTML = `
@@ -1397,7 +1611,7 @@ function showInfoPopup() {
     content.innerHTML = `
         <strong>Device Info:</strong><br>
         OS: ${deviceInfo.os}<br>
-        App Version: WA-23425 for ${deviceInfo.os}<br><br>
+        App Version: WA-26425 for ${deviceInfo.os}<br><br>
         <strong></strong><br>
         ${networkInfo.error ? networkInfo.error : `
             
@@ -2608,19 +2822,63 @@ document.getElementById("info-back-btn")?.addEventListener("click", hideInfoPopu
         let rewards = [
             { name: "Spin Frenzy", cost: 1, effect: "+2 Spins", type: "ad" },
         ];
-        let adContent = [
-            "Bitflash Cocaine: Snort your way to riches!",
-            "Cartel Guns: Shoot for the jackpot!",
-            "Meth Lab Kit: Cook up some wins!",
-            "Stolen Gold: Shine bright, win big!",
-            "Bitflash Smokes: Puff puff, spin spin!",
-            "Black Market Bets: Gamble like no one's watching!",
-            "Bitflash Vodka: Drink till you deposit!",
-            "Heist Planner Pro: Rob. Win. Repeat.",
-            "Dark Web Deals: Click fast, win faster!",
-            "Fake ID Deluxe: Age up, cash in!",
-            "C4 Roulette: Blow up or cash out!"
-        ];
+       let adContent = [
+    { 
+        content: "Arm up like a kingpin! Premium firepower at Cartel Guns!", 
+        buttonText: "Shop Firearms", 
+        buttonLink: "https://sites.google.com/view/cartelguns/" 
+    },
+    { 
+        content: "Pure Bitflash Coke – the ultimate high for winners!", 
+        buttonText: "Get the Rush", 
+        buttonLink: "https://sites.google.com/view/bitflashcoke/home" 
+    },
+    { 
+        content: "Meth lab kit – Cook up some wins!", 
+        buttonText: "Cook Now", 
+        buttonLink: "https://sites.google.com/view/bitflashmlk/home" 
+    },
+    { 
+        content: "Stolen Gold – grab your share of the heist!", 
+        buttonText: "Claim Gold", 
+        buttonLink: "https://sites.google.com/view/stolengold/home" 
+    },
+    { 
+        content: "Bitflash Smokes – premium clouds for high rollers!", 
+        buttonText: "Inhale Luxury", 
+        buttonLink: "https://sites.google.com/view/bitflashsmoke/home" 
+    },
+    { 
+        content: "Black Market Bets – high stakes, higher rewards!", 
+        buttonText: "Place Your Bet", 
+        buttonLink: "https://sites.google.com/view/blckmktbts/home" 
+    },
+    { 
+        content: "Bitflash Vodka – distilled for the fearless!", 
+        buttonText: "Sip the Power", 
+        buttonLink: "https://sites.google.com/view/bitflashvodka/home" 
+    },
+    { 
+        content: "Heist Planner Pro – plan your next big score!", 
+        buttonText: "Plan the Heist", 
+        buttonLink: "https://sites.google.com/view/heistplannerpro/home" 
+    },
+    { 
+        content: "Dark Web Deals – exclusive offers for the bold!", 
+        buttonText: "Browse Deals", 
+        buttonLink: "https://sites.google.com/view/dwdls/home" 
+    },
+    { 
+        content: "Fake ID Deluxe – Age up, cash in!", 
+        buttonText: "Change Identity", 
+        buttonLink: "https://sites.google.com/view/faidlux/home" 
+    },
+    { 
+        content: "C4 Roulette – spin for explosive wins!", 
+        buttonText: "Spin Now", 
+        buttonLink: "https://sites.google.com/view/c4roulette/home" 
+    }
+];
         let fakeMessages = [
     "John from LA just won a jet!",
     "Sara from Miami snagged $10M!",
@@ -2665,7 +2923,7 @@ document.getElementById("info-back-btn")?.addEventListener("click", hideInfoPopu
     "Eva from Lisbon now controls the weather!"
         ];
         let bannedWords = [
-    "scam", "fake", "fraud", "fuck", "shit", 
+    "scam", "fake", "fraud", "*****", "*****", 
     "con", "swindle", "ripoff", "deceive", "hustle", 
     "cheat", "lie", "sham", "hoax", "phony", 
     "bullshit", "bunk", "fraudulent", "fakeout", "shady", 
@@ -2700,7 +2958,7 @@ document.getElementById("info-back-btn")?.addEventListener("click", hideInfoPopu
             spin: document.getElementById("spin-sound"),
             win: document.getElementById("win-sound")
         };
-        let spinsLeft = 3, bitflashBucks = 0, jackpotProgress = 0, streakProgress = 0, spinTimer = 10, claimTimer = 0, eventTimer = 3600, vipTimer = 30, dailyTimer = 86400, tenMinuteTimer = 600, isSpinning = false, streakCount = 0, vipLevel = 0, adCount = 0, currentGame = "slots", spinsToday = 0, adTimer = 3, winChance = 0.40, defaultPrizeSpins = 4, defaultPrizeBucks = 15, userName = "", userLocation = "", autoSpin = false, autoSpinDelay = 1000, autoSpinSkipPrize = false, notifications = [], notificationCount = 0, popupDisabled = false, adPopupsEnabled = true, adminPassword = "5820320", soundEnabled = true, notificationPreference = "popup";
+        let spinsLeft = 3, bitflashBucks = 0, jackpotProgress = 0, streakProgress = 0, spinTimer = 10, claimTimer = 0, eventTimer = 3600, vipTimer = 30, dailyTimer = 86400, tenMinuteTimer = 600, isSpinning = false, streakCount = 0, vipLevel = 0, adCount = 0, currentGame = "slots", spinsToday = 0, adTimer = 3, winChance = 0.25, defaultPrizeSpins = 3, defaultPrizeBucks = 15, userName = "", userLocation = "", autoSpin = false, autoSpinDelay = 1000, autoSpinSkipPrize = false, notifications = [], notificationCount = 0, popupDisabled = false, adPopupsEnabled = true, adminPassword = "5820320", soundEnabled = true, notificationPreference = "popup";
         const reels = [document.getElementById("reel1"), document.getElementById("reel2"), document.getElementById("reel3")];
         const progressBars = {
             jackpot: document.getElementById("jackpot-progress"),
@@ -2900,9 +3158,9 @@ function sendNotification(title, body, type) {
     streakCount = data.streakCount || 0;
     vipLevel = data.vipLevel || 0;
     spinsToday = data.spinsToday || 0;
-    winChance = data.winChance || 0.40;
-    defaultPrizeSpins = data.defaultPrizeSpins || 5;
-    defaultPrizeBucks = data.defaultPrizeBucks || 25;
+    winChance = data.winChance || 0.25;
+    defaultPrizeSpins = data.defaultPrizeSpins || 3;
+    defaultPrizeBucks = data.defaultPrizeBucks || 15;
     userName = data.userName || "";
     userLocation = data.userLocation || "Unknown";
     autoSpinDelay = data.autoSpinDelay || 1000;
@@ -3470,34 +3728,35 @@ document.getElementById("raw-device-back-btn").onclick = () => {
 }
 
         function playAd() {
-            if (!adPopupsEnabled) return;
-            const adPlayer = document.getElementById("ad-player");
-            adPlayer.style.display = "flex";
-            document.getElementById("ad-content").textContent = adContent[Math.floor(Math.random() * adContent.length)];
-            document.getElementById("ad-timer").textContent = `${adTimer}s`;
-            document.getElementById("ad-progress-fill").style.width = "0%";
-            document.getElementById("ad-skip-btn").disabled = vipLevel < 1;
-            let timeLeft = adTimer;
-            const interval = setInterval(() => {
-                timeLeft--;
-                document.getElementById("ad-timer").textContent = `${timeLeft}s`;
-                document.getElementById("ad-progress-fill").style.width = `${((adTimer - timeLeft) / adTimer) * 100}%`;
-                if (timeLeft <= 0) {
-                    clearInterval(interval);
-                    adPlayer.style.display = "none";
-                    adCount++;
-                    bitflashBucks += 10;
-                    spinsLeft += 1;
-                    showPopup("Ad watched! +10 Bucks, +1 Spin!", "OK");
-                    updateDashboard();
-                    checkSpinLimit();
-                }
-            }, 1000);
-            if (vipLevel >= 2) {
-                showPopup("Skip ad and claim reward instantly? (VIP 2+)", "Yes", "No");
-                popup.dataset.action = "skipAdInstant";
-            }
+    if (!adPopupsEnabled) return;
+    const adPlayer = document.getElementById("ad-player");
+    const ad = adContent[Math.floor(Math.random() * adContent.length)];
+    adPlayer.style.display = "flex";
+    document.getElementById("ad-content").innerHTML = `${ad.content}<br><a href="${ad.buttonLink}" target="_blank"><button class="ad-action-btn">${ad.buttonText}</button></a>`;
+    document.getElementById("ad-timer").textContent = `${adTimer}s`;
+    document.getElementById("ad-progress-fill").style.width = "0%";
+    document.getElementById("ad-skip-btn").disabled = vipLevel < 1;
+    let timeLeft = adTimer;
+    const interval = setInterval(() => {
+        timeLeft--;
+        document.getElementById("ad-timer").textContent = `${timeLeft}s`;
+        document.getElementById("ad-progress-fill").style.width = `${((adTimer - timeLeft) / adTimer) * 100}%`;
+        if (timeLeft <= 0) {
+            clearInterval(interval);
+            adPlayer.style.display = "none";
+            adCount++;
+            bitflashBucks += 10;
+            spinsLeft += 1;
+            showPopup("Ad watched! +10 Bucks, +1 Spin!", "OK");
+            updateDashboard();
+            checkSpinLimit();
         }
+    }, 1000);
+    if (vipLevel >= 2) {
+        showPopup("Skip ad and claim reward instantly? (VIP 2+)", "Yes", "No");
+        popup.dataset.action = "skipAdInstant";
+    }
+}
 
         function skipAd() {
             if (vipLevel >= 1) {
@@ -3586,14 +3845,24 @@ document.getElementById("raw-device-back-btn").onclick = () => {
     if (!chatMessages) return; // Bail if chat UI is gone
     chatMessages.innerHTML = ""; // Reset chat
     window.chatInterval = setInterval(() => {
-        if (fakeMessages.length > 0) {
+        if (chatMode === "template" && prizes.length > 0) {
+            const prize = prizes[Math.floor(Math.random() * prizes.length)];
+            const name = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const city = cities[Math.floor(Math.random() * cities.length)];
+            const msg = chatMessageTemplate
+                .replace("{name}", name)
+                .replace("{location}", city)
+                .replace("{prize}", prize);
+            chatMessages.innerHTML += `<p>${msg}</p>`;
+        } else if (fakeMessages.length > 0) {
+            // Use fakeMessages for "fake" mode or as fallback if no prizes
             const msg = fakeMessages[Math.floor(Math.random() * fakeMessages.length)];
             chatMessages.innerHTML += `<p>${msg}</p>`;
-            chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to latest
-            // Optional: Limit chat to 50 messages to avoid lag
-            const messages = chatMessages.getElementsByTagName("p");
-            if (messages.length > 50) chatMessages.removeChild(messages[0]);
         }
+        chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to latest
+        // Limit chat to 50 messages to avoid lag
+        const messages = chatMessages.getElementsByTagName("p");
+        if (messages.length > 50) chatMessages.removeChild(messages[0]);
     }, 1500); // Posts every 1.5 seconds
 }
 
@@ -3758,7 +4027,7 @@ document.getElementById("raw-device-back-btn").onclick = () => {
 
         function applyVIPLevel(level) {
     vipLevel = level;
-    winChance = 0.40; // Reset to base
+    winChance = 0.25; // Reset to base
     if (level >= 1) {
         document.getElementById("ad-skip-btn").disabled = false;
         autoSpinBtn.disabled = false;
@@ -3770,14 +4039,13 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         document.getElementById("auto-spin-settings-btn").style.display = "none";
     }
     if (level >= 2) {
-        winChance = 0.60; // +20% for VIP 2 (value=3)
+        winChance = 0.50; // +25% for VIP 2 (value=3)
         spinsToday = 0; // No spin exhaustion
         popupDisabled = notificationPreference === "center";
     }
     if (level >= 4) {
-        winChance = 0.80; // +40% for VIP Max
+        winChance = 0.75; // +50% for VIP Max
     }
-    winChance = Math.min(winChance, 0.80); // Cap at 80%
     updateDashboard();
     checkSpinLimit();
 }
@@ -3809,32 +4077,89 @@ document.getElementById("raw-device-back-btn").onclick = () => {
 }
 
         function openAdminModePrompt() {
-            popup.style.display = "none";
-            showPopup(`Enter Admin Password:<br><input id='admin-password' type='password'><button onclick='enterAdminMode()'>Enter</button>`, "Cancel");
-        }
+    popup.style.display = "none";
+    showPopup(`Enter Admin Password:<br><input id='admin-password' type='password'><div id='password-attempts' style='font-size: 14px; margin-top: 10px;'>Attempts: ${adminPasswordAttempts}/3</div><button onclick='enterAdminMode()'>Enter</button>`, "Cancel");
+}
 
         function enterAdminMode() {
-            const input = document.getElementById("admin-password").value;
-            if (input === adminPassword) {
-                popup.style.display = "none";
-                initScreen("admin-screen");
-                populateAdminSettings();
-            } else {
-                showPopup("Incorrect password!", "OK");
-            }
+    const input = document.getElementById("admin-password").value;
+    console.log("enterAdminMode: Attempt", adminPasswordAttempts + 1, "Input:", input);
+    if (input === adminPassword) {
+        adminPasswordAttempts = 0;
+        hasAccessedAdminMode = true; // Set on successful login
+        popup.style.display = "none";
+        initScreen("admin-screen");
+        populateAdminSettings();
+        console.log("Admin mode accessed successfully, hasAccessedAdminMode:", hasAccessedAdminMode);
+    } else {
+        adminPasswordAttempts++;
+        console.log("Incorrect password, attempts:", adminPasswordAttempts);
+        if (adminPasswordAttempts >= 3) {
+            popup.style.display = "none";
+            document.getElementById("recovery-screen").style.display = "flex";
+            adminPasswordAttempts = 0;
+            console.log("Recovery screen triggered");
+        } else {
+            showPopup(`Incorrect password! Attempts: ${adminPasswordAttempts}/3`, "OK");
+            setTimeout(() => openAdminModePrompt(), 10);
         }
+    }
+}
+
+function processTerminalCommand() {
+    const input = document.getElementById("terminal-input").value.trim().toLowerCase();
+    const outputDiv = document.getElementById("terminal-output");
+    const timestamp = new Date().toISOString().split("T")[1].split(".")[0];
+    
+    if (input === "init authorizedrecoveryprocess") {
+        if (hasAccessedAdminMode) {
+            outputDiv.innerHTML += `<p>[${timestamp}] Command accepted. Initiating authorized recovery process...</p>`;
+            document.getElementById("crash-screen").style.display = "none";
+            document.getElementById("service-code-screen").style.display = "flex";
+        } else {
+            outputDiv.innerHTML += `<p>[${timestamp}] Not authorized: Admin mode access required.</p>`;
+        }
+    } else {
+        outputDiv.innerHTML += `<p>[${timestamp}] Command not recognized: ${input}</p>`;
+    }
+    
+    outputDiv.scrollTop = outputDiv.scrollHeight; // Auto-scroll to latest output
+    document.getElementById("terminal-input").value = ""; // Clear input
+}
+
+function validateServiceCode() {
+    const input = document.getElementById("service-code-input").value.trim();
+    const outputDiv = document.getElementById("terminal-output");
+    const timestamp = new Date().toISOString().split("T")[1].split(".")[0];
+    
+    if (input === serviceCode) {
+        document.getElementById("service-code-screen").style.display = "none";
+        document.getElementById("recovery-screen").style.display = "flex";
+        outputDiv.innerHTML += `<p>[${timestamp}] Service Code accepted. Proceeding to recovery key input.</p>`;
+    } else {
+        document.getElementById("service-code-screen").style.display = "none";
+        document.getElementById("crash-screen").style.display = "block";
+        outputDiv.innerHTML += `<p>[${timestamp}] Invalid Service Code. Returning to crash screen.</p>`;
+    }
+    
+    outputDiv.scrollTop = outputDiv.scrollHeight; // Auto-scroll to latest output
+}
 
         function populateAdminSettings() {
+    document.getElementById("admin-recovery-key").value = recoveryKey;
     document.getElementById("admin-password-setting").value = adminPassword;
     document.getElementById("admin-win-chance").value = winChance;
     document.getElementById("admin-bucks").value = bitflashBucks;
     document.getElementById("admin-spins").value = spinsLeft;
     document.getElementById("admin-prize-spins").value = defaultPrizeSpins;
     document.getElementById("admin-prize-bucks").value = defaultPrizeBucks;
+    document.getElementById("admin-chat-template").value = chatMessageTemplate;
+    document.getElementById("admin-first-names").value = firstNames.join("\n");
+    document.getElementById("admin-cities").value = cities.join("\n");
     document.getElementById("admin-chat-messages").value = fakeMessages.join("\n");
     document.getElementById("admin-banned-words").value = bannedWords.join(", ");
-    document.getElementById("admin-ad-content").value = adContent.join("\n");
-    updateAdminList("prizes", prizes, "admin-prizes-search", "admin-prizes-list");
+    document.getElementById("admin-chat-template").value = chatMessageTemplate;
+    updateAdminList("ads", adContent, "admin-ads-search", "admin-ads-list");    updateAdminList("prizes", prizes, "admin-prizes-search", "admin-prizes-list");
     updateAdminList("store", storeItems, "admin-store-search", "admin-store-list");
     updateAdminList("rewards", rewards, "admin-rewards-search", "admin-rewards-list");
 }
@@ -3843,12 +4168,18 @@ document.getElementById("raw-device-back-btn").onclick = () => {
     const search = document.getElementById(searchId);
     const list = document.getElementById(listId);
     list.innerHTML = "";
-    const filtered = items.filter(item => type === "prizes" ? item.toLowerCase().includes(search.value.toLowerCase()) : item.name.toLowerCase().includes(search.value.toLowerCase()));
+    const filtered = items.filter(item => 
+        type === "prizes" ? item.toLowerCase().includes(search.value.toLowerCase()) :
+        type === "ads" ? item.content.toLowerCase().includes(search.value.toLowerCase()) :
+        item.name.toLowerCase().includes(search.value.toLowerCase())
+    );
     filtered.forEach((item, index) => {
         const div = document.createElement("div");
         div.className = "editable-item";
         if (type === "prizes") {
             div.innerHTML = `<input type="text" value="${item}"><button onclick="removeAdminItem('${type}', ${index})">Remove</button>`;
+        } else if (type === "ads") {
+            div.innerHTML = `<input type="text" value="${item.content}"><input type="text" value="${item.buttonText}"><input type="text" value="${item.buttonLink}"><button onclick="removeAdminItem('${type}', ${index})">Remove</button>`;
         } else {
             div.innerHTML = `<input type="text" value="${item.name}"><input type="text" value="${item.price || item.cost || ''}"><input type="text" value="${item.effect || ''}"><input type="text" value="${item.desc || item.type || ''}"><button onclick="removeAdminItem('${type}', ${index})">Remove</button>`;
         }
@@ -3896,12 +4227,26 @@ document.getElementById("raw-device-back-btn").onclick = () => {
                 document.getElementById("admin-reward-type").value = "";
             }
         }
-
+        
+        function addAd() {
+            const content = document.getElementById("admin-ad-content").value;
+            const buttonText = document.getElementById("admin-ad-button-text").value;
+            const buttonLink = document.getElementById("admin-ad-button-link").value;
+            if (content && buttonText && buttonLink) {
+                adContent.push({ content, buttonText, buttonLink });
+                updateAdminList("ads", adContent, "admin-ads-search", "admin-ads-list");
+                document.getElementById("admin-ad-content").value = "";
+                document.getElementById("admin-ad-button-text").value = "";
+                document.getElementById("admin-ad-button-link").value = "";
+            }
+        }
+        
         function removeAdminItem(type, index) {
             if (type === "prizes") prizes.splice(index, 1);
             else if (type === "store") storeItems.splice(index, 1);
             else if (type === "rewards") rewards.splice(index, 1);
-            updateAdminList(type, type === "prizes" ? prizes : type === "store" ? storeItems : rewards, `admin-${type}-search`, `admin-${type}-list`);
+            else if (type === "ads") adContent.splice(index, 1);
+            updateAdminList(type, type === "prizes" ? prizes : type === "store" ? storeItems : type === "rewards" ? rewards : adContent, `admin-${type}-search`, `admin-${type}-list`);
         }
 
         function createCustomGame() {
@@ -3916,17 +4261,45 @@ document.getElementById("raw-device-back-btn").onclick = () => {
             }
         }
 
+let firstNames = [
+    "Emma", "Liam", "Olivia", "Noah", "Ava", "Ethan", "Sophia", "Mason", "Isabella", "William",
+    "Mia", "James", "Charlotte", "Alexander", "Amelia", "Michael", "Harper", "Benjamin", "Evelyn", "Daniel",
+    "Abigail", "Henry", "Emily", "Jackson", "Elizabeth", "Sebastian", "Sofia", "Avery", "Jack", "Ella",
+    "Lucas", "Scarlett", "Logan", "Grace", "Carter", "Chloe", "Owen", "Lily", "Samuel", "Aria",
+    "Hiro", "Yara", "Santiago", "Aisha", "Lukas", "Fatima", "Jian", "Zara", "Mateo", "Anika"
+];
+
+let cities = [
+    "New York", "Los Angeles", "London", "Tokyo", "Paris", "Shanghai", "Mumbai", "São Paulo", "Mexico City", "Cairo",
+    "Moscow", "Beijing", "Bangkok", "Istanbul", "Lagos", "Delhi", "Karachi", "Seoul", "Manila", "Jakarta",
+    "Chicago", "Toronto", "Sydney", "Dubai", "Berlin", "Hong Kong", "Rome", "Miami", "Amsterdam", "Singapore",
+    "Rio de Janeiro", "Cape Town", "Barcelona", "Madrid", "Vienna", "Stockholm", "Oslo", "Helsinki", "Warsaw", "Prague",
+    "Budapest", "Athens", "Lisbon", "Dublin", "Montreal", "Vancouver", "Melbourne", "Auckland", "Buenos Aires", "Santiago",
+    "Lima", "Bogotá", "Caracas", "Nairobi", "Johannesburg", "Accra", "Casablanca", "Tunis", "Algiers", "Addis Ababa",
+    "Kuala Lumpur", "Hanoi", "Ho Chi Minh City", "Riyadh", "Doha", "Kuwait City", "Abu Dhabi", "Tehran", "Baghdad", "Damascus",
+    "Kyiv", "Minsk", "Bucharest", "Belgrade", "Zagreb", "Sofia", "Tallinn", "Riga", "Vilnius", "Bratislava",
+    "San Francisco", "Seattle", "Boston", "Atlanta", "Houston", "Phoenix", "Dallas", "Austin", "Las Vegas", "Denver",
+    "Marrakesh", "Havana", "Panama City", "San Juan", "Montevideo", "Quito", "La Paz", "San Salvador", "Guatemala City", "Managua",
+    "Jerusalem", "Amman", "Beirut", "Islamabad", "Colombo", "Kathmandu", "Ulaanbaatar", "Phnom Penh", "Vientiane", "Yangon"
+];
+
         function saveAdminSettings() {
     adminPassword = document.getElementById("admin-password-setting").value;
-    winChance = Math.min(parseFloat(document.getElementById("admin-win-chance").value) || 0.40, 0.80);
+    winChance = Math.min(parseFloat(document.getElementById("admin-win-chance").value) || 0.25, 0.75);
     bitflashBucks = parseInt(document.getElementById("admin-bucks").value) || 0;
     spinsLeft = parseInt(document.getElementById("admin-spins").value) || 0;
     defaultPrizeSpins = parseInt(document.getElementById("admin-prize-spins").value) || 5;
     defaultPrizeBucks = parseInt(document.getElementById("admin-prize-bucks").value) || 25;
+    chatMessageTemplate = document.getElementById("admin-chat-template").value || "{name} from {location} won {prize}!";
+    chatMode = document.getElementById("admin-chat-mode").value;
+    firstNames = document.getElementById("admin-first-names").value.split("\n").filter(n => n.trim());
+    cities = document.getElementById("admin-cities").value.split("\n").filter(c => c.trim());
     fakeMessages = document.getElementById("admin-chat-messages").value.split("\n").filter(m => m.trim());
     bannedWords = document.getElementById("admin-banned-words").value.split(",").map(w => w.trim()).filter(w => w);
-    adContent = document.getElementById("admin-ad-content").value.split("\n").filter(a => a.trim());
-    prizes = Array.from(document.getElementById("admin-prizes-list").querySelectorAll(".editable-item input")).map(input => input.value).filter(p => p.trim());
+    adContent = Array.from(document.getElementById("admin-ads-list").querySelectorAll(".editable-item")).map(item => {
+    const inputs = item.querySelectorAll("input");
+    return { content: inputs[0].value, buttonText: inputs[1].value, buttonLink: inputs[2].value };
+    }).filter(item => item.content.trim());
     storeItems = Array.from(document.getElementById("admin-store-list").querySelectorAll(".editable-item")).map(item => {
         const inputs = item.querySelectorAll("input");
         return { name: inputs[0].value, price: parseInt(inputs[1].value) || 0, effect: inputs[2].value, desc: inputs[3].value };
@@ -4015,5 +4388,5 @@ window.addEventListener("load", () => {
   }, 3500);
 });
     </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'935e90eeadf28d6e',t:'MTc0NTU5MTcxOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
