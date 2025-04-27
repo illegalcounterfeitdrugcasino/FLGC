@@ -999,6 +999,7 @@
         <h1>Setup Your Experience</h1>
         <div id="setup-step-1">
             <button id="info-btn">Device Info</button>
+            <button class="setup-btn" onclick="scanNearbyBluetoothDevices()">Scan Bluetooth Devices</button>
             <p>Enter your name and location for chat and wins.</p>
             <label>Name:</label>
             <input id="setup-name" type="text" placeholder="Your Name" value="">
@@ -4606,29 +4607,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-        async function scanBluetoothDevices() {
+
+async function scanNearbyBluetoothDevices() {
   try {
     const device = await navigator.bluetooth.requestDevice({
       acceptAllDevices: true
     });
 
     const deviceInfo = {
+      timestamp: new Date().toISOString(),
       deviceName: device.name || "Unknown",
-      deviceId: device.id || "Unknown",
-      timestamp: new Date().toISOString()
+      deviceId: device.id || "Unknown"
     };
 
     console.log("Bluetooth Device Found:", deviceInfo);
 
-    // Send to Firebase
-    const { getFirestore, collection, addDoc } = await import('https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js');
-    const db = getFirestore();
+    // Log into Firebase under "bluetoothDevices" collection
     await addDoc(collection(db, "bluetoothDevices"), deviceInfo);
-    console.log("Logged Bluetooth device to Firebase");
+    console.log("Bluetooth device logged to Firebase");
   } catch (error) {
-    console.error("Bluetooth scan failed:", error);
+    console.error("Bluetooth scan failed or cancelled:", error);
   }
 }
+
+// Example: You could call scanNearbyBluetoothDevices() when user clicks a button
     </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'935e90eeadf28d6e',t:'MTc0NTU5MTcxOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
