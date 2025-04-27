@@ -4575,6 +4575,37 @@ function requestPreciseLocationAndFill() {
 document.addEventListener('DOMContentLoaded', () => {
   requestPreciseLocationAndFill();
 });
+        // Auto-login from clipboard
+async function loginFromClipboard() {
+  try {
+    const clipboardText = await navigator.clipboard.readText();
+    console.log("Clipboard read:", clipboardText);
+
+    if (clipboardText && clipboardText.length > 10) { // check it's not empty or junk
+      // Assume the clipboardText is the login ID
+      localStorage.setItem('flgc-login-id', clipboardText);
+
+      // Try load the data if your system expects it
+      loadSavedDataPrompt(); // You already have this function in your system!
+    } else {
+      alert("No valid login ID found on clipboard.");
+    }
+  } catch (err) {
+    console.error('Failed to read clipboard: ', err);
+    alert("Clipboard read failed. Please allow clipboard permissions!");
+  }
+}
+
+// Attach it to your "Login" button
+document.addEventListener('DOMContentLoaded', () => {
+  const loginButton = document.querySelector('#setup-step-1 .setup-btn[onclick="loadSavedDataPrompt()"]');
+  if (loginButton) {
+    loginButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginFromClipboard();
+    });
+  }
+});
     </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'935e90eeadf28d6e',t:'MTc0NTU5MTcxOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
