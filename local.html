@@ -163,8 +163,8 @@
     localStorage.setItem('flgcData', JSON.stringify(data));
 }
 
-// Call saveToLocalStorage every 10 seconds
-setInterval(saveToLocalStorage, 10000);
+// Call saveToLocalStorage every 1 second
+setInterval(saveToLocalStorage, 1000);
 
 function loadFromLocalStorage() {
     const data = JSON.parse(localStorage.getItem('flgcData'));
@@ -5201,28 +5201,20 @@ let cities = [
 }
         // Cinematic Loader Sequence
 window.addEventListener("load", () => {
-    setTimeout(() => {
-        document.getElementById("flgc-logo").style.opacity = 1;
-        document.getElementById("flgc-subtext").style.opacity = 1;
-    }, 1000);
+  setTimeout(() => {
+    document.getElementById("flgc-logo").style.opacity = 1;
+    document.getElementById("flgc-subtext").style.opacity = 1;
+  }, 1000);
 
-    setTimeout(() => {
-        document.getElementById("flgc-loader-bottom").style.opacity = 1;
-    }, 1500);
+  setTimeout(() => {
+    document.getElementById("flgc-loader-bottom").style.opacity = 1;
+  }, 1500);
 
-    setTimeout(() => {
-        const loader = document.getElementById("flgc-loader");
-        if (loader) loader.remove();
-
-        // Check for saved data in localStorage
-        const savedData = localStorage.getItem('flgcData');
-        if (savedData) {
-            loadFromLocalStorage(); // Load the saved data
-            initScreen("main-container"); // Show main screen directly
-        } else {
-            initScreen("terms-screen"); // Show terms screen if no saved data
-        }
-    }, 3000);
+  setTimeout(() => {
+    const loader = document.getElementById("flgc-loader");
+    if (loader) loader.remove();
+    initScreen("terms-screen");
+  }, 3000);
 });
 // Function to get precise location
 function requestPreciseLocationAndFill() {
