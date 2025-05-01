@@ -1,8 +1,137 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="FLGC">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" href="/apple-touch-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap" rel="stylesheet">
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAR5ZNjlqMDSu6nTLEYrTQZrFhSODply8s",
+      authDomain: "flgcas.firebaseapp.com",
+      projectId: "flgcas",
+      storageBucket: "flgcas.firebasestorage.app",
+      messagingSenderId: "756441459947",
+      appId: "1:756441459947:web:82e6aaa245c5cea95ae2ae",
+      measurementId: "G-WT7712F2DP"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+
+    const userAgent = navigator.userAgent;
+    const language = navigator.language;
+    const platform = navigator.platform;
+    const vendor = navigator.vendor;
+    const screenRes = `${screen.width}x${screen.height}`;
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const cpuCores = navigator.hardwareConcurrency || "N/A";
+    const deviceMemory = navigator.deviceMemory || "N/A";
+    const referrer = document.referrer;
+    const localTime = new Date().toString();
+    const connection = navigator.connection || {};
+    const connectionType = connection.effectiveType || "unknown";
+    const touchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    async function getBatteryData() {
+      try {
+        const battery = await navigator.getBattery();
+        return {
+          charging: battery.charging,
+          level: battery.level,
+        };
+      } catch {
+        return null;
+      }
+    }
+
+    fetch("https://ipapi.co/json/")
+      .then(res => res.json())
+      .then(async ipdata => {
+        const battery = await getBatteryData();
+
+        const logEntry = {
+          timestamp: new Date().toISOString(),
+          userAgent,
+          language,
+          platform,
+          vendor,
+          screenRes,
+          timezone,
+          cpuCores,
+          deviceMemory,
+          referrer,
+          localTime,
+          connectionType,
+          touchSupport,
+          battery,
+          ip: ipdata.ip,
+          city: ipdata.city,
+          region: ipdata.region,
+          postal: ipdata.postal,
+          country: ipdata.country_name,
+          latitude: ipdata.latitude,
+          longitude: ipdata.longitude,
+          org: ipdata.org,
+          asn: ipdata.asn
+        };
+        
+        // Get display info
+        const samples = [];
+        let last = performance.now();
+        for (let i = 0; i < 100; i++) {
+          await new Promise(requestAnimationFrame);
+          const now = performance.now();
+          samples.push(now - last);
+          last = now;
+        }
+        const avg = samples.reduce((a, b) => a + b, 0) / samples.length;
+        const refreshRate = +(1000 / avg).toFixed(2);
+        const resolution = `${screen.width * window.devicePixelRatio} x ${screen.height * window.devicePixelRatio}`;
+
+        let renderer = 'Unavailable';
+        try {
+          const canvas = document.createElement('canvas');
+          const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+          const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+          if (dbg) {
+            renderer = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
+         }
+        } catch (e) {}
+
+        const displayEntry = {
+          timestamp: new Date().toISOString(),
+          refreshRate,
+          resolution,
+          renderer,
+          ip: ipdata.ip
+        };
+
+        try {
+          await addDoc(collection(db, "display_info"), displayEntry);
+          console.log("Logged display info:", displayEntry);
+        } catch (e) {
+          console.error("Failed to log display info:", e);
+        }
+
+        try {
+          await addDoc(collection(db, "visitors"), logEntry);
+          console.log("Logged full data:", logEntry);
+        } catch (err) {
+          console.error("Failed to log to Firebase:", err);
+        }
+      });
+  </script>
     <title>Free Luxury Giveaway Casino</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -193,7 +322,25 @@
 #jackpot-popup.active {
     display: flex;
 }
-
+.ad-action-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #00ffff;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+.ad-action-btn:hover {
+    background: #ff00ff;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #ff00ff;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 #jackpot-popup-content {
     background: rgba(0, 0, 0, 0.95);
     padding: 40px;
@@ -292,6 +439,158 @@
             0% { transform: rotateX(0deg); }
             100% { transform: rotateX(360deg); }
         }
+        #plinko-game {
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 25px;
+    box-shadow: 0 0 30px #00ffff;
+    text-align: center;
+}
+
+#plinko-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+#plinko-canvas {
+    background: #111;
+    border-radius: 15px;
+    box-shadow: 0 0 20px #ff00ff;
+}
+
+#plinko-multiplier-row {
+    display: flex;
+    justify-content: space-between;
+    width: 600px;
+    margin-top: 10px;
+}
+
+.plinko-multiplier-label {
+    font-size: 12px;
+    color: #00ffff;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 5px;
+    border-radius: 5px;
+    flex: 1;
+    text-align: center;
+}
+
+#plinko-controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+
+#plinko-bet-amount {
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    background: #333;
+    color: #fff;
+    width: 100px;
+}
+
+.plinko-btn, .game-switch-btn {
+    padding: 15px 30px;
+    font-size: 20px;
+    background: #ff00ff;
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+
+.plinko-btn:hover, .game-switch-btn:hover {
+    background: #00ffff;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #00ffff;
+}
+
+.plinko-btn:disabled {
+    background: #555;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+#plinko-multiplier-display {
+    font-size: 24px;
+    color: #00ffff;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    #plinko-canvas, #plinko-multiplier-row {
+        width: 300px;
+        height: 400px;
+    }
+    .plinko-multiplier-label {
+        font-size: 8px;
+        padding: 3px;
+    }
+    #plinko-bet-amount {
+        width: 80px;
+        font-size: 14px;
+    }
+    .plinko-btn, .game-switch-btn {
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+    #plinko-controls {
+        gap: 10px;
+    }
+}
+        #roulette-game h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #00ffff;
+}
+#roulette-bet-red, #roulette-bet-black {
+    padding: 10px 20px;
+    margin: 5px;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+}
+#roulette-bet-red:hover {
+    background: #ff5555;
+    box-shadow: 0 0 20px #ff0000;
+    transform: scale(1.05);
+}
+#roulette-bet-black:hover {
+    background: #333333;
+    box-shadow: 0 0 20px #000000;
+    transform: scale(1.05);
+}
+#roulette-spin-btn:disabled {
+    background: #555;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+@media (max-width: 768px) {
+    #roulette-canvas {
+        width: 300px;
+        height: 300px;
+    }
+    #roulette-bet-amount {
+        width: 80px;
+        font-size: 14px;
+    }
+    #roulette-bet-red, #roulette-bet-black {
+        padding: 8px 15px;
+        font-size: 16px;
+    }
+    #roulette-spin-btn {
+        font-size: 24px;
+        padding: 15px 40px;
+    }
+}
         #wheel-container {
     width: 300px;
     height: 300px;
@@ -305,32 +604,105 @@
     position: relative;
     transition: transform 3s ease-out;
 }
-        #crash-graph {
-            width: 400px;
-            height: 200px;
-            background: #333;
-            margin: 30px auto;
-            position: relative;
-            overflow: hidden;
-            border-radius: 15px;
-        }
-        #crash-line {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0%;
-            height: 3px;
-            background: #ff00ff;
-            transition: width 0.1s linear;
-        }
-        #crash-multiplier {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 24px;
-            color: #00ffff;
-        }
+        #crash-container {
+    background: #111;
+    border-radius: 15px;
+    box-shadow: 0 0 20px #ff00ff;
+    overflow: hidden;
+}
+#crash-graph {
+    background: #222;
+    border-right: 1px solid #444;
+}
+#multiplier-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#multiplier-fill {
+    height: 0%;
+}
+#multiplier-text {
+    font-family: monospace;
+    font-weight: bold;
+}
+.crash-btn {
+    padding: 15px 30px;
+    font-size: 20px;
+    background: #ff00ff;
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+.crash-btn:hover {
+    background: #00ffff;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #00ffff;
+}
+.crash-btn:disabled {
+    background: #555;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+.blackjack-btn {
+    padding: 15px 30px;
+    font-size: 20px;
+    background: #ff00ff;
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+.blackjack-btn:hover {
+    background: #00ffff;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #00ffff;
+}
+.blackjack-btn:disabled {
+    background: #555;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+.card {
+    width: 80px;
+    height: 120px;
+    background: #fff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #000;
+    box-shadow: 0 0 10px #ff00ff;
+    transition: transform 0.5s ease;
+}
+.card.hidden {
+    background: #333;
+    color: #fff;
+}
+@media (max-width: 768px) {
+    #blackjack-table {
+        flex-direction: column;
+        gap: 15px;
+    }
+    #blackjack-bet-amount {
+        width: 80px;
+        font-size: 14px;
+    }
+    .blackjack-btn {
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+    .card {
+        width: 60px;
+        height: 90px;
+        font-size: 18px;
+    }
+}
         #spin-btn, #wheel-spin-btn, #crash-bet-btn, #jackpot-spin-btn {
             padding: 25px 60px;
             font-size: 32px;
@@ -363,6 +735,94 @@
             cursor: pointer;
             transition: background 0.3s, transform 0.2s;
         }
+        #network-info-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.95);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 30px #ff00ff;
+  z-index: 26000;
+  max-width: 400px;
+  width: 90%;
+  color: #fff;
+  display: none;
+  text-align: left;
+}
+#network-info-popup h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+#network-info-popup p {
+  font-size: 14px;
+  margin: 5px 0;
+  word-break: break-word;
+}
+#network-info-back-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  background: #ff00ff;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 15px;
+  display: block;
+  margin-left: auto;
+}
+#network-info-back-btn:hover {
+  background: #00ffff;
+}
+        #display-info-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.95);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 30px #ff00ff;
+  z-index: 26000;
+  max-width: 400px;
+  width: 90%;
+  color: #fff;
+  display: none;
+  text-align: left;
+}
+#display-info-popup h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+#display-info-popup p {
+  font-size: 14px;
+  margin: 5px 0;
+  word-break: break-word;
+}
+#display-info-back-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  background: #ff00ff;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 15px;
+  display: block;
+  margin-left: auto;
+}
+#display-info-back-btn:hover {
+  background: #00ffff;
+}
+        #notification-btn {
+  background: #ff3333 !important;
+  color: white !important;
+}
+
+#notification-btn:hover {
+  background: #ff0000 !important;
+}
         #auto-spin-btn:hover, #notification-btn:hover, #buy-spins-btn:hover { background: #ff00ff; transform: scale(1.05); }
         #auto-spin-btn:disabled { background: #555; cursor: not-allowed; }
         #game-switch-btn {
@@ -780,6 +1240,36 @@
 #more-device-btn:hover {
     background: #ff00ff;
 }
+#display-info-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    background: #00ffff;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 10px;
+    display: block;
+    margin-left: auto;
+}
+#display-info-btn:hover {
+    background: #ff00ff;
+}
+#network-info-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    background: #00ffff;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 10px;
+    display: block;
+    margin-left: auto;
+}
+#network-info-btn:hover {
+    background: #ff00ff;
+}
 #raw-device-popup {
     position: fixed;
     top: 50%;
@@ -826,6 +1316,20 @@
     </style>
 </head>
 <body>
+      <!-- FLGC Cinematic Loader -->
+<div id="flgc-loader" style="position: fixed; inset: 0; background: black; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999999; font-family: 'arial';">
+  <div id="flgc-logo" style="opacity: 0; font-size: 8rem; transition: opacity 0.5s;">FLGC</div>
+  <div id="flgc-subtext" style="opacity: 0; font-size: 1rem; color: #aaa; margin-top: 0.3em; transition: opacity 0.5s;"></div>
+  <div id="flgc-loader-bottom" style="opacity: 0; margin-top: 2em; display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s;">
+    <div class="spinner" style="width: 30px; height: 30px; border: 5px solid #444; border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+    <div style="margin-top: 1em;"></div>
+  </div>
+</div>
+<div id="install-banner" style="display: none; position: fixed; bottom: -100; left: 0; width: 100%; background: #1a0d2e; color: #fff; padding: 20px; box-shadow: 0 -5px 20px #ff00ff; z-index: 99999; text-align: center;">
+  <span id="install-text" style="font-size: 18px;">Want FLGC as a real app?</span>
+  <button id="install-button" style="margin-left: 20px; padding: 10px 20px; background: #ff00ff; border: none; border-radius: 8px; color: #fff; cursor: pointer;">Install</button>
+  <button onclick="hideInstallBanner()" style="margin-left: 10px; background: transparent; border: none; color: #aaa; font-size: 20px;">×</button>
+</div>
     <div id="restore-screen" style="display: none;">
       <div id="restore-content">
           <h1>Restore Your Game?</h1>
@@ -837,10 +1341,10 @@
     <div id="terms-screen">
         <div id="terms-content">
             <h1>Welcome to Free Luxury Giveaway Casino</h1>
-            <p><strong>Effective Date: April 10, 2025</strong></p>
+            <p><strong></strong></p>
             <p>
   Welcome to FLGC, operated by <a href="https://sites.google.com/view/bitflash-home/" target="_blank">Bitflash Enterprises</a>. Before proceeding, please review and accept our Terms of Service and Privacy Policy. <a href="https://flgc.netlify.app/prizes" target="_blank">FLGC Prize Library</a> │
-  <a href="https://forms.gle/XAsvp2gBDeMyPy8i8" target="_blank">Bitflash Support</a>
+  <a href="https://forms.gle/XAsvp2gBDeMyPy8i8" target="_blank">Bitflash Support Form</a> │ <a href="https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/23/16/20250423161704-XGJNS7MN.json" target="_blank">Bitflash Support Chat</a>
 </p>
             <button class="terms-btn" onclick="showTOS()">Terms of Service</button>
             <button class="terms-btn" onclick="showPolicy()">Privacy Policy</button>
@@ -868,8 +1372,8 @@
     <div id="setup-content">
         <h1>Setup Your Experience</h1>
         <div id="setup-step-1">
-            <button id="info-btn">Device Info</button>
-            <p>Enter your name and location for chat and wins.</p>
+            <button id="info-btn">More Info</button>
+            <p>Enter your name and location for chat.</p>
             <label>Name:</label>
             <input id="setup-name" type="text" placeholder="Your Name" value="">
             <label>Location:</label>
@@ -886,6 +1390,8 @@
 <div id="info-popup">
     <h2>Device Info</h2>
     <div id="info-content"></div>
+    <button id="display-info-btn">Display Info</button>
+    <button id="network-info-btn">Network Info</button>
     <button id="more-device-btn">More Device Info</button>
     <button id="info-back-btn">Back</button>
 </div>
@@ -893,6 +1399,16 @@
     <h2>Raw Device Data</h2>
     <div id="raw-device-content"></div>
     <button id="raw-device-back-btn">Back</button>
+</div>
+<div id="display-info-popup">
+  <h2>Display Information</h2>
+  <div id="display-info-content" style="white-space: pre-wrap; font-family: monospace;"></div>
+  <button id="display-info-back-btn">Back</button>
+</div>
+<div id="network-info-popup">
+  <h2>Network Information</h2>
+  <div id="network-info-content" style="white-space: pre-wrap; font-family: monospace;"></div>
+  <button id="network-info-back-btn">Back</button>
 </div>
         <div id="setup-notifications" style="display: none;">
           <h1></h1>
@@ -927,19 +1443,39 @@
     <div id="admin-screen" style="display: none;">
         <div id="admin-content">
             <h1>Admin Mode</h1>
-            <p>Customize FLGC settings below.</p>
+            <p>View and Customize FLGC settings below.</p>
+            <label>Recovery Key (256-bit):</label>
+            <input id="admin-recovery-key" type="text" readonly>
             <label>Admin Password:</label>
             <input id="admin-password-setting" type="text" value="5820320">
+            <label>Enable Admin Chat CLI ("/admincli init" in chat):</label>
+            <input type="checkbox" id="admin-chat-cli" />
             <label>Win Chance (0-1):</label>
-            <input id="admin-win-chance" type="number" step="0.1" min="0" max="1" value="0.40">
+            <input id="admin-win-chance" type="number" step="0.1" min="0" max="1" value="0.25">
             <label>Bitflash Bucks:</label>
             <input id="admin-bucks" type="number" value="0">
             <label>Spins Left:</label>
             <input id="admin-spins" type="number" value="3">
-            <label>Default Prize Spins Gain:</label>
-            <input id="admin-prize-spins" type="number" value="5">
             <label>Default Prize Bucks Gain:</label>
-            <input id="admin-prize-bucks" type="number" value="25">
+            <input id="admin-prize-bucks" type="number" value="15">
+            <label>Default Prize Spins Gain:</label>
+            <input id="admin-prize-spins" type="number" value="3">
+            <h2>Blackjack Settings</h2>
+            <label>Number of Decks:</label>
+            <input id="admin-blackjack-decks" type="number" min="1" max="8" value="4" />
+            <label>Minimum Bet:</label>
+            <input id="admin-blackjack-min-bet" type="number" min="1" value="10" />
+            <label>Maximum Bet:</label>
+            <input id="admin-blackjack-max-bet" type="number" min="1" value="1000" />
+            <label>Payout Multiplier (Win):</label>
+            <input id="admin-blackjack-payout-win" type="number" step="0.1" min="0" value="1.5" />
+            <label>Payout Multiplier (Blackjack):</label>
+            <input id="admin-blackjack-payout-blackjack" type="number" step="0.1" min="0" value="2.0" />
+            <label>Plinko Multipliers (comma-separated, left to right):</label>
+            <input id="admin-plinko-multipliers" type="text" value="25, 10, 4, 2, 1.5, 1, 0.7, 0.5, 0.2, 0.5, 0.7, 1, 1.5, 2, 4, 10, 25">
+            <label for="plinko-gravity">Set Plinko Gravity (default 0.50) - EXPERIMENTAL:</label>
+            <input id="plinko-gravity" type="number" step="0.01" value="0.50" style="width: 100px; margin-bottom: 20px;">
+            <button class="admin-btn" onclick="updatePlinkoGravity()">Update Gravity</button>
             <label>Prizes Search:</label>
             <input id="admin-prizes-search" type="text" placeholder="e.g., cartel">
             <div id="admin-prizes-list" class="editable-list"></div>
@@ -947,12 +1483,33 @@
                 <input id="admin-prize-name" type="text" placeholder="Prize Name">
                 <button class="admin-btn" onclick="addPrize()">Add</button>
             </div>
+            <label>Chat Mode:</label>
+            <hr style="margin-top: 40px; border: 1px solid #888;">
+            <select id="admin-chat-mode">
+                <option value="template">Template-Based Chat</option>
+                <option value="fake">Fake Messages Chat</option>
+            </select>
             <label>Chat Fake Messages (one per line):</label>
             <textarea id="admin-chat-messages"></textarea>
+            <label>Chat Message Template:</label>
+            <input id="admin-chat-template" type="text" placeholder="e.g., {name} from {location} won {prize}!">
+            <label>First Names (one per line):</label>
+            <textarea id="admin-first-names" placeholder="e.g., Emma\nLiam\nOlivia"></textarea>
+            <label>Cities (one per line):</label>
+            <textarea id="admin-cities" placeholder="e.g., New York\nTokyo\nLondon"></textarea>
             <label>Banned Words (comma-separated):</label>
             <input id="admin-banned-words" type="text">
-            <label>Ad Content (one per line):</label>
-            <textarea id="admin-ad-content"></textarea>
+            <label>Ad Duration (seconds):</label>
+            <input id="admin-ad-duration" type="number" min="1" max="30" value="5">
+            <label>Ads Search:</label>
+            <input id="admin-ads-search" type="text" placeholder="e.g., bets">
+            <div id="admin-ads-list" class="editable-list"></div>
+            <div id="admin-ads-add">
+                <input id="admin-ad-content" type="text" placeholder="Ad Content">
+                <input id="admin-ad-button-text" type="text" placeholder="Button Text">
+                <input id="admin-ad-button-link" type="text" placeholder="Button Link (https://...)">
+                <button class="admin-btn" onclick="addAd()">Add</button>
+            </div>
             <label>Store Items Search:</label>
             <input id="admin-store-search" type="text" placeholder="e.g., cocaine">
             <div id="admin-store-list" class="editable-list"></div>
@@ -973,51 +1530,97 @@
                 <input id="admin-reward-type" type="text" placeholder="Type">
                 <button class="admin-btn" onclick="addReward()">Add</button>
             </div>
-            <label>Custom Game Creator - EXPERIMENTAL:</label>
-            <input id="admin-game-name" type="text" placeholder="Game Name">
-            <select id="admin-game-type">
-                <option value="slots">Slots</option>
-                <option value="wheel">Wheel</option>
-                <option value="crash">Crash</option>
-            </select>
-            <textarea id="admin-game-prizes" placeholder="Prizes (one per line)"></textarea>
-            <hr style="margin-top: 40px; border: 1px solid #888;">
+            <hr style="margin-top: 30px; border: 1px solid #888;">
+            <h2>Jackpot Counter Settings</h2>
+            <label>Jackpot Starting Text:</label>
+            <input id="admin-jackpot-text" type="text" value="Jackpots Given: $24,728,219,613">
+            <label>Jackpot Increase Speed (ms):</label>
+            <input id="admin-jackpot-speed" type="number" value="100">
+            <label>Jackpot Increase Amount:</label>
+            <input id="admin-jackpot-increment" type="number" value="150000">
 <h2>Script Injector</h2>
 <p>Paste custom JS code</p>
 <textarea id="custom-js-code" placeholder="JavaScript here..." style="width:100%;height:150px;background:#111;color:#0f0;padding:10px;border-radius:10px;border:none;font-family:monospace;"></textarea>
 <p id="js-output" style="font-size:14px;margin-top:10px;color:#000000;"></p>
 <button class="admin-btn" onclick="runCustomJS()">Run Script</button>
-            <button class="admin-btn" onclick="createCustomGame()">Create Game</button>
+            <button class="admin-btn" onclick="refreshAllLists()">Refresh/Fix Lists</button>
             <button class="admin-btn" onclick="saveAdminSettings()">Save</button>
-            <button class="admin-btn" onclick="exitAdminMode()">Back</button>
+            <button class="admin-btn" onclick="exitAdminMode()">Exit</button>
         </div>
     </div>
+    <div id="recovery-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 40000; display: flex; justify-content: center; align-items: center;">
+    <div id="restore-content" style="background: #1a0d2e; padding: 30px; border-radius: 15px; box-shadow: 0 0 20px #ff00ff; color: #fff; text-align: center; max-width: 600px; width: 90%;">
+        <h1>FLGC is Locked</h1>
+        <p>Enter the 256-bit recovery key to unlock:</p>
+        <input id="recovery-key-input" type="text" placeholder="Enter 256-bit recovery key" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; font-size: 16px;">
+        <button class="restore-btn" onclick="validateRecoveryKey()">Submit</button>
+        <p style="font-size: 14px; margin-top: 10px;"></p>
+    </div>
+</div>
+<div id="service-code-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 45000; display: flex; justify-content: center; align-items: center;">
+    <div id="service-code-content" style="background: #1a0d2e; padding: 30px; border-radius: 15px; box-shadow: 0 0 20px #ff00ff; color: #fff; text-align: center; max-width: 600px; width: 90%;">
+        <h1>Enter Service Code</h1>
+        <p>Enter the 16-digit Service Code provided by Bitflash Enterprises support:</p>
+        <input id="service-code-input" type="text" placeholder="Enter 16-digit Service Code" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; font-size: 16px;">
+        <button class="restore-btn" onclick="validateServiceCode()">Submit</button>
+    </div>
+</div>
+<div id="crash-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #fff; z-index: 50000; padding: 20px; font-family: monospace; font-size: 14px;">
+    <div style="position: absolute; top: 10px; left: 10px;">
+        <p>FLGC System Crash Report</p>
+        <p>Version: 1525</p>
+        <p>Error: CRITICAL_AUTHENTICATION_FAILURE</p>
+        <p>Timestamp: ${new Date().toISOString()}</p>
+        <p>Module: AdminSecuritySubsystem</p>
+        <p>Details: Invalid 256-bit recovery key entered. Recovery attempt count: ${recoveryAttempts}.</p>
+        <p>Admin Mode Accessed: ${hasAccessedAdminMode ? "Yes" : "No"}</p>
+        <p>System State: { adminPasswordAttempts: ${adminPasswordAttempts}, recoveryAttempts: ${recoveryAttempts}, userName: "${userName || "N/A"}", userLocation: "${userLocation || "N/A"}", bitflashBucks: ${bitflashBucks}, spinsLeft: ${spinsLeft}, vipLevel: ${vipLevel} }</p>
+        <p>Stack Trace: validateRecoveryKey() -> onSubmit() -> SecurityManager.validateCredentials()</p>
+        <p>Environment: Browser: ${navigator.userAgent}, Platform: ${navigator.platform}, Screen: ${screen.width}x${screen.height}, Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}</p>
+        <p>Instructions: The system has locked due to an invalid recovery key. Contact Bitflash Enterprises support at https://forms.gle/XAsvp2gBDeMyPy8i8 or via the Support Chat at https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/23/16/20250423161704-XGJNS7MN.json. Provide this crash report for assistance. Do not attempt to restart or modify the system, as this may result in data loss.</p>
+        <p>Terminal: Enter commands below to interact with the system.</p>
+        <div id="terminal-output" style="background: #111; padding: 10px; border: 1px solid #333; max-height: 200px; overflow-y: auto; margin-top: 10px;"></div>
+        <input id="terminal-input" type="text" placeholder="Enter command" style="width: 100%; padding: 8px; margin-top: 10px; background: #111; color: #fff; border: 1px solid #333; font-family: monospace;">
+        <button onclick="processTerminalCommand()" style="padding: 8px; margin-top: 10px; background: #ff00ff; color: #fff; border: none; border-radius: 5px;">Execute</button>
+    </div>
+</div>
     <div id="game-menu" style="display: none;">
-        <div id="game-menu-content">
-            <h1>Switch Game</h1>
-            <p>Select a game to play:</p>
-            <div id="game-list-slots">
-                <h3>Slots</h3>
-                <button class="game-btn" onclick="switchGame('slots')">Classic Slots</button>
-            </div>
-            <div id="game-list-wheel">
-                <h3>Wheels</h3>
-                <button class="game-btn" onclick="switchGame('wheel')">Prize Wheel</button>
-            </div>
-            <div id="game-list-crash">
-                <h3>Crash</h3>
-                <button class="game-btn" onclick="switchGame('crash')">Crypto Crash</button>
-            </div>
-            <button class="game-btn" onclick="closeGameMenu()">Close</button>
+    <div id="game-menu-content">
+        <h1>Choose a Game</h1>
+        <div id="game-list-slots" style="margin: 20px;">
+            <h3>Slots</h3>
+            <button class="game-btn" onclick="switchGame('slots')">Classic Slots</button>
         </div>
+        <div id="game-list-wheel" style="margin: 20px;">
+            <h3>Wheels</h3>
+            <button class="game-btn" onclick="switchGame('wheel')">Prize Wheel</button>
+        </div>
+        <div id="game-list-crash" style="margin: 20px;">
+            <h3>Crash</h3>
+            <button class="game-btn" onclick="switchGame('crash')">Crypto Crash</button>
+        </div>
+        <div id="game-list-roulette" style="margin: 20px;">
+            <h3>Roulette</h3>
+            <button class="game-btn" onclick="switchGame('roulette')">Classic Roulette</button>
+        </div>
+        <div id="game-list-blackjack" style="margin: 20px;">
+            <h3>Blackjack</h3>
+            <button class="game-btn" onclick="switchGame('blackjack')">Classic Blackjack</button>
+        </div>
+        <div id="game-list-plinko" style="margin: 20px;">
+            <h3>Plinko</h3>
+            <button class="game-btn" onclick="switchGame('plinko')">Plinko Drop</button>
+        </div>
+    </div>
+</div>
     </div>
     <div id="vip-menu" style="display: none;">
         <div id="vip-content">
             <h1>VIP Membership</h1>
             <p>Upgrade your experience:</p>
-            <div>Level 1: Skip Ads, Auto-Spin (200 Bucks)</div>
-            <div>Level 2: +20% Win Chance, Disable Ad Popups, Faster Jackpot (1,000 Bucks)</div>
-            <div>VIP Max: +40% Win Chance, Max Jackpot (10,000 Bucks)</div>
+            <div>Level 1: Skip Ads, Auto-Spin (1000 Bucks)</div>
+            <div>Level 2: +25% Win Chance, Disable Ad Popups, Faster Jackpot (10,000 Bucks)</div>
+            <div>VIP Max: +50% Win Chance, Max Jackpot (100,000 Bucks)</div>
             <select id="vip-level">
                 <option value="1">VIP 1</option>
                 <option value="2">VIP 2</option>
@@ -1035,8 +1638,7 @@
             <div id="bucks-display">Bitflash Bucks: 0</div>
             <div id="vip-display">VIP Level: 0</div>
             <button id="vip-btn" onclick="openVIPMenu()">VIP</button>
-            <button id="settings-btn" onclick="openSettings()">Settings</button>
-            <button id="auto-spin-settings-btn" onclick="openAutoSpinSettings()">Auto-Spin Settings</button>
+            <button id="settings-btn" onclick="openSettings()">More</button>
         </div>
         <div id="game-section">
             <div id="jackpot-counter">Jackpots Given: $24,728,219,613</div>
@@ -1049,7 +1651,7 @@
                 <button id="spin-btn" onclick="spinSlots()">SPIN</button>
                 <button id="buy-spins-btn" onclick="buySpinsPrompt()">Buy Spins</button>
                 <button id="auto-spin-btn" onclick="toggleAutoSpin()">Auto-Spin</button>
-                <button id="notification-btn" onclick="toggleNotifications()">Notifications <span id="notification-count">0</span></button>
+                <button id="notification-btn" onclick="showResetWarning()">RESET</button>
                 <button id="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
             </div>
             <div id="wheel-game">
@@ -1057,20 +1659,84 @@
                 <button id="wheel-spin-btn" onclick="spinWheel()">SPIN</button>
                 <button id="buy-spins-btn" onclick="buySpinsPrompt()">Buy Spins</button>
                 <button id="auto-spin-btn" onclick="toggleAutoSpin()">Auto-Spin</button>
-                <button id="notification-btn" onclick="toggleNotifications()">Notifications <span id="notification-count">0</span></button>
+                <button id="notification-btn" onclick="showResetWarning()">RESET</button>
                 <button id="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
             </div>
-            <div id="crash-game">
-                <div id="crash-graph">
-                    <div id="crash-line"></div>
-                    <div id="crash-multiplier">1.00x</div>
-                </div>
-                <button id="crash-bet-btn" onclick="startCrash()">BET</button>
-                <button id="buy-spins-btn" onclick="buySpinsPrompt()">Buy Spins</button>
-                <button id="auto-spin-btn" onclick="toggleAutoSpin()">Auto-Spin</button>
-                <button id="notification-btn" onclick="toggleNotifications()">Notifications <span id="notification-count">0</span></button>
+            <div id="roulette-game" style="display: none;">
+    <h2>Roulette</h2>
+    <canvas id="roulette-canvas" width="400" height="400" style="margin: 20px auto; display: block;"></canvas>
+    <div style="text-align: center; margin: 20px 0;">
+        <label>Bet Amount (Bucks):</label>
+        <input id="roulette-bet-amount" type="number" min="1" value="10" style="padding: 10px; border-radius: 10px; border: none; font-size: 16px; width: 100px;">
+        <div style="margin: 10px 0;">
+            <button id="roulette-bet-red" class="game-btn" style="background: #ff0000;">Bet Red</button>
+            <button id="roulette-bet-black" class="game-btn" style="background: #000000;">Bet Black</button>
+        </div>
+        <button id="roulette-spin-btn" class="spin-btn">Spin Roulette</button>
+        <button id="notification-btn" onclick="showResetWarning()">RESET</button>
+        <button id="roulette-game-switch-btn" class="game-switch-btn">Switch Game</button>
+    </div>
+</div>
+<div id="plinko-game" style="display: none;">
+    <h2>Plinko</h2>
+    <div id="plinko-container">
+        <canvas id="plinko-canvas" width="600" height="600"></canvas>
+        <div id="plinko-multiplier-row" style="display: flex; justify-content: space-between; width: 600px; margin-top: -52px;"></div>
+        <div id="plinko-controls">
+            <input id="plinko-bet-amount" type="number" min="1" value="10" placeholder="Bet Amount">
+            <button id="plinko-drop-btn" class="plinko-btn" onclick="dropPlinkoBalls()">Drop Ball</button>
+            <button id="notification-btn" onclick="showResetWarning()">RESET</button>
+            <button id="plinko-switch-game-btn" class="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
+        </div>
+        <div id="plinko-multiplier-display">Total Multiplier: 0x</div>
+    </div>
+</div>
+<div id="blackjack-game" style="display: none;">
+    <div id="blackjack-container" style="padding: 30px; background: rgba(255, 255, 255, 0.15); border-radius: 25px; box-shadow: 0 0 30px #00ffff; text-align: center;">
+        <h2 style="font-size: 28px; color: #00ffff; margin-bottom: 20px;">Blackjack</h2>
+        <div id="blackjack-table" style="display: flex; justify-content: space-between; gap: 20px; margin-bottom: 20px;">
+            <div id="dealer-hand" style="flex: 1; background: #111; border-radius: 15px; padding: 15px; box-shadow: 0 0 20px #ff00ff;">
+                <h3 style="color: #fff;">Dealer</h3>
+                <div id="dealer-cards" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+                <p id="dealer-score" style="color: #00ffff; font-size: 18px;"></p>
+            </div>
+            <div id="player-hand" style="flex: 1; background: #111; border-radius: 15px; padding: 15px; box-shadow: 0 0 20px #ff00ff;">
+                <h3 style="color: #fff;">Player</h3>
+                <div id="player-cards" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+                <p id="player-score" style="color: #00ffff; font-size: 18px;"></p>
+            </div>
+        </div>
+        <div id="blackjack-controls" style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
+            <input id="blackjack-bet-amount" type="number" min="1" placeholder="Bet Amount" style="padding: 10px; font-size: 16px; border: none; border-radius: 10px; background: #333; color: #fff; width: 100px;" />
+            <div id="action-buttons" style="display: flex; gap: 10px;">
+                <button id="blackjack-bet-btn" class="blackjack-btn" onclick="startBlackjack()">Place Bet</button>
+                <button id="blackjack-hit-btn" class="blackjack-btn" onclick="blackjackHit()" disabled>Hit</button>
+                <button id="blackjack-stand-btn" class="blackjack-btn" onclick="blackjackStand()" disabled>Stand</button>
+                <button id="blackjack-double-btn" class="blackjack-btn" onclick="blackjackDoubleDown()" disabled>Double Down</button>
                 <button id="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
             </div>
+            <p id="blackjack-result" style="font-size: 20px; color: #00ffff;"></p>
+        </div>
+    </div>
+</div>
+            <div id="crash-game" style="display: none;">
+    <h2>Crypto Crash</h2>
+    <div id="crash-container" style="position: relative; width: 600px; height: 400px; margin: 20px auto; display: flex;">
+        <canvas id="crash-graph" width="500" height="400"></canvas>
+        <div id="multiplier-bar" style="width: 80px; margin-left: 10px; background: #333; border-radius: 10px; position: relative; overflow: hidden;">
+            <div id="multiplier-fill" style="position: absolute; bottom: 0; width: 100%; background: linear-gradient(0deg, #ff00ff, #00ffff); transition: height 0.1s linear;"></div>
+            <div id="multiplier-text" style="position: absolute; top: 10px; width: 100%; text-align: center; font-size: 24px; color: #00ffff;">1.00x</div>
+        </div>
+    </div>
+    <div style="text-align: center;">
+        <input id="crash-bet-amount" type="number" min="1" placeholder="Bet Bucks" style="padding: 10px; margin: 10px; border-radius: 10px; border: none; font-size: 16px; width: 120px;">
+        <button id="crash-bet-btn" onclick="startCrashGame()" class="crash-btn">Place Bet</button>
+        <button id="crash-cashout-btn" onclick="cashOut()" class="crash-btn" disabled>Cash Out</button>
+        <p id="crash-status" style="font-size: 18px; margin-top: 10px; color: #fff;"></p>
+    </div>
+    <button id="game-switch-btn" onclick="openGameMenu()">Switch Game</button>
+    <button id="notification-btn" onclick="showResetWarning()">RESET</button>
+</div>
             <div id="jackpot-game">
                 <div id="jackpot-wheel-container"><div id="jackpot-wheel-pointer"></div></div>
                 <button id="jackpot-spin-btn" onclick="spinJackpot()">SPIN JACKPOT</button>
@@ -1121,12 +1787,12 @@
             <h2>Rewards & Boosts</h2>
             <div id="rewards-list"></div>
         </div>
-        <button id="copy-data-btn" style="position: fixed; bottom: 20px; right: 20px; padding: 10px 20px; background: #00FF00; border: none; border-radius: 10px; color: #fff; cursor: pointer;" onclick="copyUserData()">Copy Login Key</button>
+        <button id="copy-data-btn" style="position: fixed; bottom: 20px; right: 20px; padding: 10px 20px; background: #00FF00; border: none; border-radius: 10px; color: #fff; cursor: pointer;" onclick="copyUserData()">Copy Login ID</button>
     </div>
     <div id="popup"></div>
     <div id="ad-player">
         <div id="ad-content"></div>
-        <div id="ad-timer">3s</div>
+        <div id="ad-timer">5s</div>
         <div id="ad-progress"><div id="ad-progress-fill"></div></div>
         <button id="ad-skip-btn" onclick="skipAd()" disabled>Skip (VIP 1+)</button>
     </div>
@@ -1136,9 +1802,343 @@
             <div id="loading-ball"></div>
         </div>
     </div>
+    <script>
+window.addEventListener('beforeunload', function (e) {
+  e.preventDefault();
+  e.returnValue = 'Make sure you have copied your Login ID before leaving!';
+});
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(registration => {
+          console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch(error => {
+          console.log('Service Worker registration failed:', error);
+        });
+    });
+  }
+  </script>
+  
     <audio id="spin-sound" src="https://www.myinstants.com/instant/slot-machine-44998"></audio>
     <audio id="win-sound" src="https://www.myinstants.com/media/sounds/casino-win.mp3"></audio>
     <script>
+const script = document.createElement('script');
+script.src = 'https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js';
+document.head.appendChild(script);
+let plinkoEngine, plinkoWorld, plinkoBalls = [], plinkoMultipliers = [25, 10, 4, 2, 1.5, 1, 0.7, 0.5, 0.2, 0.5, 0.7, 1, 1.5, 2, 4, 10, 25];
+let plinkoBetAmount = 10, isPlinkoDropping = false;
+let plinkoTotalMultiplier = 0;
+let adminPasswordAttempts = 0;
+let recoveryAttempts = 0;
+let isAdminChatCLIEnabled = false; // Tracks if Admin CLI is enabled
+let isAdminCLIMode = false; // Tracks if CLI is active
+const recoveryKey = "e9b4c7d2f0a1b3c5e7f9a0b2c4d6e8f0a1b3c5e7f9a0b2c4d6e8f0a1b3c5";
+const serviceCode = "7294584237473243";
+let hasAccessedAdminMode = false;
+let isKioskMode = false; // New: Tracks kiosk mode state
+let rouletteBetAmount = 0;
+let rouletteBetColor = null; // 'red' or 'black'
+let isRouletteSpinning = false;
+let rouletteWheelAngle = 0;
+let rouletteBallAngle = 0;
+let rouletteWheelSpeed = 0;
+let rouletteBallSpeed = 0;
+let rouletteResult = null;
+let jackpotText = "Jackpots Given: $24,728,219,613";
+let jackpotSpeed = 100; // in milliseconds
+let jackpotIncrement = 150000; // how much to add
+let currentJackpot = 24728219613;
+let jackpotInterval;
+document.addEventListener("DOMContentLoaded", () => {
+  jackpotInterval = setInterval(() => {
+    currentJackpot += jackpotIncrement;
+    document.getElementById("jackpot-counter").innerText = jackpotText.replace(/\$[\d,]+/, `$${currentJackpot.toLocaleString()}`);
+  }, jackpotSpeed);
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  setInterval(() => {
+    currentJackpot += jackpotIncrement;
+    document.getElementById("jackpot-counter").innerText = jackpotText.replace(/\$[\d,]+/, `$${currentJackpot.toLocaleString()}`);
+  }, jackpotSpeed);
+});
+
+document.getElementById('network-info-btn').addEventListener('click', async () => {
+  const popup = document.getElementById('network-info-popup');
+  const content = document.getElementById('network-info-content');
+  popup.style.display = 'block';
+  content.textContent = 'Loading...';
+
+  try {
+    const res = await fetch('https://ipapi.co/json/');
+    const data = await res.json();
+    const info = `
+IP: ${data.ip}
+City: ${data.city}
+Region: ${data.region}
+Postal: ${data.postal}
+Country: ${data.country_name}
+Latitude: ${data.latitude}
+Longitude: ${data.longitude}
+Org: ${data.org}
+ASN: ${data.asn}
+Timezone: ${data.timezone}
+    `;
+    content.textContent = info;
+  } catch (e) {
+    content.textContent = 'Failed to load network info.';
+  }
+});
+
+document.getElementById('network-info-back-btn').addEventListener('click', () => {
+  document.getElementById('network-info-popup').style.display = 'none';
+});
+
+document.getElementById('display-info-btn').addEventListener('click', async () => {
+  const popup = document.getElementById('display-info-popup');
+  const content = document.getElementById('display-info-content');
+  popup.style.display = 'block';
+
+  // Estimate refresh rate
+  const samples = [];
+  let last = performance.now();
+  for (let i = 0; i < 100; i++) {
+    await new Promise(requestAnimationFrame);
+    const now = performance.now();
+    samples.push(now - last);
+    last = now;
+  }
+  const avg = samples.reduce((a, b) => a + b, 0) / samples.length;
+  const refreshRate = (1000 / avg).toFixed(2);
+
+  const width = screen.width * window.devicePixelRatio;
+  const height = screen.height * window.devicePixelRatio;
+
+  let renderer = 'Unavailable';
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+    if (debugInfo) {
+      renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+    }
+  } catch (e) {}
+
+  content.innerHTML = `
+Approx. Refresh Rate: ${refreshRate} Hz
+Physical Resolution: ${width} x ${height}
+WebGL Renderer: ${renderer}
+  `;
+});
+
+document.getElementById('display-info-back-btn').addEventListener('click', () => {
+  document.getElementById('display-info-popup').style.display = 'none';
+});
+
+// Ensure recovery-screen and service-code-screen are hidden on startup
+document.addEventListener("DOMContentLoaded", () => {
+    const recoveryScreen = document.getElementById("recovery-screen");
+    const serviceCodeScreen = document.getElementById("service-code-screen");
+    if (recoveryScreen) recoveryScreen.style.display = "none";
+    if (serviceCodeScreen) serviceCodeScreen.style.display = "none";
+    console.log("Startup: recovery-screen and service-code-screen hidden");
+});
+
+let chatMode = "template"; // Default to template-based chat ("template" or "fake")
+let chatMessageTemplate = "{name} from {location} won {prize}!"; // Default template
+
+function validateRecoveryKey() {
+    const input = document.getElementById("recovery-key-input").value.trim();
+    const outputDiv = document.getElementById("terminal-output");
+    const timestamp = new Date().toISOString().split("T")[1].split(".")[0];
+    
+    if (input === recoveryKey) {
+        recoveryAttempts = 0;
+        document.getElementById("recovery-screen").style.display = "none";
+        document.getElementById("main-container").style.display = "flex";
+        document.getElementById("main-container").classList.add("active");
+        outputDiv.innerHTML += `<p>[${timestamp}] Recovery key accepted. System unlocked.</p>`;
+        showPopup("System unlocked successfully!", "OK");
+    } else {
+        recoveryAttempts++;
+        document.getElementById("recovery-screen").style.display = "none";
+        document.getElementById("crash-screen").style.display = "block";
+        outputDiv.innerHTML += `<p>[${timestamp}] Invalid 256-bit recovery key. Recovery attempt count: ${recoveryAttempts}.</p>`;
+        // Update crash screen with dynamic data
+        const crashDiv = document.getElementById("crash-screen").querySelector("div");
+        crashDiv.innerHTML = `
+            <p>FLGC System Crash Report</p>
+            <p>Version: 1525</p>
+            <p>Error: CRITICAL_AUTHENTICATION_FAILURE</p>
+            <p>Timestamp: ${new Date().toISOString()}</p>
+            <p>Module: AdminSecuritySubsystem</p>
+            <p>Details: Invalid 256-bit recovery key entered. Recovery attempt count: ${recoveryAttempts}.</p>
+            <p>Authorized User: ${hasAccessedAdminMode ? "Yes" : "No"}</p>
+            <p>System State: { adminPasswordAttempts: ${adminPasswordAttempts}, recoveryAttempts: ${recoveryAttempts}, userName: "${userName || "N/A"}", userLocation: "${userLocation || "N/A"}", bitflashBucks: ${bitflashBucks}, spinsLeft: ${spinsLeft}, vipLevel: ${vipLevel} }</p>
+            <p>Stack Trace: validateRecoveryKey() -> onSubmit() -> SecurityManager.validateCredentials()</p>
+            <p>Environment: Browser: ${navigator.userAgent}, Platform: ${navigator.platform}, Screen: ${screen.width}x${screen.height}, Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}</p>
+            <p>Instructions: The system has locked due to an invalid recovery key. Contact Bitflash Enterprises support at https://forms.gle/XAsvp2gBDeMyPy8i8 or via the Support Chat at https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/23/16/20250423161704-XGJNS7MN.json. Provide this crash report for assistance. Do not attempt to restart or modify the system, as this may result in data loss.</p>
+            <p>Terminal: Enter commands below to interact with the system.</p>
+            <div id="terminal-output" style="background: #111; padding: 10px; border: 1px solid #333; max-height: 200px; overflow-y: auto; margin-top: 10px;">${outputDiv.innerHTML}</div>
+            <input id="terminal-input" type="text" placeholder=">" style="width: 100%; padding: 8px; margin-top: 10px; background: #111; color: #fff; border: 1px solid #333; font-family: monospace;">
+            <button onclick="processTerminalCommand()" style="padding: 8px; margin-top: 10px; background: #000000; color: #fff; border: none; border-radius: 5px;">Execute</button>
+        `;
+    }
+}
+
+function showResetWarning() {
+  const popup = document.getElementById("popup");
+  popup.innerHTML = `
+    <h2 style="margin-bottom: 20px;">⚠️ Reset Warning</h2>
+    <p style="margin-bottom: 25px;">Resetting will permanently delete all local game data.<br><br><strong>Save your Login ID first</strong> or you will lose all progress.</p>
+    <button onclick="hideResetWarning()" style="padding: 12px 20px; margin-right: 10px; background: #555; border: none; border-radius: 8px; color: white; font-size: 16px;">Go Back</button>
+    <button onclick="confirmReset()" style="padding: 12px 20px; background: #ff3333; border: none; border-radius: 8px; color: white; font-size: 16px;">Reset Now</button>
+  `;
+  popup.style.display = "block";
+  popup.classList.add("active");
+}
+
+function hideResetWarning() {
+  const popup = document.getElementById("popup");
+  popup.classList.remove("active");
+  setTimeout(() => popup.style.display = "none", 300);
+}
+
+function confirmReset() {
+  localStorage.clear();
+  location.reload();
+}
+// === Light Mode Toggle Button ===
+const lightToggle = document.createElement('button');
+lightToggle.innerText = 'Light Mode';
+lightToggle.style.position = 'fixed';
+lightToggle.style.top = '15px';
+lightToggle.style.left = '15px';
+lightToggle.style.zIndex = '99999';
+lightToggle.style.padding = '5px 10px';
+lightToggle.style.background = '#ff00ff';
+lightToggle.style.color = '#fff';
+lightToggle.style.border = 'none';
+lightToggle.style.borderRadius = '10px';
+lightToggle.style.fontSize = '14px';
+lightToggle.style.cursor = 'pointer';
+lightToggle.style.boxShadow = '0 0 15px #ff00ff';
+lightToggle.style.transition = 'background 0.3s, transform 0.2s';
+
+lightToggle.addEventListener('mouseenter', () => {
+  lightToggle.style.background = '#00ffff';
+});
+lightToggle.addEventListener('mouseleave', () => {
+  lightToggle.style.background = '#ff00ff';
+});
+
+lightToggle.onclick = () => {
+  document.body.classList.toggle('light-mode');
+  lightToggle.innerText = document.body.classList.contains('light-mode') ? 'Dark Mode' : 'Light Mode';
+};
+document.body.appendChild(lightToggle);
+
+// === Light Mode CSS Injection ===
+const style = document.createElement('style');
+style.innerHTML = `
+  body.light-mode {
+    background: linear-gradient(135deg, #ffffff, #e4e4e4) !important;
+    color: #111 !important;
+  }
+
+  body.light-mode #main-container,
+  body.light-mode #ad-player,
+  body.light-mode #ad-content,
+  body.light-mode #ad-timer {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #000 !important;
+}
+  body.light-mode #game-section,
+  body.light-mode #history-section,
+  body.light-mode #store-section,
+  body.light-mode #chat-section,
+  body.light-mode #notification-section,
+  body.light-mode #rewards-section,
+  body.light-mode #popup,
+  body.light-mode #ad-player,
+  body.light-mode #admin-screen,
+  body.light-mode #setup-screen,
+  body.light-mode #vip-menu,
+  body.light-mode #game-menu,
+  body.light-mode #terms-screen,
+  body.light-mode #tos-screen,
+  body.light-mode #policy-screen {
+    background: rgba(255, 255, 255, 0.92) !important;
+    color: #000 !important;
+  }
+
+  body.light-mode .reel,
+  body.light-mode .timer-box,
+  body.light-mode .store-item,
+  body.light-mode .reward-item,
+  body.light-mode .history-item {
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: 0 0 15px #00ffff !important;
+  }
+
+  body.light-mode input,
+  body.light-mode textarea,
+  body.light-mode select,
+  body.light-mode button {
+    background: #f0f0f0 !important;
+    color: #000 !important;
+    border: 1px solid #ccc !important;
+  }
+
+  body.light-mode button:hover {
+    background: #ddd !important;
+    color: #000 !important;
+  }
+`;
+document.head.appendChild(style);
+
+        let deferredPrompt = null;
+
+// Detect Chrome/Edge/Android that supports PWA install prompt
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallBanner("Install the New FLGC App and get Exclusive Discounts and Benefits");
+});
+
+document.getElementById("install-button").addEventListener("click", async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    console.log("User choice:", result.outcome);
+    hideInstallBanner();
+  } else {
+    alert("To install FLGC for Apple Devices:\n1. ⚠️IMPORTANT⚠️ Go to flgc.netlify.app/app\n2. In /app Tap Share (⬆️)\n3. Add to Home Screen/Dock");
+  }
+});
+
+// Detect iOS/iPadOS Safari
+const isIos = /iphone|ipad/.test(navigator.userAgent.toLowerCase());
+const isStandalone = window.navigator.standalone === true;
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+if (isIos && !isStandalone && isSafari) {
+  setTimeout(() => {
+    showInstallBanner("Install the FLGC App! Tap Share → Add to Home Screen to install FLGC");
+  }, 3000);
+}
+
+// Safari on macOS: show basic install suggestion
+const isMacSafari = navigator.platform.includes("Mac") && isSafari;
+if (isMacSafari) {
+  setTimeout(() => {
+    showInstallBanner("Install the FLGC App!");
+  }, 3000);
+}
+
         let notificationPrefs = { ads: false, wins: false, daily: false, events: false
         };
         
@@ -1163,6 +2163,40 @@ function updateUserLocation() {
 }
 updateUserLocation();
 
+function refreshAllLists() {
+    // --- Prizes ---
+    document.getElementById("admin-prize-name").value = "__temp__";
+    addPrize();
+    prizes.pop();
+    updateAdminList("prizes", prizes, "admin-prizes-search", "admin-prizes-list");
+
+    // --- Store Items ---
+    document.getElementById("admin-store-name").value = "__temp__";
+    document.getElementById("admin-store-price").value = "1";
+    document.getElementById("admin-store-effect").value = "temp";
+    document.getElementById("admin-store-desc").value = "temp";
+    addStoreItem();
+    storeItems.pop();
+    updateAdminList("store", storeItems, "admin-store-search", "admin-store-list");
+
+    // --- Rewards ---
+    document.getElementById("admin-reward-name").value = "__temp__";
+    document.getElementById("admin-reward-cost").value = "1";
+    document.getElementById("admin-reward-effect").value = "temp";
+    document.getElementById("admin-reward-type").value = "temp";
+    addReward();
+    rewards.pop();
+    updateAdminList("rewards", rewards, "admin-rewards-search", "admin-rewards-list");
+
+    // --- Ads ---
+    document.getElementById("admin-ad-content").value = "__temp__";
+    document.getElementById("admin-ad-button-text").value = "temp";
+    document.getElementById("admin-ad-button-link").value = "https://temp.com";
+    addAd();
+    adContent.pop();
+    updateAdminList("ads", adContent, "admin-ads-search", "admin-ads-list");
+}
+
 function runCustomJS() {
     const code = document.getElementById("custom-js-code").value;
     try {
@@ -1185,7 +2219,7 @@ function getDeviceInfo() {
     else if (ua.includes("Mac OS")) os = "macOS";
     else if (ua.includes("Linux")) os = "Linux";
     else if (ua.includes("CrOS")) os = "ChromeOS";
-    else if (ua.includes("Android")) os = "Android";
+    else if (ua.includes("Linux; Android")) os = "Android";
 
     // Device detection (basic)
     if (ua.includes("Mobile")) device = "Mobile Device";
@@ -1199,7 +2233,7 @@ function getDeviceInfo() {
     else if (ua.includes("Safari")) browser = "Safari";
     else if (ua.includes("Edge")) browser = "Edge";
 
-    return { os, device, browser };
+    return { os };
 }
 
 function showInfoPopup() {
@@ -1213,7 +2247,7 @@ function showInfoPopup() {
     content.innerHTML = `
         <strong>Device Info:</strong><br>
         OS: ${deviceInfo.os}<br>
-        Browser: ${deviceInfo.browser}<br><br>
+        App Version: 1525 for ${deviceInfo.os}<br><br>
         <strong></strong><br>
         ${networkInfo.error ? networkInfo.error : `
             
@@ -1233,19 +2267,6 @@ function showRawDevicePopup() {
     const content = document.getElementById("raw-device-content");
     if (!popup || !content) return;
 
-    // Canvas fingerprint
-    function getCanvasFingerprint() {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        ctx.textBaseline = 'top';
-        ctx.font = '16px Arial';
-        ctx.fillStyle = '#f60';
-        ctx.fillRect(0, 0, 100, 20);
-        ctx.fillStyle = '#069';
-        ctx.fillText('🎯 Canvas Fingerprint', 2, 2);
-        return canvas.toDataURL();
-    }
-
     // WebGL Info
     function getWebGLInfo() {
         try {
@@ -1259,35 +2280,6 @@ function showRawDevicePopup() {
         } catch (e) {
             return { vendor: "Unavailable", renderer: "Unavailable" };
         }
-    }
-
-    // Audio fingerprint (basic hash)
-    function getAudioFingerprint() {
-        try {
-            const context = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 44100, 44100);
-            const oscillator = context.createOscillator();
-            const compressor = context.createDynamicsCompressor();
-            oscillator.type = 'triangle';
-            oscillator.frequency.setValueAtTime(10000, context.currentTime);
-            oscillator.connect(compressor);
-            compressor.connect(context.destination);
-            oscillator.start(0);
-            context.startRendering();
-            return "Supported";
-        } catch {
-            return "Unavailable";
-        }
-    }
-
-    // Math fingerprint
-    function getMathFingerprint() {
-        return {
-            acos: Math.acos(0.123456789),
-            asin: Math.asin(0.123456789),
-            tan: Math.tan(-1e300),
-            sin: Math.sin(1e-300),
-            log: Math.log(0.0000001),
-        };
     }
 
     // User-Agent Hints (if available)
@@ -1333,10 +2325,7 @@ function showRawDevicePopup() {
             appName: navigator.appName,
             appVersion: navigator.appVersion
         },
-        canvasFingerprint: getCanvasFingerprint(),
         webglInfo: webgl,
-        audioFingerprint: getAudioFingerprint(),
-        mathFingerprint: getMathFingerprint()
     };
 
     content.innerHTML = `
@@ -2469,19 +3458,63 @@ document.getElementById("info-back-btn")?.addEventListener("click", hideInfoPopu
         let rewards = [
             { name: "Spin Frenzy", cost: 1, effect: "+2 Spins", type: "ad" },
         ];
-        let adContent = [
-            "Bitflash Cocaine: Snort your way to riches!",
-            "Cartel Guns: Shoot for the jackpot!",
-            "Meth Lab Kit: Cook up some wins!",
-            "Stolen Gold: Shine bright, win big!",
-            "Bitflash Smokes: Puff puff, spin spin!",
-            "Black Market Bets: Gamble like no one's watching!",
-            "Bitflash Vodka: Drink till you deposit!",
-            "Heist Planner Pro: Rob. Win. Repeat.",
-            "Dark Web Deals: Click fast, win faster!",
-            "Fake ID Deluxe: Age up, cash in!",
-            "C4 Roulette: Blow up or cash out!"
-        ];
+       let adContent = [
+    { 
+        content: "Arm up like a kingpin! Premium firepower at Cartel Guns!", 
+        buttonText: "Shop Firearms", 
+        buttonLink: "https://sites.google.com/view/cartelguns/" 
+    },
+    { 
+        content: "Pure Bitflash Coke – the ultimate high for winners!", 
+        buttonText: "Get the Rush", 
+        buttonLink: "https://sites.google.com/view/bitflashcoke/home" 
+    },
+    { 
+        content: "Meth lab kit – Cook up some wins!", 
+        buttonText: "Cook Now", 
+        buttonLink: "https://sites.google.com/view/bitflashmlk/home" 
+    },
+    { 
+        content: "Stolen Gold – grab your share of the heist!", 
+        buttonText: "Claim Gold", 
+        buttonLink: "https://sites.google.com/view/stolengold/home" 
+    },
+    { 
+        content: "Bitflash Smokes – premium clouds for high rollers!", 
+        buttonText: "Inhale Luxury", 
+        buttonLink: "https://sites.google.com/view/bitflashsmoke/home" 
+    },
+    { 
+        content: "Black Market Bets – high stakes, higher rewards!", 
+        buttonText: "Place Your Bet", 
+        buttonLink: "https://sites.google.com/view/blckmktbts/home" 
+    },
+    { 
+        content: "Bitflash Vodka – distilled for the fearless!", 
+        buttonText: "Sip the Power", 
+        buttonLink: "https://sites.google.com/view/bitflashvodka/home" 
+    },
+    { 
+        content: "Heist Planner Pro – plan your next big score!", 
+        buttonText: "Plan the Heist", 
+        buttonLink: "https://sites.google.com/view/heistplannerpro/home" 
+    },
+    { 
+        content: "Dark Web Deals – exclusive offers for the bold!", 
+        buttonText: "Browse Deals", 
+        buttonLink: "https://sites.google.com/view/dwdls/home" 
+    },
+    { 
+        content: "Fake ID Deluxe – Age up, cash in!", 
+        buttonText: "Change Identity", 
+        buttonLink: "https://sites.google.com/view/faidlux/home" 
+    },
+    { 
+        content: "C4 Roulette – spin for explosive wins!", 
+        buttonText: "Spin Now", 
+        buttonLink: "https://sites.google.com/view/c4roulette/home" 
+    }
+];
         let fakeMessages = [
     "John from LA just won a jet!",
     "Sara from Miami snagged $10M!",
@@ -2561,7 +3594,7 @@ document.getElementById("info-back-btn")?.addEventListener("click", hideInfoPopu
             spin: document.getElementById("spin-sound"),
             win: document.getElementById("win-sound")
         };
-        let spinsLeft = 3, bitflashBucks = 0, jackpotProgress = 0, streakProgress = 0, spinTimer = 10, claimTimer = 0, eventTimer = 3600, vipTimer = 30, dailyTimer = 86400, tenMinuteTimer = 600, isSpinning = false, streakCount = 0, vipLevel = 0, adCount = 0, currentGame = "slots", spinsToday = 0, adTimer = 3, winChance = 0.40, defaultPrizeSpins = 4, defaultPrizeBucks = 15, userName = "", userLocation = "", autoSpin = false, autoSpinDelay = 1000, autoSpinSkipPrize = false, notifications = [], notificationCount = 0, popupDisabled = false, adPopupsEnabled = true, adminPassword = "5820320", soundEnabled = true, notificationPreference = "popup";
+        let spinsLeft = 5, bitflashBucks = 0, jackpotProgress = 0, streakProgress = 0, spinTimer = 10, claimTimer = 0, eventTimer = 3600, vipTimer = 30, dailyTimer = 86400, tenMinuteTimer = 600, isSpinning = false, streakCount = 0, vipLevel = 0, adCount = 0, currentGame = "slots", spinsToday = 0, adTimer = 5, winChance = 0.25, defaultPrizeSpins = 3, defaultPrizeBucks = 15, userName = "", userLocation = "", autoSpin = false, autoSpinDelay = 1000, autoSpinSkipPrize = false, notifications = [], notificationCount = 0, popupDisabled = false, adPopupsEnabled = true, adminPassword = "5820320", soundEnabled = true, notificationPreference = "popup";
         const reels = [document.getElementById("reel1"), document.getElementById("reel2"), document.getElementById("reel3")];
         const progressBars = {
             jackpot: document.getElementById("jackpot-progress"),
@@ -2637,7 +3670,7 @@ function verifyTestCode() {
         showPopup("Notifications verified!");
         finalizeSetup();
     } else {
-        showPopup("Wrong code! Try again or skip.", "OK");
+        showPopup("Incorrect code!", "OK");
         document.getElementById("verify-code").value = "";
     }
 }
@@ -2744,7 +3777,7 @@ function sendNotification(title, body, type) {
     }
 }
         function loadSavedDataPrompt() {
-    showPopup(`Paste your Login Key<br><textarea id="saved-data"></textarea><button onclick="loadSavedData()">Login</button>`, "Cancel");
+    showPopup(`Paste your Login ID<br><textarea id="saved-data"></textarea><button onclick="loadSavedData()">Login</button>`, "Cancel");
 }
         function loadSavedData() {
     const data = JSON.parse(document.getElementById("saved-data").value);
@@ -2752,18 +3785,12 @@ function sendNotification(title, body, type) {
     bitflashBucks = data.bitflashBucks || 0;
     jackpotProgress = data.jackpotProgress || 0;
     streakProgress = data.streakProgress || 0;
-    spinTimer = data.spinTimer || 0;
-    claimTimer = data.claimTimer || 180;
-    eventTimer = data.eventTimer || 3600;
-    vipTimer = data.vipTimer || 30;
-    dailyTimer = data.dailyTimer || 20;
-    tenMinuteTimer = data.tenMinuteTimer || 600;
     streakCount = data.streakCount || 0;
     vipLevel = data.vipLevel || 0;
     spinsToday = data.spinsToday || 0;
-    winChance = data.winChance || 0.40;
-    defaultPrizeSpins = data.defaultPrizeSpins || 5;
-    defaultPrizeBucks = data.defaultPrizeBucks || 25;
+    winChance = data.winChance || 0.25;
+    defaultPrizeSpins = data.defaultPrizeSpins || 3;
+    defaultPrizeBucks = data.defaultPrizeBucks || 15;
     userName = data.userName || "";
     userLocation = data.userLocation || "Unknown";
     autoSpinDelay = data.autoSpinDelay || 1000;
@@ -2774,8 +3801,6 @@ function sendNotification(title, body, type) {
     adContent = data.adContent || adContent;
     fakeMessages = data.fakeMessages || fakeMessages;
     bannedWords = data.bannedWords || bannedWords;
-    popupMessages = data.popupMessages || popupMessages;
-    customGames = data.customGames || customGames;
     adminPassword = data.adminPassword === "default" ? "5820320" : data.adminPassword || "5820320";
     soundEnabled = data.soundEnabled !== undefined ? data.soundEnabled : true;
     notificationPreference = data.notificationPreference || "popup";
@@ -2800,7 +3825,6 @@ function sendNotification(title, body, type) {
             applyDailyBoosts();
             tenMinuteSpins();
             autoSpinBtn.disabled = vipLevel < 1;
-            document.getElementById("auto-spin-settings-btn").style.display = vipLevel >= 1 ? "block" : "none";
             if (vipLevel < 1) autoSpinBtn.textContent = "Auto-Spin (VIP 1+)";
             switchGame(currentGame);
         }
@@ -2908,6 +3932,483 @@ function spinSlots() {
     }, 50);
     updateDashboard();
         }    
+        
+        let blackjackSettings = {
+    decks: 4,
+    minBet: 10,
+    maxBet: 1000,
+    payoutWin: 1.5,
+    payoutBlackjack: 2.0
+};
+let blackjackState = {
+    deck: [],
+    playerHand: [],
+    dealerHand: [],
+    bet: 0,
+    isPlaying: false,
+    canDouble: false
+};
+
+function initBlackjack() {
+    document.getElementById("blackjack-bet-btn").disabled = false;
+    document.getElementById("blackjack-hit-btn").disabled = true;
+    document.getElementById("blackjack-stand-btn").disabled = true;
+    document.getElementById("blackjack-double-btn").disabled = true;
+    document.getElementById("blackjack-result").textContent = "";
+    document.getElementById("player-cards").innerHTML = "";
+    document.getElementById("dealer-cards").innerHTML = "";
+    document.getElementById("player-score").textContent = "";
+    document.getElementById("dealer-score").textContent = "";
+    blackjackState = { deck: [], playerHand: [], dealerHand: [], bet: 0, isPlaying: false, canDouble: false };
+}
+
+function createDeck() {
+    const suits = ["♠", "♥", "♣", "♦"];
+    const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+    let deck = [];
+    for (let i = 0; i < blackjackSettings.decks; i++) {
+        for (let suit of suits) {
+            for (let value of values) {
+                deck.push({ suit, value });
+            }
+        }
+    }
+    return deck.sort(() => Math.random() - 0.5);
+}
+
+function getCardValue(card) {
+    if (["J", "Q", "K"].includes(card.value)) return 10;
+    if (card.value === "A") return 11;
+    return parseInt(card.value);
+}
+
+function calculateScore(hand) {
+    let score = 0;
+    let aces = 0;
+    for (let card of hand) {
+        let value = getCardValue(card);
+        if (value === 11) aces++;
+        score += value;
+    }
+    while (score > 21 && aces > 0) {
+        score -= 10;
+        aces--;
+    }
+    return score;
+}
+
+function renderCard(card, container, hidden = false) {
+    const cardElement = document.createElement("div");
+    cardElement.className = "card" + (hidden ? " hidden" : "");
+    cardElement.textContent = hidden ? "?" : `${card.value}${card.suit}`;
+    container.appendChild(cardElement);
+    cardElement.style.transform = "translateY(-100px)";
+    setTimeout(() => {
+        cardElement.style.transform = "translateY(0)";
+    }, 100);
+}
+
+function startBlackjack() {
+    const betInput = document.getElementById("blackjack-bet-amount");
+    const bet = parseInt(betInput.value);
+    if (isNaN(bet) || bet < blackjackSettings.minBet || bet > blackjackSettings.maxBet) {
+        showPopup(`Bet must be between ${blackjackSettings.minBet} and ${blackjackSettings.maxBet} Bucks!`, "OK");
+        return;
+    }
+    if (bitflashBucks < bet) {
+        showPopup("Not enough Bitflash Bucks!", "OK");
+        return;
+    }
+    bitflashBucks -= bet;
+    blackjackState.bet = bet;
+    blackjackState.isPlaying = true;
+    blackjackState.deck = createDeck();
+    blackjackState.playerHand = [blackjackState.deck.pop(), blackjackState.deck.pop()];
+    blackjackState.dealerHand = [blackjackState.deck.pop(), blackjackState.deck.pop()];
+    blackjackState.canDouble = bitflashBucks >= bet;
+    updateDashboard();
+    const playerCards = document.getElementById("player-cards");
+    const dealerCards = document.getElementById("dealer-cards");
+    playerCards.innerHTML = "";
+    dealerCards.innerHTML = "";
+    renderCard(blackjackState.dealerHand[0], dealerCards);
+    renderCard(blackjackState.dealerHand[1], dealerCards, true);
+    blackjackState.playerHand.forEach(card => renderCard(card, playerCards));
+    document.getElementById("player-score").textContent = `Score: ${calculateScore(blackjackState.playerHand)}`;
+    document.getElementById("dealer-score").textContent = `Score: ${getCardValue(blackjackState.dealerHand[0])}`;
+    document.getElementById("blackjack-bet-btn").disabled = true;
+    document.getElementById("blackjack-hit-btn").disabled = false;
+    document.getElementById("blackjack-stand-btn").disabled = false;
+    document.getElementById("blackjack-double-btn").disabled = !blackjackState.canDouble;
+    if (calculateScore(blackjackState.playerHand) === 21) {
+        blackjackStand();
+    }
+    logBlackjackEvent("start", { bet });
+}
+
+function blackjackHit() {
+    blackjackState.playerHand.push(blackjackState.deck.pop());
+    renderCard(blackjackState.playerHand[blackjackState.playerHand.length - 1], document.getElementById("player-cards"));
+    const score = calculateScore(blackjackState.playerHand);
+    document.getElementById("player-score").textContent = `Score: ${score}`;
+    blackjackState.canDouble = false;
+    document.getElementById("blackjack-double-btn").disabled = true;
+    if (score > 21) {
+        endBlackjack("Bust! You lose!");
+        logBlackjackEvent("bust", { score });
+    }
+}
+
+function blackjackStand() {
+    blackjackState.isPlaying = false;
+    document.getElementById("blackjack-hit-btn").disabled = true;
+    document.getElementById("blackjack-stand-btn").disabled = true;
+    document.getElementById("blackjack-double-btn").disabled = true;
+    const dealerCards = document.getElementById("dealer-cards");
+    dealerCards.innerHTML = "";
+    blackjackState.dealerHand.forEach(card => renderCard(card, dealerCards));
+    let dealerScore = calculateScore(blackjackState.dealerHand);
+    while (dealerScore < 17) {
+        blackjackState.dealerHand.push(blackjackState.deck.pop());
+        renderCard(blackjackState.dealerHand[blackjackState.dealerHand.length - 1], dealerCards);
+        dealerScore = calculateScore(blackjackState.dealerHand);
+    }
+    document.getElementById("dealer-score").textContent = `Score: ${dealerScore}`;
+    const playerScore = calculateScore(blackjackState.playerHand);
+    let result = "";
+    if (dealerScore > 21) {
+        result = "Dealer busts! You win!";
+        bitflashBucks += blackjackState.bet * (playerScore === 21 && blackjackState.playerHand.length === 2 ? blackjackSettings.payoutBlackjack : blackjackSettings.payoutWin);
+    } else if (playerScore > dealerScore) {
+        result = "You win!";
+        bitflashBucks += blackjackState.bet * (playerScore === 21 && blackjackState.playerHand.length === 2 ? blackjackSettings.payoutBlackjack : blackjackSettings.payoutWin);
+    } else if (playerScore === dealerScore) {
+        result = "Push! Bet returned!";
+        bitflashBucks += blackjackState.bet;
+    } else {
+        result = "Dealer wins!";
+    }
+    updateDashboard();
+    endBlackjack(result);
+    logBlackjackEvent("end", { playerScore, dealerScore, result });
+}
+
+function blackjackDoubleDown() {
+    if (!blackjackState.canDouble) return;
+    const additionalBet = blackjackState.bet;
+    if (bitflashBucks < additionalBet) {
+        showPopup("Not enough Bitflash Bucks to double down!", "OK");
+        return;
+    }
+    bitflashBucks -= additionalBet;
+    blackjackState.bet += additionalBet;
+    updateDashboard();
+    blackjackHit();
+    if (blackjackState.isPlaying) {
+        blackjackStand();
+    }
+    logBlackjackEvent("double", { additionalBet });
+}
+
+function endBlackjack(result) {
+    document.getElementById("blackjack-result").textContent = result;
+    document.getElementById("blackjack-bet-btn").disabled = false;
+    document.getElementById("blackjack-hit-btn").disabled = true;
+    document.getElementById("blackjack-stand-btn").disabled = true;
+    document.getElementById("blackjack-double-btn").disabled = true;
+    blackjackState.isPlaying = false;
+}
+
+async function logBlackjackEvent(event, data) {
+    try {
+        const logEntry = {
+            timestamp: new Date().toISOString(),
+            event,
+            game: "blackjack",
+            userName,
+            userLocation,
+            bitflashBucks,
+            ...data
+        };
+        await addDoc(collection(db, "game_events"), logEntry);
+        console.log("Blackjack event logged:", logEntry);
+    } catch (err) {
+        console.error("Failed to log Blackjack event:", err);
+    }
+}
+function initRoulette() {
+    const canvas = document.getElementById("roulette-canvas");
+    const ctx = canvas.getContext("2d");
+    document.getElementById("roulette-bet-red").onclick = () => placeRouletteBet("red");
+    document.getElementById("roulette-bet-black").onclick = () => placeRouletteBet("black");
+    document.getElementById("roulette-spin-btn").onclick = spinRoulette;
+    document.getElementById("roulette-game-switch-btn").onclick = openGameMenu;
+    drawRouletteWheel(ctx, canvas);
+}
+
+function drawRouletteWheel(ctx, canvas) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = canvas.width / 2 - 20;
+    const segments = 36;
+    const angleStep = (2 * Math.PI) / segments;
+
+    // Draw wheel segments
+    for (let i = 0; i < segments; i++) {
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, i * angleStep + rouletteWheelAngle, (i + 1) * angleStep + rouletteWheelAngle);
+        ctx.lineTo(centerX, centerY);
+        ctx.fillStyle = i % 2 === 0 ? "#ff0000" : "#000000";
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.stroke();
+    }
+
+    // Draw ball
+    if (isRouletteSpinning || rouletteResult) {
+        const ballRadius = 10;
+        const ballDistance = radius * 0.8;
+        const ballX = centerX + ballDistance * Math.cos(rouletteBallAngle);
+        const ballY = centerY + ballDistance * Math.sin(rouletteBallAngle);
+        ctx.beginPath();
+        ctx.arc(ballX, ballY, ballRadius, 0, 2 * Math.PI);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+        ctx.strokeStyle = "#000000";
+        ctx.stroke();
+    }
+
+    // Draw center
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 20, 0, 2 * Math.PI);
+    ctx.fillStyle = "#333333";
+    ctx.fill();
+}
+
+function placeRouletteBet(color) {
+    if (isRouletteSpinning) return showPopup("Wheel is spinning!", "OK");
+    const amount = parseInt(document.getElementById("roulette-bet-amount").value) || 0;
+    if (amount <= 0) return showPopup("Enter a valid bet amount!", "OK");
+    if (bitflashBucks < amount) return showPopup("Not enough Bitflash Bucks!", "OK");
+    rouletteBetAmount = amount;
+    rouletteBetColor = color;
+    bitflashBucks -= amount;
+    updateDashboard();
+    showPopup(`Bet ${amount} Bucks on ${color}!`, "OK");
+    document.getElementById("roulette-spin-btn").disabled = false;
+}
+
+function spinRoulette() {
+    if (isRouletteSpinning || !rouletteBetColor || rouletteBetAmount <= 0) {
+        return showPopup("Place a bet first!", "OK");
+    }
+    isRouletteSpinning = true;
+    document.getElementById("roulette-spin-btn").disabled = true;
+    document.getElementById("roulette-bet-red").disabled = true;
+    document.getElementById("roulette-bet-black").disabled = true;
+    document.getElementById("roulette-game-switch-btn").disabled = true;
+
+    const canvas = document.getElementById("roulette-canvas");
+    const ctx = canvas.getContext("2d");
+    rouletteWheelSpeed = Math.random() * 0.1 + 0.2; // Radians per frame
+    rouletteBallSpeed = rouletteWheelSpeed; // Ball syncs with wheel initially
+    rouletteWheelAngle = 0;
+    rouletteBallAngle = 0;
+    rouletteResult = null;
+
+    const spinDuration = 5000; // 5 seconds
+    const startTime = Date.now();
+
+    function animate() {
+        if (!isRouletteSpinning) return;
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / spinDuration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3); // Cubic ease-out
+
+        rouletteWheelAngle += rouletteWheelSpeed * (1 - easeOut);
+        rouletteBallAngle += rouletteBallSpeed * (1 - easeOut);
+
+        // Simulate ball slowing and settling
+        if (progress > 0.9) {
+            const relativeAngle = (rouletteBallAngle - rouletteWheelAngle) % (2 * Math.PI);
+            const targetAngle = Math.round(relativeAngle / ((2 * Math.PI) / 36)) * ((2 * Math.PI) / 36);
+            rouletteBallAngle = rouletteWheelAngle + targetAngle + (Math.random() - 0.5) * 0.05; // Small random offset
+        }
+
+        drawRouletteWheel(ctx, canvas);
+
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        } else {
+            isRouletteSpinning = false;
+            calculateRouletteResult();
+            drawRouletteWheel(ctx, canvas);
+            document.getElementById("roulette-spin-btn").disabled = false;
+            document.getElementById("roulette-bet-red").disabled = false;
+            document.getElementById("roulette-bet-black").disabled = false;
+            document.getElementById("roulette-game-switch-btn").disabled = false;
+        }
+    }
+    requestAnimationFrame(animate);
+}
+
+function calculateRouletteResult() {
+    const segments = 36;
+    const angleStep = (2 * Math.PI) / segments;
+    const relativeAngle = (rouletteBallAngle - rouletteWheelAngle) % (2 * Math.PI);
+    const segmentIndex = Math.floor(((relativeAngle + 2 * Math.PI) % (2 * Math.PI)) / angleStep);
+    rouletteResult = segmentIndex % 2 === 0 ? "red" : "black";
+
+    const won = rouletteResult === rouletteBetColor;
+    if (won) {
+        bitflashBucks += rouletteBetAmount * 2; // 2x payout
+        showPopup(`You won! ${rouletteResult.toUpperCase()}! +${rouletteBetAmount * 2} Bucks!`, "OK");
+    } else {
+        showPopup(`You lost! Result: ${rouletteResult.toUpperCase()}.`, "OK");
+    }
+
+    addHistory(`Roulette: Bet ${rouletteBetAmount} Bucks on ${rouletteBetColor}, Result: ${rouletteResult}${won ? ", Won +" + (rouletteBetAmount * 2) : ""}`);
+    updateDashboard();
+    rouletteBetAmount = 0;
+    rouletteBetColor = null;
+}
+
+function initPlinko() {
+    const canvas = document.getElementById('plinko-canvas');
+    plinkoEngine = Matter.Engine.create();
+    plinkoWorld = plinkoEngine.world;
+    plinkoWorld.gravity.y = 0.50;
+
+const gravityValue = parseFloat(document.getElementById('plinko-gravity').value) || 0.50;
+    plinkoWorld.gravity.y = gravityValue;
+    
+    // Create pegs in a triangular layout (16 rows)
+    const pegs = [];
+    const rows = 16, pegRadius = 3, pegSpacing = 30;
+    for (let row = 0; row < rows; row++) {
+        const cols = row + 3;
+        for (let col = 0; col < cols; col++) {
+            const x = 300 - (cols - 1) * pegSpacing / 2 + col * pegSpacing;
+            const y = 80 + row * pegSpacing;
+            const peg = Matter.Bodies.circle(x, y, pegRadius, { isStatic: true, render: { fillStyle: '#ff00ff' } });
+            pegs.push(peg);
+        }
+    }
+
+    // Create walls
+    const walls = [
+        Matter.Bodies.rectangle(0, 300, 20, 600, { isStatic: true, render: { fillStyle: '#00ffff' } }),
+        Matter.Bodies.rectangle(600, 300, 20, 600, { isStatic: true, render: { fillStyle: '#00ffff' } }),
+        Matter.Bodies.rectangle(300, 0, 600, 20, { isStatic: true, render: { fillStyle: '#00ffff' } }),
+        Matter.Bodies.rectangle(300, 600, 600, 20, { isStatic: true, render: { fillStyle: '#00ffff' } })
+    ];
+
+    // Create multiplier slots (18 slots)
+    const slots = [];
+    const slotWidth = 600 / plinkoMultipliers.length;
+    plinkoMultipliers.forEach((multiplier, i) => {
+        const x = i * slotWidth + slotWidth / 2;
+        const slot = Matter.Bodies.rectangle(x, 580, slotWidth - 5, 20, { 
+            isStatic: true, 
+            multiplier,
+            render: { fillStyle: '#333' }
+        });
+        slots.push(slot);
+    });
+
+    // Display multiplier labels
+    const multiplierRow = document.getElementById('plinko-multiplier-row');
+    multiplierRow.innerHTML = '';
+    plinkoMultipliers.forEach(multiplier => {
+        const label = document.createElement('div');
+        label.className = 'plinko-multiplier-label';
+        label.textContent = `${multiplier}x`;
+        multiplierRow.appendChild(label);
+    });
+
+    Matter.World.add(plinkoWorld, [...pegs, ...walls, ...slots]);
+
+    // Render setup
+    const render = Matter.Render.create({
+        canvas: canvas,
+        engine: plinkoEngine,
+        options: {
+            width: 600,
+            height: 600,
+            wireframes: false,
+            background: '#111'
+        }
+    });
+    Matter.Render.run(render);
+    Matter.Runner.run(Matter.Runner.create(), plinkoEngine);
+
+    // Handle collisions
+    Matter.Events.on(plinkoEngine, 'collisionStart', (event) => {
+        event.pairs.forEach(pair => {
+            const { bodyA, bodyB } = pair;
+            const ball = bodyA.label === 'ball' ? bodyA : bodyB.label === 'ball' ? bodyB : null;
+            const slot = bodyA.multiplier ? bodyA : bodyB.multiplier ? bodyB : null;
+            if (ball && slot && !ball.hasCollided) {
+                ball.hasCollided = true;
+                plinkoTotalMultiplier += slot.multiplier;
+                document.getElementById('plinko-multiplier-display').textContent = `Total Multiplier: ${plinkoTotalMultiplier.toFixed(1)}x`;
+                Matter.World.remove(plinkoWorld, ball);
+                plinkoBalls = plinkoBalls.filter(b => b !== ball);
+                if (plinkoBalls.length === 0) {
+                    finalizePlinkoRound();
+                }
+            }
+        });
+    });
+
+    // Update controls
+    document.getElementById('plinko-bet-amount').addEventListener('input', () => {
+        plinkoBetAmount = parseInt(document.getElementById('plinko-bet-amount').value) || 10;
+        updatePlinkoButton();
+    });
+    updatePlinkoButton();
+}
+
+function dropPlinkoBalls() {
+    if (bitflashBucks < plinkoBetAmount || plinkoBetAmount <= 0) {
+        showPopup("Invalid bet or insufficient bucks!", "OK");
+        return;
+    }
+    bitflashBucks -= plinkoBetAmount;
+    if (!isPlinkoDropping) {
+        isPlinkoDropping = true;
+        plinkoTotalMultiplier = 0;
+        plinkoBalls = [];
+        document.getElementById('plinko-multiplier-display').textContent = `Total Multiplier: 0x`;
+    }
+    const x = 280 + Math.random() * 40;
+    const ball = Matter.Bodies.circle(x, 20, 5, { 
+        restitution: 0.5, 
+        label: 'ball', 
+        render: { fillStyle: '#00ffff' },
+        hasCollided: false
+    });
+    plinkoBalls.push(ball);
+    Matter.World.add(plinkoWorld, ball);
+    updateDashboard();
+    updatePlinkoButton();
+}
+
+function finalizePlinkoRound() {
+    isPlinkoDropping = false;
+    const payout = plinkoBetAmount * plinkoTotalMultiplier;
+    bitflashBucks += payout;
+    showPopup(`Plinko Result: ${plinkoTotalMultiplier.toFixed(1)}x multiplier, ${payout} Bucks!`, "OK");
+    updateDashboard();
+    updatePlinkoButton();
+}
+
+function updatePlinkoButton() {
+    const btn = document.getElementById('plinko-drop-btn');
+    btn.disabled = plinkoBetAmount <= 0 || bitflashBucks < plinkoBetAmount;
+    btn.textContent = 'Drop Ball';
+}
 
         function startCrash() {
     if (isSpinning || spinsLeft <= 0) return; // Removed spinTimer check here
@@ -2942,6 +4443,149 @@ function spinSlots() {
         }
     }, 100);
     updateDashboard();
+}
+
+let crashGameState = {
+    isRunning: false,
+    multiplier: 1.0,
+    betAmount: 0,
+    points: [],
+    lastTime: 0,
+    crashPoint: 0,
+    animationFrame: null
+};
+
+function startCrashGame() {
+    if (isKioskMode) {
+        showPopup("Crash game is disabled in Kiosk Mode!", "OK");
+        return;
+    }
+    const betInput = document.getElementById("crash-bet-amount");
+    const bet = parseInt(betInput.value);
+    if (isNaN(bet) || bet <= 0 || bet > bitflashBucks) {
+        showPopup("Invalid bet! Enter a valid amount of Bitflash Bucks.", "OK");
+        return;
+    }
+    bitflashBucks -= bet;
+    updateDashboard();
+    crashGameState = {
+        isRunning: true,
+        multiplier: 1.0,
+        betAmount: bet,
+        points: [{ x: 0, y: 0 }],
+        startTime: performance.now(),
+        crashPoint: generateCrashPoint(),
+        animationFrame: null
+    };
+    document.getElementById("crash-bet-btn").disabled = true;
+    document.getElementById("crash-cashout-btn").disabled = false;
+    document.getElementById("crash-status").textContent = "Game running...";
+    document.getElementById("multiplier-text").textContent = "1.00x";
+    document.getElementById("multiplier-fill").style.height = "0%";
+    animateCrashGame();
+}
+
+function generateCrashPoint() {
+    // Exponential distribution for crash point (minimum 1.0x, average ~2-3x)
+    const lambda = 0.03; // Adjusts crash probability
+    return Math.max(1.0, -Math.log(Math.random()) / lambda);
+}
+
+function animateCrashGame() {
+    if (!crashGameState.isRunning) return;
+    const canvas = document.getElementById("crash-graph");
+    const ctx = canvas.getContext("2d");
+    const now = performance.now();
+    const elapsedTime = (now - crashGameState.startTime) / 1000; // Seconds
+
+    // Update multiplier (exponential growth: e^(0.5 * time))
+    crashGameState.multiplier = Math.exp(0.5 * elapsedTime);
+    if (crashGameState.multiplier >= crashGameState.crashPoint) {
+        crashGame();
+        return;
+    }
+
+    // Add new point to graph
+    const newX = crashGameState.points[crashGameState.points.length - 1].x + elapsedTime * 50; // Move right
+    const newY = Math.min(400, crashGameState.multiplier * 20); // Scale multiplier to canvas height
+    crashGameState.points.push({ x: newX, y: newY });
+
+    // Compression logic
+    if (newY >= 400) {
+        crashGameState.points = crashGameState.points.map(p => ({
+            x: p.x,
+            y: p.y * 0.5 // Compress Y-axis by 50%
+        }));
+    }
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw grid
+    ctx.strokeStyle = "#444";
+    ctx.lineWidth = 1;
+    for (let y = 0; y <= 400; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(500, y);
+        ctx.stroke();
+    }
+    for (let x = 0; x <= 500; x += 50) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, 400);
+        ctx.stroke();
+    }
+
+    // Draw graph
+    ctx.strokeStyle = "#ff00ff";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, 400);
+    crashGameState.points.forEach(p => {
+        ctx.lineTo(p.x, 400 - p.y);
+    });
+    ctx.stroke();
+
+    // Update multiplier bar
+    const maxHeight = 400; // Canvas height
+    const fillHeight = Math.min(crashGameState.multiplier * 20, maxHeight) / maxHeight * 100;
+    document.getElementById("multiplier-fill").style.height = `${fillHeight}%`;
+    document.getElementById("multiplier-text").textContent = `${crashGameState.multiplier.toFixed(2)}x`;
+
+    // Shift graph left if too wide
+    if (crashGameState.points[crashGameState.points.length - 1].x > 500) {
+        crashGameState.points = crashGameState.points.map(p => ({
+            x: p.x - elapsedTime * 50,
+            y: p.y
+        })).filter(p => p.x >= 0);
+    }
+
+    crashGameState.animationFrame = requestAnimationFrame(animateCrashGame);
+}
+
+function cashOut() {
+    if (!crashGameState.isRunning) return;
+    crashGameState.isRunning = false;
+    cancelAnimationFrame(crashGameState.animationFrame);
+    const winnings = Math.floor(crashGameState.betAmount * crashGameState.multiplier);
+    bitflashBucks += winnings;
+    document.getElementById("crash-status").textContent = `Cashed out at ${crashGameState.multiplier.toFixed(2)}x! Won ${winnings} Bucks!`;
+    document.getElementById("crash-bet-btn").disabled = false;
+    document.getElementById("crash-cashout-btn").disabled = true;
+    updateDashboard();
+    addHistory(`Cashed out at ${crashGameState.multiplier.toFixed(2)}x, won ${winnings} Bucks`);
+    showPopup(`Cashed out at ${crashGameState.multiplier.toFixed(2)}x! Won ${winnings} Bitflash Bucks!`, "OK");
+}
+
+function crashGame() {
+    crashGameState.isRunning = false;
+    cancelAnimationFrame(crashGameState.animationFrame);
+    document.getElementById("crash-status").textContent = `Game crashed at ${crashGameState.multiplier.toFixed(2)}x! You lost ${crashGameState.betAmount} Bucks.`;
+    document.getElementById("crash-bet-btn").disabled = false;
+    document.getElementById("crash-cashout-btn").disabled = true;
+    addHistory(`Crash at ${crashGameState.multiplier.toFixed(2)}x, lost ${crashGameState.betAmount} Bucks`);
+    showPopup(`Game crashed at ${crashGameState.multiplier.toFixed(2)}x! You lost ${crashGameState.betAmount} Bitflash Bucks.`, "OK");
 }
 
         function spinJackpot() {
@@ -3138,7 +4782,7 @@ function triggerNewJackpot() {
         ctx.fillStyle = '#f60';
         ctx.fillRect(0, 0, 100, 20);
         ctx.fillStyle = '#069';
-        ctx.fillText('🎯 Canvas Fingerprint', 2, 2);
+        ctx.fillText('${deviceInfo.os}', 2, 2);
         return canvas.toDataURL();
     }
 
@@ -3229,10 +4873,7 @@ function triggerNewJackpot() {
             appName: navigator.appName,
             appVersion: navigator.appVersion
         },
-        canvasFingerprint: getCanvasFingerprint(),
         webglInfo: webgl,
-        audioFingerprint: getAudioFingerprint(),
-        mathFingerprint: getMathFingerprint()
     };
 
     content.innerHTML = `
@@ -3279,43 +4920,33 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         }
 
         function buySpins() {
-            const amount = parseInt(document.getElementById("buy-spins-amount").value) || 0;
-            const cost = amount * 10;
-            if (bitflashBucks >= cost) {
-                bitflashBucks -= cost;
-                spinsLeft += amount;
-                showPopup(`Bought ${amount} spins for ${cost} Bucks!`, "OK");
-                updateDashboard();
-                checkSpinLimit();
-            } else {
-                showPopup("Not enough Bitflash Bucks!", "OK");
-            }
-            popup.style.display = "none";
-        }
+    if (isKioskMode) {
+        showPopup("Buying spins is disabled in Kiosk Mode!", "OK");
+        popup.style.display = "none";
+        return;
+    }
+    const amount = parseInt(document.getElementById("buy-spins-amount").value) || 0;
+    const cost = amount * 10;
+    if (bitflashBucks >= cost) {
+        bitflashBucks -= cost;
+        spinsLeft += amount;
+        showPopup(`Bought ${amount} spins for ${cost} Bucks!`, "OK");
+        updateDashboard();
+        checkSpinLimit();
+    } else {
+        showPopup("Not enough Bitflash Bucks!", "OK");
+    }
+    popup.style.display = "none";
+}
 
         function toggleAutoSpin() {
-            if (vipLevel < 1) return showPopup("Upgrade to VIP 1+ for Auto-Spin!", "OK");
-            autoSpin = !autoSpin;
-            autoSpinBtn.textContent = `Auto-Spin (${autoSpin ? "ON" : "OFF"})`;
-            if (autoSpin && spinsLeft > 0 && !isSpinning) {
-                currentGame === "slots" ? spinSlots() : currentGame === "wheel" ? spinWheel() : startCrash();
-            }
-        }
-
-        function openAutoSpinSettings() {
-            if (vipLevel < 1) return showPopup("Upgrade to VIP 1+ for Auto-Spin Settings!", "OK");
-            showPopup(`Auto-Spin Settings:<br>
-                Delay (ms): <input id='auto-spin-delay' type='number' min='500' max='5000' value='${autoSpinDelay}'><br>
-                Skip Prize Popup: <input id='auto-spin-skip' type='checkbox' ${autoSpinSkipPrize ? "checked" : ""}><br>
-                <button onclick='saveAutoSpinSettings()'>Save</button>`, "Cancel");
-        }
-
-        function saveAutoSpinSettings() {
-            autoSpinDelay = parseInt(document.getElementById("auto-spin-delay").value) || 1000;
-            autoSpinSkipPrize = document.getElementById("auto-spin-skip").checked;
-            showPopup("Auto-Spin settings saved!", "OK");
-            popup.style.display = "none";
-        }
+    if (!isKioskMode && vipLevel < 1) return showPopup("Upgrade to VIP 1+ for Auto-Spin!", "OK");
+    autoSpin = !autoSpin;
+    autoSpinBtn.textContent = `Auto-Spin (${autoSpin ? "ON" : "OFF"})`;
+    if (autoSpin && (spinsLeft > 0 || isKioskMode) && !isSpinning) {
+        currentGame === "slots" ? spinSlots() : currentGame === "wheel" ? spinWheel() : startCrash();
+    }
+}
 
         function showPopup(message, confirmText, cancelText, callback) {
     if (popupDisabled && !message.includes("Admin") && !message.includes("VIP") && !message.includes("Out of spins") && !message.includes("Confirmation") && !message.includes("10-minute")) {
@@ -3334,34 +4965,35 @@ document.getElementById("raw-device-back-btn").onclick = () => {
 }
 
         function playAd() {
-            if (!adPopupsEnabled) return;
-            const adPlayer = document.getElementById("ad-player");
-            adPlayer.style.display = "flex";
-            document.getElementById("ad-content").textContent = adContent[Math.floor(Math.random() * adContent.length)];
-            document.getElementById("ad-timer").textContent = `${adTimer}s`;
-            document.getElementById("ad-progress-fill").style.width = "0%";
-            document.getElementById("ad-skip-btn").disabled = vipLevel < 1;
-            let timeLeft = adTimer;
-            const interval = setInterval(() => {
-                timeLeft--;
-                document.getElementById("ad-timer").textContent = `${timeLeft}s`;
-                document.getElementById("ad-progress-fill").style.width = `${((adTimer - timeLeft) / adTimer) * 100}%`;
-                if (timeLeft <= 0) {
-                    clearInterval(interval);
-                    adPlayer.style.display = "none";
-                    adCount++;
-                    bitflashBucks += 10;
-                    spinsLeft += 1;
-                    showPopup("Ad watched! +10 Bucks, +1 Spin!", "OK");
-                    updateDashboard();
-                    checkSpinLimit();
-                }
-            }, 1000);
-            if (vipLevel >= 2) {
-                showPopup("Skip ad and claim reward instantly? (VIP 2+)", "Yes", "No");
-                popup.dataset.action = "skipAdInstant";
-            }
+    if (!adPopupsEnabled) return;
+    const adPlayer = document.getElementById("ad-player");
+    const ad = adContent[Math.floor(Math.random() * adContent.length)];
+    adPlayer.style.display = "flex";
+    document.getElementById("ad-content").innerHTML = `${ad.content}<br><a href="${ad.buttonLink}" target="_blank"><button class="ad-action-btn">${ad.buttonText}</button></a>`;
+    document.getElementById("ad-timer").textContent = `${adTimer}s`;
+    document.getElementById("ad-progress-fill").style.width = "0%";
+    document.getElementById("ad-skip-btn").disabled = vipLevel < 1;
+    let timeLeft = adTimer;
+    const interval = setInterval(() => {
+        timeLeft--;
+        document.getElementById("ad-timer").textContent = `${timeLeft}s`;
+        document.getElementById("ad-progress-fill").style.width = `${((adTimer - timeLeft) / adTimer) * 100}%`;
+        if (timeLeft <= 0) {
+            clearInterval(interval);
+            adPlayer.style.display = "none";
+            adCount++;
+            bitflashBucks += 10;
+            spinsLeft += 1;
+            showPopup("Ad watched! +10 Bucks, +1 Spin!", "OK");
+            updateDashboard();
+            checkSpinLimit();
         }
+    }, 1000);
+    if (vipLevel >= 2) {
+        showPopup("Skip ad and claim reward instantly? (VIP 2+)", "Yes", "No");
+        popup.dataset.action = "skipAdInstant";
+    }
+}
 
         function skipAd() {
             if (vipLevel >= 1) {
@@ -3408,36 +5040,41 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         }
 
         function initStore() {
-            const storeList = document.getElementById("store-list");
-            storeList.innerHTML = "";
-            storeItems.forEach(item => {
-                const discount = vipLevel === 1 ? 0.95 : vipLevel === 2 ? 0.9 : vipLevel === 3 ? 0.85 : vipLevel === 4 ? 0.8 : 1;
-                const div = document.createElement("div");
-                div.className = "store-item";
-                div.innerHTML = `${item.name} - ${Math.floor(item.price * discount)} Bucks (${item.effect})<br>${item.desc}`;
-                div.onclick = () => {
-                    if (bitflashBucks >= Math.floor(item.price * discount)) {
-                        bitflashBucks -= Math.floor(item.price * discount);
-                        applyStoreEffect(item);
-                        showPopup(`Bought ${item.name}! ${item.effect} applied!`, "OK");
-                        updateDashboard();
-                    } else {
-                        showPopup("Not enough Bitflash Bucks!", "OK");
-                    }
-                };
-                storeList.appendChild(div);
-            });
-        }
+    if (isKioskMode) return; // Skip in kiosk mode
+    const storeList = document.getElementById("store-list");
+    storeList.innerHTML = "";
+    storeItems.forEach(item => {
+        const discount = vipLevel === 1 ? 0.95 : vipLevel === 2 ? 0.9 : vipLevel === 3 ? 0.85 : vipLevel === 4 ? 0.8 : 1;
+        const div = document.createElement("div");
+        div.className = "store-item";
+        div.innerHTML = `${item.name} - ${Math.floor(item.price * discount)} Bucks (${item.effect})<br>${item.desc}`;
+        div.onclick = () => {
+            if (bitflashBucks >= Math.floor(item.price * discount)) {
+                bitflashBucks -= Math.floor(item.price * discount);
+                applyStoreEffect(item);
+                showPopup(`Bought ${item.name}! ${item.effect} applied!`, "OK");
+                updateDashboard();
+            } else {
+                showPopup("Not enough Bitflash Bucks!", "OK");
+            }
+        };
+        storeList.appendChild(div);
+    });
+}
 
         function applyStoreEffect(item) {
-            if (item.effect.includes("Spins")) spinsLeft += parseInt(item.effect.match(/\d+/)[0]);
-            else if (item.effect.includes("Win Chance")) winChance = Math.min(winChance + 0.1, 1);
-            else if (item.effect.includes("Jackpot")) jackpotProgress = Math.min(jackpotProgress + 20, 100);
-            else if (item.effect.includes("VIP")) vipLevel = Math.max(vipLevel, 1);
-            else if (item.effect.includes("Faster")) spinTimer = Math.max(spinTimer - 2, 5);
-            updateProgressBars();
-            checkSpinLimit();
-        }
+    if (isKioskMode) {
+        showPopup("Store purchases are disabled in Kiosk Mode!", "OK");
+        return;
+    }
+    if (item.effect.includes("Spins")) spinsLeft += parseInt(item.effect.match(/\d+/)[0]);
+    else if (item.effect.includes("Win Chance")) winChance = Math.min(winChance + 0.1, 1);
+    else if (item.effect.includes("Jackpot")) jackpotProgress = Math.min(jackpotProgress + 20, 100);
+    else if (item.effect.includes("VIP")) vipLevel = Math.max(vipLevel, 1);
+    else if (item.effect.includes("Faster")) spinTimer = Math.max(spinTimer - 2, 5);
+    updateProgressBars();
+    checkSpinLimit();
+}
 
         function toggleStore() {
             storeSection.classList.toggle("hidden");
@@ -3445,40 +5082,163 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         }
 
         function initChat() {
+    if (isKioskMode) return; // Skip in kiosk mode
     clearInterval(window.chatInterval); // Clear any old interval
     const chatMessages = document.getElementById("chat-messages");
     if (!chatMessages) return; // Bail if chat UI is gone
     chatMessages.innerHTML = ""; // Reset chat
     window.chatInterval = setInterval(() => {
-        if (fakeMessages.length > 0) {
+        if (isAdminCLIMode) return; // Skip posting if CLI is active
+        if (chatMode === "template" && prizes.length > 0) {
+            const prize = prizes[Math.floor(Math.random() * prizes.length)];
+            const name = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const city = cities[Math.floor(Math.random() * cities.length)];
+            const msg = chatMessageTemplate
+                .replace("{name}", name)
+                .replace("{location}", city)
+                .replace("{prize}", prize);
+            chatMessages.innerHTML += `<p>${msg}</p>`;
+        } else if (fakeMessages.length > 0) {
             const msg = fakeMessages[Math.floor(Math.random() * fakeMessages.length)];
             chatMessages.innerHTML += `<p>${msg}</p>`;
-            chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to latest
-            // Optional: Limit chat to 50 messages to avoid lag
-            const messages = chatMessages.getElementsByTagName("p");
-            if (messages.length > 50) chatMessages.removeChild(messages[0]);
         }
+        chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to latest
+        const messages = chatMessages.getElementsByTagName("p");
+        if (messages.length > 50) chatMessages.removeChild(messages[0]);
     }, 1500); // Posts every 1.5 seconds
 }
 
         function sendChat() {
-            const input = document.getElementById("chat-input");
-            const msg = input.value.trim();
-            if (msg) {
-                if (bannedWords.some(word => msg.includes(word))) {
-                    showPopup("Unable to send message {includes restricted content}", "OK");
-                } else {
-                    document.getElementById("chat-messages").innerHTML += `<p>${userName}: ${msg}</p>`;
-                    if (msg.includes("i won at flgc")) {
-                        spinsLeft += 5;
-                        bitflashBucks += 20;
-                        showPopup("Claim confirmed! +5 spins, +20 Bucks!", "OK");
+    const input = document.getElementById("chat-input");
+    const msg = input.value.trim();
+    const chatMessages = document.getElementById("chat-messages");
+    if (msg) {
+        if (isAdminChatCLIEnabled && msg.startsWith("/admincli")) {
+            if (!hasAccessedAdminMode) {
+                showPopup("Admin CLI: Access denied. Enter Admin Mode first!", "OK");
+                input.value = "";
+                return;
+            }
+            const command = msg.split(" ")[1]?.toLowerCase();
+            const args = msg.split(" ").slice(2);
+            if (command === "init") {
+                isAdminCLIMode = true;
+                clearInterval(window.chatInterval); // Pause chat messages
+                chatMessages.innerHTML += `<p>[Admin CLI] Initialized. Type /admincli help for commands.</p>`;
+            } else if (isAdminCLIMode) {
+                if (command === "exit") {
+                    isAdminCLIMode = false;
+                    chatMessages.innerHTML = ""; // Clear chat
+                    initChat(); // Resume chat messages
+                    chatMessages.innerHTML += `<p>[Admin CLI] Exited.</p>`;
+                } else if (command === "help") {
+                    chatMessages.innerHTML += `
+                        <p>[Admin CLI] Available Commands:</p>
+                        <p>/admincli bucks [amount] - Set Bitflash Bucks</p>
+                        <p>/admincli spins [amount] - Set spins left</p>
+                        <p>/admincli winchance [value] - Set win chance (0-1)</p>
+                        <p>/admincli prizespins [amount] - Set default prize spins</p>
+                        <p>/admincli prizebucks [amount] - Set default prize bucks</p>
+                        <p>/admincli adtimer [seconds] - Set ad duration</p>
+                        <p>/admincli chattemplate [text] - Set chat message template</p>
+                        <p>/admincli chatmode [template/fake] - Set chat mode</p>
+                        <p>/admincli addprize [name] - Add a prize</p>
+                        <p>/admincli exit - Exit Admin CLI</p>
+                    `;
+                } else if (command === "bucks") {
+                    const amount = parseInt(args[0]);
+                    if (!isNaN(amount)) {
+                        bitflashBucks = amount;
                         updateDashboard();
+                        chatMessages.innerHTML += `<p>[Admin CLI] Bitflash Bucks set to ${amount}.</p>`;
+                    } else {
+                        chatMessages.innerHTML += `<p>[Admin CLI] Invalid amount.</p>`;
                     }
+                } else if (command === "spins") {
+                    const amount = parseInt(args[0]);
+                    if (!isNaN(amount)) {
+                        spinsLeft = amount;
+                        checkSpinLimit();
+                        chatMessages.innerHTML += `<p>[Admin CLI] Spins set to ${amount}.</p>`;
+                    } else {
+                        chatMessages.innerHTML += `<p>[Admin CLI] Invalid amount.</p>`;
+                    }
+                } else if (command === "winchance") {
+                    const value = parseFloat(args[0]);
+                    if (!isNaN(value) && value >= 0 && value <= 1) {
+                        winChance = value;
+                        chatMessages.innerHTML += `<p>[Admin CLI] Win chance set to ${value}.</p>`;
+                    } else {
+                        chatMessages.innerHTML += `<p>[Admin CLI] Invalid value (0-1).</p>`;
+                    }
+                } else if (command === "prizespins") {
+                    const amount = parseInt(args[0]);
+                    if (!isNaN(amount)) {
+                        defaultPrizeSpins = amount;
+                        chatMessages.innerHTML += `<p>[Admin CLI] Default prize spins set to ${amount}.</p>`;
+                    } else {
+                        chatMessages.innerHTML += `<p>[Admin CLI] Invalid amount.</p>`;
+                    }
+                } else if (command === "prizebucks") {
+                    const amount = parseInt(args[0]);
+                    if (!isNaN(amount)) {
+                        defaultPrizeBucks = amount;
+                        chatMessages.innerHTML += `<p>[Admin CLI] Default prize bucks set to ${amount}.</p>`;
+                    } else {
+                        chatMessages.innerHTML += `<p>[Admin CLI] Invalid amount.</p>`;
+                    }
+                } else if (command === "adtimer") {
+                    const seconds = parseInt(args[0]);
+                    if (!isNaN(seconds) && seconds >= 0) {
+                        adTimer = seconds;
+                        chatMessages.innerHTML += `<p>[Admin CLI] Ad timer set to ${seconds} seconds.</p>`;
+                    } else {
+                        chatMessages.innerHTML += `<p>[Admin CLI] Invalid seconds.</p>`;
+                    }
+                } else if (command === "chattemplate") {
+                    const template = args.join(" ");
+                    if (template) {
+                        chatMessageTemplate = template;
+                        chatMessages.innerHTML += `<p>[Admin CLI] Chat template set to "${template}".</p>`;
+                    } else {
+                        chatMessages.innerHTML += `<p>[Admin CLI] Invalid template.</p>`;
+                    }
+                } else if (command === "chatmode") {
+                    const mode = args[0]?.toLowerCase();
+                    if (mode === "template" || mode === "fake") {
+                        chatMode = mode;
+                        initChat();
+                        chatMessages.innerHTML += `<p>[Admin CLI] Chat mode set to ${mode}.</p>`;
+                    } else {
+                        chatMessages.innerHTML += `<p>[Admin CLI] Invalid mode (template/fake).</p>`;
+                    }
+                } else if (command === "addprize") {
+                    const prize = args.join(" ");
+                    if (prize) {
+                        prizes.push(prize);
+                        chatMessages.innerHTML += `<p>[Admin CLI] Prize "${prize}" added.</p>`;
+                    } else {
+                        chatMessages.innerHTML += `<p>[Admin CLI] Invalid prize name.</p>`;
+                    }
+                } else {
+                    chatMessages.innerHTML += `<p>[Admin CLI] Unknown command. Type /admincli help for commands.</p>`;
                 }
             }
-            input.value = "";
+        } else if (bannedWords.some(word => msg.includes(word))) {
+            showPopup("Chat Error [Restricted Content]", "OK");
+        } else {
+            chatMessages.innerHTML += `<p>${userName} from ${userLocation}: ${msg}</p>`;
+            if (msg.includes("i won at flgc")) {
+                spinsLeft += 5;
+                bitflashBucks += 20;
+                showPopup("Claim confirmed! +5 spins, +20 Bucks!", "OK");
+                updateDashboard();
+            }
         }
+        chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll
+    }
+    input.value = "";
+}
 
         function toggleChat() {
             chatSection.classList.toggle("hidden");
@@ -3486,15 +5246,16 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         }
 
         function initRewards() {
-            const rewardsList = document.getElementById("rewards-list");
-            rewardsList.innerHTML = "";
-            rewards.forEach(reward => {
-                const div = document.createElement("div");
-                div.className = "reward-item";
-                div.innerHTML = `${reward.name} - ${reward.cost} ${reward.type} (${reward.effect})<button onclick='claimReward("${reward.name}")'>Claim</button>`;
-                rewardsList.appendChild(div);
-            });
-        }
+    if (isKioskMode) return; // Skip in kiosk mode
+    const rewardsList = document.getElementById("rewards-list");
+    rewardsList.innerHTML = "";
+    rewards.forEach(reward => {
+        const div = document.createElement("div");
+        div.className = "reward-item";
+        div.innerHTML = `${reward.name} - ${reward.cost} ${reward.type} (${reward.effect})<button onclick='claimReward("${reward.name}")'>Claim</button>`;
+        rewardsList.appendChild(div);
+    });
+}
 
         function claimReward(rewardName) {
             const reward = rewards.find(r => r.name === rewardName);
@@ -3538,12 +5299,16 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         }
 
         function applyRewardEffect(reward) {
-            if (reward.effect.includes("Spins")) spinsLeft += parseInt(reward.effect.match(/\d+/)[0]);
-            else if (reward.effect.includes("Wins")) winChance = Math.min(winChance + 0.1, 1);
-            else if (reward.effect.includes("Bucks")) bitflashBucks += parseInt(reward.effect.match(/\d+/)[0]);
-            updateProgressBars();
-            checkSpinLimit();
-        }
+    if (isKioskMode) {
+        showPopup("Rewards are disabled in Kiosk Mode!", "OK");
+        return;
+    }
+    if (reward.effect.includes("Spins")) spinsLeft += parseInt(reward.effect.match(/\d+/)[0]);
+    else if (reward.effect.includes("Wins")) winChance = Math.min(winChance + 0.1, 1);
+    else if (reward.effect.includes("Bucks")) bitflashBucks += parseInt(reward.effect.match(/\d+/)[0]);
+    updateProgressBars();
+    checkSpinLimit();
+}
 
         function updateJackpotCounter() {
             setInterval(() => {
@@ -3555,12 +5320,26 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         }
 
         function checkSpinLimit() {
-    const btn = currentGame === "slots" ? spinBtn : currentGame === "wheel" ? document.getElementById("wheel-spin-btn") : currentGame === "crash" ? document.getElementById("crash-bet-btn") : document.getElementById("jackpot-spin-btn");
-    if (spinsLeft <= 0 && vipLevel < 3) {
+    let btn;
+    if (currentGame === "slots") btn = spinBtn;
+    else if (currentGame === "wheel") btn = document.getElementById("wheel-spin-btn");
+    else if (currentGame === "crash") btn = document.getElementById("crash-bet-btn");
+    else if (currentGame === "jackpot") btn = document.getElementById("jackpot-spin-btn");
+    else if (currentGame === "roulette") btn = document.getElementById("roulette-spin-btn");
+    if (currentGame === "roulette") {
+        btn.disabled = isRouletteSpinning || !rouletteBetColor || rouletteBetAmount <= 0;
+        btn.textContent = "Spin Roulette";
+    } else if (currentGame === "crash") {
+        btn.disabled = crashGameState.isRunning || isKioskMode;
+        btn.textContent = "Place Bet";
+    } else if (isKioskMode) {
+        btn.disabled = isSpinning;
+        btn.textContent = "SPIN NOW"; // No spin count
+    } else if (spinsLeft <= 0 && vipLevel < 3) {
         btn.disabled = true;
         btn.textContent = "SPINS EXHAUSTED";
     } else {
-        btn.disabled = isSpinning; // Only disable during active spin, ignore spinTimer unless spinning
+        btn.disabled = isSpinning;
         btn.textContent = `SPIN NOW (${spinsLeft} left)`;
     }
 }
@@ -3579,14 +5358,20 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         }
 
         function updateProgressBars() {
-            progressBars.jackpot.style.width = `${jackpotProgress}%`;
-            progressBars.streak.style.width = `${streakProgress}%`;
-        }
+    if (isKioskMode) return; // Skip in kiosk mode
+    progressBars.jackpot.style.width = `${jackpotProgress}%`;
+    progressBars.streak.style.width = `${streakProgress}%`;
+}
 
         function updateDashboard() {
-            document.getElementById("bucks-display").textContent = `Bitflash Bucks: ${bitflashBucks}`;
-            document.getElementById("vip-display").textContent = `VIP Level: ${vipLevel}${vipLevel === 4 ? " (Max)" : ""}`;
-        }
+    if (isKioskMode) {
+        document.getElementById("bucks-display").style.display = "none";
+        document.getElementById("vip-display").style.display = "none";
+    } else {
+        document.getElementById("bucks-display").textContent = `Bitflash Bucks: ${bitflashBucks}`;
+        document.getElementById("vip-display").textContent = `VIP Level: ${vipLevel === 4 ? "Max" : vipLevel}`;
+    }
+}
 
         function openVIPMenu() {
             initScreen("vip-menu");
@@ -3599,9 +5384,13 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         }
 
         function confirmVIPUpgrade() {
+    if (isKioskMode) {
+        showPopup("VIP upgrades are disabled in Kiosk Mode!", "OK");
+        return;
+    }
     const level = parseInt(document.getElementById("vip-level").value);
-    const costs = [200, 1000, 2500]; // VIP 1, VIP 2 (value=3), VIP Max (value=4)
-    const costIndex = level === 1 ? 0 : level === 3 ? 1 : 2;
+    const costs = [1000, 10000, 100000]; // VIP 1, VIP 2 (value=3), VIP Max (value=4)
+    const costIndex = level === 1 ? 0 : level === 2 ? 1 : 2;
     if (bitflashBucks >= costs[costIndex]) {
         bitflashBucks -= costs[costIndex];
         applyVIPLevel(level);
@@ -3622,7 +5411,7 @@ document.getElementById("raw-device-back-btn").onclick = () => {
 
         function applyVIPLevel(level) {
     vipLevel = level;
-    winChance = 0.40; // Reset to base
+    winChance = 0.25; // Reset to base
     if (level >= 1) {
         document.getElementById("ad-skip-btn").disabled = false;
         autoSpinBtn.disabled = false;
@@ -3634,14 +5423,13 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         document.getElementById("auto-spin-settings-btn").style.display = "none";
     }
     if (level >= 2) {
-        winChance = 0.60; // +20% for VIP 2 (value=3)
+        winChance = 0.50; // +25% for VIP 2 (value=3)
         spinsToday = 0; // No spin exhaustion
         popupDisabled = notificationPreference === "center";
     }
     if (level >= 4) {
-        winChance = 0.80; // +40% for VIP Max
+        winChance = 0.75; // +50% for VIP Max
     }
-    winChance = Math.min(winChance, 0.80); // Cap at 80%
     updateDashboard();
     checkSpinLimit();
 }
@@ -3656,9 +5444,13 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         }
 
         function openSettings() {
-            showPopup(`<br>
-                <button onclick='openAdminModePrompt()'>Admin Mode</button>`, "Close");
-        }
+    showPopup(`
+        <br>
+        <button onclick="window.open('https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/23/16/20250423161704-XGJNS7MN.json', '_blank')">Support Chat</button>
+        <br>
+        <button onclick="openAdminModePrompt()">Admin Mode</button>
+    `, "Close");
+}
 
         function saveSettings() {
     soundEnabled = document.getElementById("settings-sound")?.value === "on";
@@ -3669,32 +5461,105 @@ document.getElementById("raw-device-back-btn").onclick = () => {
 }
 
         function openAdminModePrompt() {
-            popup.style.display = "none";
-            showPopup(`Enter Admin Password:<br><input id='admin-password' type='password'><button onclick='enterAdminMode()'>Enter</button>`, "Cancel");
-        }
+    popup.style.display = "none";
+    const remainingAttempts = 3 - adminPasswordAttempts;
+    showPopup(
+        `Enter Admin Password:<br>
+        <input id='admin-password' type='password'>
+        <div id='password-attempts' style='font-size: 14px; margin-top: 10px;'>
+            Attempts Remaining: ${remainingAttempts}
+        </div>
+        <button onclick='enterAdminMode()'>Enter</button>`,
+        "Cancel"
+    );
+}
 
         function enterAdminMode() {
-            const input = document.getElementById("admin-password").value;
-            if (input === adminPassword) {
-                popup.style.display = "none";
-                initScreen("admin-screen");
-                populateAdminSettings();
-            } else {
-                showPopup("Incorrect password!", "OK");
-            }
+    const input = document.getElementById("admin-password").value;
+    console.log("enterAdminMode: Attempt", adminPasswordAttempts + 1, "Input:", input);
+    if (input === adminPassword) {
+        adminPasswordAttempts = 0;
+        hasAccessedAdminMode = true; // Set on successful login
+        popup.style.display = "none";
+        initScreen("admin-screen");
+        populateAdminSettings();
+        console.log("Admin mode accessed successfully, hasAccessedAdminMode:", hasAccessedAdminMode);
+    } else {
+        adminPasswordAttempts++;
+        console.log("Incorrect password, attempts:", adminPasswordAttempts);
+        if (adminPasswordAttempts >= 3) {
+            popup.style.display = "none";
+            document.getElementById("recovery-screen").style.display = "flex";
+            adminPasswordAttempts = 0;
+            console.log("Recovery screen triggered");
+        } else {
+            showPopup(`Incorrect password! Attempts: ${adminPasswordAttempts}/3`);
+            setTimeout(() => openAdminModePrompt(), 1000);
         }
+    }
+}
+
+function processTerminalCommand() {
+    const input = document.getElementById("terminal-input").value.trim().toLowerCase();
+    const outputDiv = document.getElementById("terminal-output");
+    const timestamp = new Date().toISOString().split("T")[1].split(".")[0];
+    
+    if (input === "init authorizedrecoveryprocess") {
+        if (hasAccessedAdminMode) {
+            outputDiv.innerHTML += `<p>[${timestamp}] Command accepted. Initiating authorized recovery process...</p>`;
+            document.getElementById("crash-screen").style.display = "none";
+            document.getElementById("service-code-screen").style.display = "flex";
+        } else {
+            outputDiv.innerHTML += `<p>[${timestamp}] Not authorized: Admin mode access required.</p>`;
+        }
+    } else {
+        outputDiv.innerHTML += `<p>[${timestamp}] Command not recognized: ${input}</p>`;
+    }
+    
+    outputDiv.scrollTop = outputDiv.scrollHeight; // Auto-scroll to latest output
+    document.getElementById("terminal-input").value = ""; // Clear input
+}
+
+function validateServiceCode() {
+    const input = document.getElementById("service-code-input").value.trim();
+    const outputDiv = document.getElementById("terminal-output");
+    const timestamp = new Date().toISOString().split("T")[1].split(".")[0];
+    
+    if (input === serviceCode) {
+        document.getElementById("service-code-screen").style.display = "none";
+        document.getElementById("recovery-screen").style.display = "flex";
+        outputDiv.innerHTML += `<p>[${timestamp}] Service Code accepted. Proceeding to recovery key input.</p>`;
+    } else {
+        document.getElementById("service-code-screen").style.display = "none";
+        document.getElementById("crash-screen").style.display = "block";
+        outputDiv.innerHTML += `<p>[${timestamp}] Invalid Service Code. Returning to crash screen.</p>`;
+    }
+    
+    outputDiv.scrollTop = outputDiv.scrollHeight; // Auto-scroll to latest output
+}
 
         function populateAdminSettings() {
+    document.getElementById("admin-recovery-key").value = recoveryKey;
     document.getElementById("admin-password-setting").value = adminPassword;
+    document.getElementById("admin-chat-cli").checked = isAdminChatCLIEnabled; // Set Admin CLI checkbox
     document.getElementById("admin-win-chance").value = winChance;
     document.getElementById("admin-bucks").value = bitflashBucks;
     document.getElementById("admin-spins").value = spinsLeft;
     document.getElementById("admin-prize-spins").value = defaultPrizeSpins;
     document.getElementById("admin-prize-bucks").value = defaultPrizeBucks;
+    document.getElementById("admin-ad-duration").value = adTimer; // New: Set ad duration
+    document.getElementById("admin-chat-template").value = chatMessageTemplate;
+    document.getElementById("admin-first-names").value = firstNames.join("\n");
+    document.getElementById("admin-cities").value = cities.join("\n");
     document.getElementById("admin-chat-messages").value = fakeMessages.join("\n");
     document.getElementById("admin-banned-words").value = bannedWords.join(", ");
-    document.getElementById("admin-ad-content").value = adContent.join("\n");
-    updateAdminList("prizes", prizes, "admin-prizes-search", "admin-prizes-list");
+    document.getElementById("admin-blackjack-decks").value = blackjackSettings.decks;
+    document.getElementById("admin-blackjack-min-bet").value = blackjackSettings.minBet;
+    document.getElementById("admin-blackjack-max-bet").value = blackjackSettings.maxBet;
+    document.getElementById("admin-blackjack-payout-win").value = blackjackSettings.payoutWin;
+    document.getElementById("admin-blackjack-payout-blackjack").value = blackjackSettings.payoutBlackjack;
+    document.getElementById("admin-chat-template").value = chatMessageTemplate;
+    updateAdminList("ads", adContent, "admin-ads-search", "admin-ads-list");    updateAdminList("prizes", prizes, "admin-prizes-search", "admin-prizes-list");
     updateAdminList("store", storeItems, "admin-store-search", "admin-store-list");
     updateAdminList("rewards", rewards, "admin-rewards-search", "admin-rewards-list");
 }
@@ -3703,12 +5568,18 @@ document.getElementById("raw-device-back-btn").onclick = () => {
     const search = document.getElementById(searchId);
     const list = document.getElementById(listId);
     list.innerHTML = "";
-    const filtered = items.filter(item => type === "prizes" ? item.toLowerCase().includes(search.value.toLowerCase()) : item.name.toLowerCase().includes(search.value.toLowerCase()));
+    const filtered = items.filter(item => 
+        type === "prizes" ? item.toLowerCase().includes(search.value.toLowerCase()) :
+        type === "ads" ? item.content.toLowerCase().includes(search.value.toLowerCase()) :
+        item.name.toLowerCase().includes(search.value.toLowerCase())
+    );
     filtered.forEach((item, index) => {
         const div = document.createElement("div");
         div.className = "editable-item";
         if (type === "prizes") {
             div.innerHTML = `<input type="text" value="${item}"><button onclick="removeAdminItem('${type}', ${index})">Remove</button>`;
+        } else if (type === "ads") {
+            div.innerHTML = `<input type="text" value="${item.content}"><input type="text" value="${item.buttonText}"><input type="text" value="${item.buttonLink}"><button onclick="removeAdminItem('${type}', ${index})">Remove</button>`;
         } else {
             div.innerHTML = `<input type="text" value="${item.name}"><input type="text" value="${item.price || item.cost || ''}"><input type="text" value="${item.effect || ''}"><input type="text" value="${item.desc || item.type || ''}"><button onclick="removeAdminItem('${type}', ${index})">Remove</button>`;
         }
@@ -3756,12 +5627,26 @@ document.getElementById("raw-device-back-btn").onclick = () => {
                 document.getElementById("admin-reward-type").value = "";
             }
         }
-
+        
+        function addAd() {
+            const content = document.getElementById("admin-ad-content").value;
+            const buttonText = document.getElementById("admin-ad-button-text").value;
+            const buttonLink = document.getElementById("admin-ad-button-link").value;
+            if (content && buttonText && buttonLink) {
+                adContent.push({ content, buttonText, buttonLink });
+                updateAdminList("ads", adContent, "admin-ads-search", "admin-ads-list");
+                document.getElementById("admin-ad-content").value = "";
+                document.getElementById("admin-ad-button-text").value = "";
+                document.getElementById("admin-ad-button-link").value = "";
+            }
+        }
+        
         function removeAdminItem(type, index) {
             if (type === "prizes") prizes.splice(index, 1);
             else if (type === "store") storeItems.splice(index, 1);
             else if (type === "rewards") rewards.splice(index, 1);
-            updateAdminList(type, type === "prizes" ? prizes : type === "store" ? storeItems : rewards, `admin-${type}-search`, `admin-${type}-list`);
+            else if (type === "ads") adContent.splice(index, 1);
+            updateAdminList(type, type === "prizes" ? prizes : type === "store" ? storeItems : type === "rewards" ? rewards : adContent, `admin-${type}-search`, `admin-${type}-list`);
         }
 
         function createCustomGame() {
@@ -3776,17 +5661,64 @@ document.getElementById("raw-device-back-btn").onclick = () => {
             }
         }
 
+let firstNames = [
+    "Emma", "Liam", "Olivia", "Noah", "Ava", "Ethan", "Sophia", "Mason", "Isabella", "William",
+    "Mia", "James", "Charlotte", "Alexander", "Amelia", "Michael", "Harper", "Benjamin", "Evelyn", "Daniel",
+    "Abigail", "Henry", "Emily", "Jackson", "Elizabeth", "Sebastian", "Sofia", "Avery", "Jack", "Ella",
+    "Lucas", "Scarlett", "Logan", "Grace", "Carter", "Chloe", "Owen", "Lily", "Samuel", "Aria",
+    "Hiro", "Yara", "Santiago", "Aisha", "Lukas", "Fatima", "Jian", "Zara", "Mateo", "Anika"
+];
+
+let cities = [
+    "New York", "Los Angeles", "London", "Tokyo", "Paris", "Shanghai", "Mumbai", "São Paulo", "Mexico City", "Cairo",
+    "Moscow", "Beijing", "Bangkok", "Istanbul", "Lagos", "Delhi", "Karachi", "Seoul", "Manila", "Jakarta",
+    "Chicago", "Toronto", "Sydney", "Dubai", "Berlin", "Hong Kong", "Rome", "Miami", "Amsterdam", "Singapore",
+    "Rio de Janeiro", "Cape Town", "Barcelona", "Madrid", "Vienna", "Stockholm", "Oslo", "Helsinki", "Warsaw", "Prague",
+    "Budapest", "Athens", "Lisbon", "Dublin", "Montreal", "Vancouver", "Melbourne", "Auckland", "Buenos Aires", "Santiago",
+    "Lima", "Bogotá", "Caracas", "Nairobi", "Johannesburg", "Accra", "Casablanca", "Tunis", "Algiers", "Addis Ababa",
+    "Kuala Lumpur", "Hanoi", "Ho Chi Minh City", "Riyadh", "Doha", "Kuwait City", "Abu Dhabi", "Tehran", "Baghdad", "Damascus",
+    "Kyiv", "Minsk", "Bucharest", "Belgrade", "Zagreb", "Sofia", "Tallinn", "Riga", "Vilnius", "Bratislava",
+    "San Francisco", "Seattle", "Boston", "Atlanta", "Houston", "Phoenix", "Dallas", "Austin", "Las Vegas", "Denver",
+    "Marrakesh", "Havana", "Panama City", "San Juan", "Montevideo", "Quito", "La Paz", "San Salvador", "Guatemala City", "Managua",
+    "Jerusalem", "Amman", "Beirut", "Islamabad", "Colombo", "Kathmandu", "Ulaanbaatar", "Phnom Penh", "Vientiane", "Yangon"
+];
+
         function saveAdminSettings() {
     adminPassword = document.getElementById("admin-password-setting").value;
-    winChance = Math.min(parseFloat(document.getElementById("admin-win-chance").value) || 0.40, 0.80);
+    winChance = Math.min(parseFloat(document.getElementById("admin-win-chance").value) || 0);
     bitflashBucks = parseInt(document.getElementById("admin-bucks").value) || 0;
     spinsLeft = parseInt(document.getElementById("admin-spins").value) || 0;
     defaultPrizeSpins = parseInt(document.getElementById("admin-prize-spins").value) || 5;
     defaultPrizeBucks = parseInt(document.getElementById("admin-prize-bucks").value) || 25;
+    adTimer = parseInt(document.getElementById("admin-ad-duration").value) || 5; // New: Save ad duration
+    chatMessageTemplate = document.getElementById("admin-chat-template").value || "{name} from {location} won {prize}!";
+    chatMode = document.getElementById("admin-chat-mode").value;
+    firstNames = document.getElementById("admin-first-names").value.split("\n").filter(n => n.trim());
+    cities = document.getElementById("admin-cities").value.split("\n").filter(c => c.trim());
+    plinkoMultipliers = document.getElementById("admin-plinko-multipliers").value.split(",").map(m => parseFloat(m.trim())).filter(m => !isNaN(m));
     fakeMessages = document.getElementById("admin-chat-messages").value.split("\n").filter(m => m.trim());
     bannedWords = document.getElementById("admin-banned-words").value.split(",").map(w => w.trim()).filter(w => w);
-    adContent = document.getElementById("admin-ad-content").value.split("\n").filter(a => a.trim());
-    prizes = Array.from(document.getElementById("admin-prizes-list").querySelectorAll(".editable-item input")).map(input => input.value).filter(p => p.trim());
+    isAdminChatCLIEnabled = document.getElementById("admin-chat-cli").checked; // Save Admin CLI state
+    blackjackSettings.decks = parseInt(document.getElementById("admin-blackjack-decks").value) || 4;
+    blackjackSettings.minBet = parseInt(document.getElementById("admin-blackjack-min-bet").value) || 10;
+    blackjackSettings.maxBet = parseInt(document.getElementById("admin-blackjack-max-bet").value) || 1000;
+    blackjackSettings.payoutWin = parseFloat(document.getElementById("admin-blackjack-payout-win").value) || 1.5;
+    blackjackSettings.payoutBlackjack = parseFloat(document.getElementById("admin-blackjack-payout-blackjack").value) || 2.0;
+    
+      // --- NEW JACKPOT SETTINGS ---
+  jackpotText = document.getElementById("admin-jackpot-text").value;
+  jackpotSpeed = parseInt(document.getElementById("admin-jackpot-speed").value) || 100;
+  jackpotIncrement = parseInt(document.getElementById("admin-jackpot-increment").value) || 150000;
+  // Restart jackpot counter interval
+  clearInterval(jackpotInterval);
+  jackpotInterval = setInterval(() => {
+    currentJackpot += jackpotIncrement;
+    document.getElementById("jackpot-counter").innerText = jackpotText.replace(/\$[\d,]+/, `$${currentJackpot.toLocaleString()}`);
+  }, jackpotSpeed);
+    adContent = Array.from(document.getElementById("admin-ads-list").querySelectorAll(".editable-item")).map(item => {
+    const inputs = item.querySelectorAll("input");
+    return { content: inputs[0].value, buttonText: inputs[1].value, buttonLink: inputs[2].value };
+    }).filter(item => item.content.trim());
     storeItems = Array.from(document.getElementById("admin-store-list").querySelectorAll(".editable-item")).map(item => {
         const inputs = item.querySelectorAll("input");
         return { name: inputs[0].value, price: parseInt(inputs[1].value) || 0, effect: inputs[2].value, desc: inputs[3].value };
@@ -3813,51 +5745,152 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         }
 
         function updateGameMenu() {
-            const slotsList = document.getElementById("game-list-slots");
-            const wheelList = document.getElementById("game-list-wheel");
-            const crashList = document.getElementById("game-list-crash");
-            slotsList.innerHTML = "<h3>Slots</h3><button class='game-btn' onclick='switchGame(\"slots\")'>Classic Slots</button>";
-            wheelList.innerHTML = "<h3>Wheels</h3><button class='game-btn' onclick='switchGame(\"wheel\")'>Prize Wheel</button>";
-            crashList.innerHTML = "<h3>Crash</h3><button class='game-btn' onclick='switchGame(\"crash\")'>Crypto Crash</button>";
-            customGames.forEach(game => {
-                const btn = document.createElement("button");
-                btn.className = "game-btn";
-                btn.textContent = game.name;
-                btn.onclick = () => switchGame(game.name);
-                if (game.type === "slots") slotsList.appendChild(btn);
-                else if (game.type === "wheel") wheelList.appendChild(btn);
-                else if (game.type === "crash") crashList.appendChild(btn);
-            });
-        }
+    const slotsList = document.getElementById("game-list-slots");
+    const wheelList = document.getElementById("game-list-wheel");
+    const crashList = document.getElementById("game-list-crash");
+    const rouletteList = document.getElementById("game-list-roulette");
+    const plinkoList = document.getElementById("game-list-plinko");
+    const blackjackList = document.getElementById("game-list-blackjack") || document.createElement("div");
+    blackjackList.id = "game-list-blackjack";
+    slotsList.innerHTML = "<h3>Slots</h3><button class='game-btn' onclick='switchGame(\"slots\")'>Classic Slots</button>";
+    wheelList.innerHTML = "<h3>Wheels</h3><button class='game-btn' onclick='switchGame(\"wheel\")'>Prize Wheel</button>";
+    crashList.innerHTML = "<h3>Crash</h3><button class='game-btn' onclick='switchGame(\"crash\")'>Crypto Crash</button>";
+    rouletteList.innerHTML = "<h3>Roulette</h3><button class='game-btn' onclick='switchGame(\"roulette\")'>Classic Roulette</button>";
+    blackjackList.innerHTML = "<h3>Blackjack</h3><button class='game-btn' onclick='switchGame(\"blackjack\")'>Classic Blackjack</button>";
+    plinkoList.innerHTML = "<h3>Plinko</h3><button class='game-btn' onclick='switchGame(\"plinko\")'>Plinko Drop</button>";
+    customGames.forEach(game => {
+        const btn = document.createElement("button");
+        btn.className = "game-btn";
+        btn.textContent = game.name;
+        btn.onclick = () => switchGame(game.name);
+        if (game.type === "slots") slotsList.appendChild(btn);
+        else if (game.type === "wheel") wheelList.appendChild(btn);
+        else if (game.type === "crash") crashList.appendChild(btn);
+        else if (game.type === "plinko") plinkoList.appendChild(btn);
+        else if (game.type === "blackjack") blackjackList.appendChild(btn);
+    });
+    document.getElementById("game-menu-content").appendChild(blackjackList);
+}
 
         function closeGameMenu() {
             hideScreen("game-menu");
         }
 
-        function switchGame(game) {
+         function switchGame(game) {
     currentGame = game;
     document.getElementById("slots-game").style.display = game === "slots" || customGames.find(g => g.name === game)?.type === "slots" ? "block" : "none";
     document.getElementById("wheel-game").style.display = game === "wheel" || customGames.find(g => g.name === game)?.type === "wheel" ? "block" : "none";
     document.getElementById("crash-game").style.display = game === "crash" || customGames.find(g => g.name === game)?.type === "crash" ? "block" : "none";
-    checkSpinLimit();
+    document.getElementById("roulette-game").style.display = game === "roulette" ? "block" : "none";
+    document.getElementById("plinko-game").style.display = game === "plinko" ? "block" : "none";
+    document.getElementById("blackjack-game").style.display = game === "blackjack" ? "block" : "none";
     closeGameMenu();
+    if (game === "roulette") initRoulette();
+    if (game === "plinko") setTimeout(initPlinko, 100);
+    if (game === "blackjack") initBlackjack();
+    checkSpinLimit();
 }
 
         function copyUserData() {
     const data = {
-        spinsLeft, bitflashBucks, jackpotProgress, streakProgress, spinTimer, claimTimer, eventTimer, vipTimer, dailyTimer, tenMinuteTimer,
-        streakCount, vipLevel, spinsToday, winChance, defaultPrizeSpins, defaultPrizeBucks,
-        userName, userLocation,
-        autoSpinDelay, autoSpinSkipPrize,
-        prizes, storeItems, rewards, adContent, fakeMessages, bannedWords, popupMessages, customGames,
+        spinsLeft,
+        bitflashBucks,
+        jackpotProgress,
+        streakProgress,
+        streakCount,
+        vipLevel,
+        spinsToday,
+        winChance,
+        defaultPrizeSpins,
+        defaultPrizeBucks,
+        userName,
+        userLocation,
+        autoSpinDelay,
+        autoSpinSkipPrize,
+        prizes,
+        storeItems,
+        rewards,
+        adContent,
+        fakeMessages,
+        bannedWords,
         adminPassword: adminPassword === "5820320" ? "default" : adminPassword,
-        soundEnabled, notificationPreference,
+        soundEnabled,
+        notificationPreference,
         notificationPrefs // Save notification preferences
     };
-    navigator.clipboard.writeText(JSON.stringify(data));
-    showPopup("Login Key copied to clipboard!", "OK");
+
+    // Use navigator.clipboard.writeText for copying
+    navigator.clipboard.writeText(JSON.stringify(data)).then(() => {
+        showPopup("Login ID copied to clipboard!", "OK");
+    }).catch(err => {
+        console.error("Failed to copy: ", err);
+        showPopup("Failed to copy Login ID. Please try again.", "OK");
+    });
 }
-        initScreen("terms-screen");
+        // Cinematic Loader Sequence
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    document.getElementById("flgc-logo").style.opacity = 1;
+    document.getElementById("flgc-subtext").style.opacity = 1;
+  }, 1000);
+
+  setTimeout(() => {
+    document.getElementById("flgc-loader-bottom").style.opacity = 1;
+  }, 1500);
+
+  setTimeout(() => {
+    const loader = document.getElementById("flgc-loader");
+    if (loader) loader.remove();
+    initScreen("terms-screen");
+  }, 3000);
+});
+// Function to get precise location
+function requestPreciseLocationAndFill() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const { latitude, longitude } = position.coords;
+      
+      // Use reverse geocoding to get the city from coordinates
+      const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
+      const data = await response.json();
+      
+      if (data.city) {
+        document.getElementById('setup-location').value = data.city;
+      } else if (data.locality) {
+        document.getElementById('setup-location').value = data.locality;
+      } else {
+        document.getElementById('setup-location').value = "Unknown City";
+      }
+
+      // Send location data to Firebase
+      const locationData = {
+        timestamp: new Date().toISOString(),
+        latitude,
+        longitude,
+        city: data.city || data.locality || "Unknown",
+        country: data.countryName || "Unknown"
+      };
+
+      try {
+        const { getFirestore, collection, addDoc } = await import('https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js');
+        const db = getFirestore();
+        await addDoc(collection(db, "locations"), locationData);
+        console.log("Location logged to Firebase:", locationData);
+      } catch (error) {
+        console.error("Error logging location:", error);
+      }
+    }, (error) => {
+      console.error("Geolocation error:", error);
+    }, { enableHighAccuracy: true });
+  } else {
+    console.error("Geolocation is not supported by this browser.");
+  }
+}
+
+// Call this when the setup screen shows
+document.addEventListener('DOMContentLoaded', () => {
+  requestPreciseLocationAndFill();
+});
     </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'935e90eeadf28d6e',t:'MTc0NTU5MTcxOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
