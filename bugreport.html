@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLGC Bug Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap" rel="stylesheet">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAR5ZNjlqMDSu6nTLEYrTQZrFhSODply8s",
+            authDomain: "flgcas.firebaseapp.com",
+            projectId: "flgcas",
+            storageBucket: "flgcas.firebasestorage.app",
+            messagingSenderId: "756441459947",
+            appId: "1:756441459947:web:82e6aaa245c5cea95ae2ae",
+            measurementId: "G-WT7712F2DP"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Lists of functions and components derived from flgc.netlify.app/source
+        const flgcFunctions = [
+            "spinSlot", "spinWheel", "startCrashGame", "spinRoulette", "dropPlinkoBall", "dealBlackjack",
+            "spinJackpot", "initChat", "sendChat", "claimReward", "watchAdForReward", "applyVIPLevel",
+            "saveAdminSettings", "enterAdminMode", "updateProgressBars", "checkSpinLimit",
+            "updateJackpotCounter", "toggleStore", "requestPreciseLocationAndFill", "copyUserData",
+            "initRewards", "toggleChat", "applyDailyBoosts", "confirmVIPUpgrade", "openSettings",
+            "processTerminalCommand", "validateServiceCode", "addPrize", "addStoreItem", "addReward",
+            "addAd", "createCustomGame", "updateGameMenu", "switchGame", "saveSettings",
+            "populateAdminSettings", "updateAdminList", "exitAdminMode"
+        ];
+
+        const flgcComponents = [
+            "slots-machine", "wheel-container", "crash-graph", "roulette-canvas", "plinko-canvas",
+            "blackjack-table", "new-jackpot-wheel-container", "store-section", "chat-section",
+            "notification-section", "vip-menu", "admin-screen", "terms-screen", "setup-screen",
+            "popup", "ad-player", "jackpot-popup", "main-container", "header", "timers-section",
+            "game-section", "progress-section", "history-section", "rewards-section", "flgc-loader",
+            "install-banner", "restore-screen", "tos-screen", "policy-screen"
+        ];
+
+        // Function-to-component mapping based on source code analysis
+        const functionComponentMap = {
+            "spinSlot": ["slots-machine", "game-section"],
+            "spinWheel": ["wheel-container", "game-section"],
+            "startCrashGame": ["crash-graph", "game-section"],
+            "spinRoulette": ["roulette-canvas", "game-section"],
+            "dropPlinkoBall": ["plinko-canvas", "game-section"],
+            "dealBlackjack": ["blackjack-table", "game-section"],
+            "spinJackpot": ["new-jackpot-wheel-container", "jackpot-popup"],
+            "initChat": ["chat-section"],
+            "sendChat": ["chat-section"],
+            "claimReward": ["rewards-section"],
+            "watchAdForReward": ["ad-player", "popup"],
+            "applyVIPLevel": ["vip-menu"],
+            "saveAdminSettings": ["admin-screen"],
+            "enterAdminMode": ["admin-screen", "popup"],
+            "updateProgressBars": ["progress-section"],
+            "checkSpinLimit": ["game-section"],
+            "updateJackpotCounter": ["jackpot-counter"],
+            "toggleStore": ["store-section"],
+            "requestPreciseLocationAndFill": ["setup-screen"],
+            "copyUserData": ["setup-screen", "popup"],
+            "initRewards": ["rewards-section"],
+            "toggleChat": ["chat-section"],
+            "applyDailyBoosts": ["timers-section"],
+            "confirmVIPUpgrade": ["vip-menu"],
+            "openSettings": ["popup"],
+            "processTerminalCommand": ["admin-screen"],
+            "validateServiceCode": ["admin-screen"],
+            "addPrize": ["admin-screen"],
+            "addStoreItem": ["admin-screen", "store-section"],
+            "addReward": ["admin-screen", "rewards-section"],
+            "addAd": ["admin-screen", "ad-player"],
+            "createCustomGame": ["admin-screen", "game-menu"],
+            "updateGameMenu": ["game-menu"],
+            "switchGame": ["game-section"],
+            "saveSettings": ["popup"],
+            "populateAdminSettings": ["admin-screen"],
+            "updateAdminList": ["admin-screen"],
+            "exitAdminMode": ["admin-screen"]
+        };
+
+        function populateRelatedComponents() {
+            const selectedFunction = document.getElementById("related-function").value;
+            const relatedComponentSelect = document.getElementById("related-component");
+            relatedComponentSelect.innerHTML = '<option value="" disabled selected>Select a component</option><option value="unsure">Unsure</option>';
+
+            if (selectedFunction && functionComponentMap[selectedFunction]) {
+                functionComponentMap[selectedFunction].forEach(comp => {
+                    const option = document.createElement("option");
+                    option.value = comp;
+                    option.textContent = comp;
+                    relatedComponentSelect.appendChild(option);
+                });
+            } else {
+                flgcComponents.forEach(comp => {
+                    const option = document.createElement("option");
+                    option.value = comp;
+                    option.textContent = comp;
+                    relatedComponentSelect.appendChild(option);
+                });
+            }
+        }
+
+        async function submitBugReport() {
+            const submitBtn = document.getElementById("submit-btn");
+            const agreeCheckbox = document.getElementById("data-agreement");
+            if (!agreeCheckbox.checked) {
+                showPopup("You must agree to data collection or opt out to submit.", "OK");
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Submitting...";
+
+            const bugReport = {
+                timestamp: new Date().toISOString(),
+                reporterName: document.getElementById("reporter-name").value.trim(),
+                reporterEmail: document.getElementById("reporter-email").value.trim(),
+                reporterLocation: document.getElementById("reporter-location").value.trim(),
+                bugDescription: document.getElementById("bug-description").value.trim(),
+                stepsToReproduce: document.getElementById("steps-to-reproduce").value.trim(),
+                gameMode: document.getElementById("game-mode").value,
+                relatedFunction: document.getElementById("related-function").value,
+                relatedComponent: document.getElementById("related-component").value,
+                secondaryComponents: Array.from(document.getElementById("secondary-components").selectedOptions).map(opt => opt.value),
+                severity: document.getElementById("severity").value,
+                browserVersion: navigator.userAgent,
+                flgcVersion: "Unknown", // Placeholder, as version not explicitly provided in source
+                additionalNotes: document.getElementById("additional-notes").value.trim(),
+                screenshot: null // Placeholder for future implementation
+            };
+
+            if (document.getElementById("collect-data").checked) {
+                bugReport.deviceInfo = {
+                    userAgent: navigator.userAgent,
+                    platform: navigator.platform,
+                    screenResolution: `${screen.width}x${screen.height}`,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    deviceMemory: navigator.deviceMemory || "N/A",
+                    cpuCores: navigator.hardwareConcurrency || "N/A",
+                    touchSupport: 'ontouchstart' in window || navigator.maxTouchPoints > 0
+                };
+
+                try {
+                    const battery = await navigator.getBattery();
+                    bugReport.deviceInfo.battery = {
+                        charging: battery.charging,
+                        level: battery.level
+                    };
+                } catch {
+                    bugReport.deviceInfo.battery = null;
+                }
+
+                try {
+                    const ipResponse = await fetch("https://ipapi.co/json/");
+                    const ipData = await ipResponse.json();
+                    bugReport.networkInfo = {
+                        ip: ipData.ip,
+                        city: ipData.city,
+                        region: ipData.region,
+                        country: ipData.country_name,
+                        latitude: ipData.latitude,
+                        longitude: ipData.longitude,
+                        org: ipData.org,
+                        asn: ipData.asn,
+                        connectionType: navigator.connection?.effectiveType || "unknown"
+                    };
+                } catch {
+                    bugReport.networkInfo = null;
+                }
+            }
+
+            try {
+                await addDoc(collection(db, "bug_reports"), bugReport);
+                showPopup("Bug report submitted successfully!", "OK");
+                document.getElementById("bug-report-form").reset();
+                document.getElementById("preview-content").innerHTML = "";
+            } catch (error) {
+                console.error("Error submitting bug report:", error);
+                showPopup("Failed to submit bug report. Please try again.", "OK");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Submit Bug Report";
+            }
+        }
+
+        function showPopup(message, buttonText) {
+            const popup = document.getElementById("popup");
+            popup.innerHTML = `<p>${message}</p><button onclick="document.getElementById('popup').style.display='none'">${buttonText}</button>`;
+            popup.style.display = "block";
+        }
+
+        function updatePreview() {
+            const previewContent = document.getElementById("preview-content");
+            const formData = {
+                Name: document.getElementById("reporter-name").value.trim() || "Not provided",
+                Email: document.getElementById("reporter-email").value.trim() || "Not provided",
+                Location: document.getElementById("reporter-location").value.trim() || "Not provided",
+                "Bug Description": document.getElementById("bug-description").value.trim() || "Not provided",
+                "Steps to Reproduce": document.getElementById("steps-to-reproduce").value.trim() || "Not provided",
+                "Game Mode/Component": document.getElementById("game-mode").value || "Not selected",
+                "Related Function": document.getElementById("related-function").value || "Not selected",
+                "Related Component": document.getElementById("related-component").value || "Not selected",
+                "Secondary Components": Array.from(document.getElementById("secondary-components").selectedOptions).map(opt => opt.value).join(", ") || "None",
+                Severity: document.getElementById("severity").value || "Not selected",
+                "Additional Notes": document.getElementById("additional-notes").value.trim() || "None"
+            };
+
+            let previewHTML = "<h3>Bug Report Preview</h3>";
+            for (const [key, value] of Object.entries(formData)) {
+                previewHTML += `<p><strong>${key}:</strong> ${value}</p>`;
+            }
+            previewContent.innerHTML = previewHTML;
+        }
+
+        function validateForm() {
+            const submitBtn = document.getElementById("submit-btn");
+            const requiredFields = [
+                "reporter-name", "reporter-email", "bug-description",
+                "steps-to-reproduce", "game-mode", "related-function",
+                "related-component", "severity"
+            ];
+            const allFilled = requiredFields.every(id => {
+                const field = document.getElementById(id);
+                return field.value.trim() !== "";
+            });
+            submitBtn.disabled = !allFilled || !document.getElementById("data-agreement").checked;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("bug-report-form");
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+                submitBugReport();
+            });
+
+            // Populate function and component dropdowns
+            const functionSelect = document.getElementById("related-function");
+            functionSelect.innerHTML = '<option value="" disabled selected>Select a function</option><option value="unsure">Unsure</option>';
+            flgcFunctions.forEach(func => {
+                const option = document.createElement("option");
+                option.value = func;
+                option.textContent = func;
+                functionSelect.appendChild(option);
+            });
+
+            const componentSelect = document.getElementById("related-component");
+            componentSelect.innerHTML = '<option value="" disabled selected>Select a component</option><option value="unsure">Unsure</option>';
+            flgcComponents.forEach(comp => {
+                const option = document.createElement("option");
+                option.value = comp;
+                option.textContent = comp;
+                componentSelect.appendChild(option);
+            });
+
+            const secondaryComponentSelect = document.getElementById("secondary-components");
+            secondaryComponentSelect.innerHTML = '<option value="none">None</option>';
+            flgcComponents.forEach(comp => {
+                const option = document.createElement("option");
+                option.value = comp;
+                option.textContent = comp;
+                secondaryComponentSelect.appendChild(option);
+            });
+
+            // Auto-fill location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    try {
+                        const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&localityLanguage=en`);
+                        const data = await response.json();
+                        document.getElementById("reporter-location").value = data.city || data.locality || "Unknown";
+                        updatePreview();
+                    } catch (error) {
+                        console.error("Error fetching location:", error);
+                    }
+                });
+            }
+
+            // Real-time form validation and preview
+            form.querySelectorAll("input, textarea, select").forEach(field => {
+                field.addEventListener("input", () => {
+                    validateForm();
+                    updatePreview();
+                });
+            });
+
+            // Update related components when function changes
+            document.getElementById("related-function").addEventListener("change", populateRelatedComponents);
+
+            // Toggle data collection fields
+            document.getElementById("collect-data").addEventListener("change", (e) => {
+                const dataFields = document.getElementById("data-collection-details");
+                dataFields.style.display = e.target.checked ? "block" : "none";
+                validateForm();
+            });
+
+            // Initial validation
+            validateForm();
+            updatePreview();
+        });
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #1a0d2e, #4a0072);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+        #main-container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 0 50px #ff00ff, 0 0 100px #00ffff;
+            animation: glow 2s infinite alternate;
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 0 50px #ff00ff, 0 0 100px #00ffff; }
+            100% { box-shadow: 0 0 70px #ff00ff, 0 0 120px #00ffff; }
+        }
+        h1 {
+            font-size: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #00ffff;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        label {
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: #00ffff;
+        }
+        input, textarea, select {
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            background: #333;
+            color: #fff;
+            width: 100%;
+            transition: box-shadow 0.3s;
+        }
+        input:focus, textarea:focus, select:focus {
+            box-shadow: 0 0 15px #ff00ff;
+            outline: none;
+        }
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        select[multiple] {
+            height: 100px;
+        }
+        button {
+            padding: 15px;
+            font-size: 20px;
+            background: #ff00ff;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+        }
+        button:hover {
+            background: #00ffff;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #00ffff;
+        }
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        #preview-section {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        #popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.98);
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 0 50px #ff00ff;
+            z-index: 1000;
+            text-align: center;
+            display: none;
+            animation: popupFade 0.3s ease;
+        }
+        @keyframes popupFade {
+            from { opacity: 0; transform: translate(-50%, -60%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+        #popup p {
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        #popup button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+        }
+        #data-collection-details {
+            display: none;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        @media (max-width: 768px) {
+            #main-container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 32px;
+            }
+            h3 {
+                font-size: 20px;
+            }
+            input, textarea, select {
+                font-size: 14px;
+            }
+            button {
+                font-size: 16px;
+                padding: 12px;
+            }
+            #popup {
+                padding: 20px;
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="main-container">
+        <h1>FLGC Bug Report</h1>
+        <form id="bug-report-form">
+            <label for="reporter-name">Your Name:</label>
+            <input id="reporter-name" type="text" placeholder="Enter your name" required>
+
+            <label for="reporter-email">Your Email:</label>
+            <input id="reporter-email" type="email" placeholder="Enter your email" required>
+
+            <label for="reporter-location">Your Location:</label>
+            <input id="reporter-location" type="text" placeholder="Enter your city/location">
+
+            <label for="bug-description">Bug Description:</label>
+            <textarea id="bug-description" placeholder="Describe the bug in detail (e.g., what happened, what was expected)" required></textarea>
+
+            <label for="steps-to-reproduce">Steps to Reproduce:</label>
+            <textarea id="steps-to-reproduce" placeholder="List the steps to reproduce the bug (e.g., 1. Open slots, 2. Click spin, 3. Error appears)" required></textarea>
+
+            <label for="game-mode">Game Mode/Component:</label>
+            <select id="game-mode" required>
+                <option value="" disabled selected>Select a game mode or component</option>
+                <option value="slots">Slots</option>
+                <option value="wheel">Prize Wheel</option>
+                <option value="crash">Crypto Crash</option>
+                <option value="roulette">Roulette</option>
+                <option value="plinko">Plinko</option>
+                <option value="blackjack">Blackjack</option>
+                <option value="jackpot">Jackpot</option>
+                <option value="store">Store</option>
+                <option value="chat">Chat</option>
+                <option value="rewards">Rewards</option>
+                <option value="notifications">Notifications</option>
+                <option value="vip">VIP Menu</option>
+                <option value="admin">Admin Panel</option>
+                <option value="setup">Setup Screen</option>
+                <option value="terms">Terms Screen</option>
+                <option value="general">General (Other)</option>
+            </select>
+
+            <label for="related-function">Related Function:</label>
+            <select id="related-function" required>
+                <option value="" disabled selected>Select a function</option>
+                <option value="unsure">Unsure</option>
+                <!-- Populated dynamically -->
+            </select>
+
+            <label for="related-component">Primary Related Component:</label>
+            <select id="related-component" required>
+                <option value="" disabled selected>Select a component</option>
+                <option value="unsure">Unsure</option>
+                <!-- Populated dynamically -->
+            </select>
+
+            <label for="secondary-components">Secondary Related Components (Optional, select multiple):</label>
+            <select id="secondary-components" multiple>
+                <option value="none">None</option>
+                <!-- Populated dynamically -->
+            </select>
+
+            <label for="severity">Severity:</label>
+            <select id="severity" required>
+                <option value="" disabled selected>Select severity</option>
+                <option value="low">Low (Minor inconvenience)</option>
+                <option value="medium">Medium (Affects gameplay but not critical)</option>
+                <option value="high">High (Major functionality broken)</option>
+                <option value="critical">Critical (Crashes or prevents use)</option>
+            </select>
+
+            <label for="additional-notes">Additional Notes:</label>
+            <textarea id="additional-notes" placeholder="Any additional context, e.g., specific error messages, time of occurrence, etc."></textarea>
+
+            <div class="checkbox-container">
+                <input type="checkbox" id="collect-data">
+                <label for="collect-data">Include device and network information (help us debug)</label>
+            </div>
+
+            <div id="data-collection-details">
+                <p>By agreeing, we will collect:</p>
+                <ul>
+                    <li>Device info (browser, platform, screen resolution, timezone, memory, CPU cores, touch support, battery status)</li>
+                    <li>Network info (IP address, city, region, country, latitude, longitude, ISP, connection type)</li>
+                </ul>
+            </div>
+
+            <div class="checkbox-container">
+                <input type="checkbox" id="data-agreement" required>
+                <label for="data-agreement">I agree to the data collection policy or opt out above</label>
+            </div>
+
+            <button id="submit-btn" type="submit" disabled>Submit Bug Report</button>
+        </form>
+
+        <div id="preview-section">
+            <h3>Bug Report Preview</h3>
+            <div id="preview-content"></div>
+        </div>
+    </div>
+    <div id="popup"></div>
+</body>
+</html>
