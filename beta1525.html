@@ -5399,7 +5399,6 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         applyVIPLevel(level);
         showPopup(`Upgraded to VIP Level ${level}${level === 4 ? " (Max)" : ""}!`, "OK");
         closeVIPMenu();
-        updateDashboard();
     } else {
         showPopup("Not enough Bitflash Bucks!", "OK");
     }
