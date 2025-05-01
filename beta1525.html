@@ -1571,7 +1571,7 @@
 <div id="crash-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #fff; z-index: 50000; padding: 20px; font-family: monospace; font-size: 14px;">
     <div style="position: absolute; top: 10px; left: 10px;">
         <p>FLGC System Crash Report</p>
-        <p>Version: 30425</p>
+        <p>Version: 1525</p>
         <p>Error: CRITICAL_AUTHENTICATION_FAILURE</p>
         <p>Timestamp: ${new Date().toISOString()}</p>
         <p>Module: AdminSecuritySubsystem</p>
@@ -1973,7 +1973,7 @@ function validateRecoveryKey() {
         const crashDiv = document.getElementById("crash-screen").querySelector("div");
         crashDiv.innerHTML = `
             <p>FLGC System Crash Report</p>
-            <p>Version: 30425</p>
+            <p>Version: 1525</p>
             <p>Error: CRITICAL_AUTHENTICATION_FAILURE</p>
             <p>Timestamp: ${new Date().toISOString()}</p>
             <p>Module: AdminSecuritySubsystem</p>
@@ -2250,7 +2250,7 @@ function showInfoPopup() {
     content.innerHTML = `
         <strong>Device Info:</strong><br>
         OS: ${deviceInfo.os}<br>
-        App Version: 30425 for ${deviceInfo.os}<br><br>
+        App Version: 1525 for ${deviceInfo.os}<br><br>
         <strong></strong><br>
         ${networkInfo.error ? networkInfo.error : `
             
@@ -5399,6 +5399,7 @@ document.getElementById("raw-device-back-btn").onclick = () => {
         applyVIPLevel(level);
         showPopup(`Upgraded to VIP Level ${level}${level === 4 ? " (Max)" : ""}!`, "OK");
         closeVIPMenu();
+        updateDashboard();
     } else {
         showPopup("Not enough Bitflash Bucks!", "OK");
     }
