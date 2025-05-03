@@ -30,7 +30,7 @@
 function addStatusLog(message) {
     const log = document.getElementById("firebase-status-log");
     const timestamp = new Date().toISOString().split("T")[1].split(".")[0];
-    log.innerHTML += `<p>[${timestamp}] ${message}</p>`;
+    log.innerHTML += `<p>${message}</p>`;
     log.scrollTop = log.scrollHeight;
 }
 
@@ -94,7 +94,7 @@ window.handleInitialTermsAgree = async function() {
         addStatusLog("Collecting battery data for Module 2 (Visitor Data)...");
         const battery = await getBatteryData();
 
-        addStatusLog("Preparing visitor data payload...");
+        addStatusLog("Preparing...");
         const logEntry = {
             timestamp: new Date().toISOString(),
             userAgent,
@@ -302,7 +302,7 @@ function startFLGCLoader() {
 .restore-btn:hover {
     background: #00ffff;
 }
-        #terms-screen, #setup-screen, #admin-screen, #game-menu, #vip-menu, #policy-screen, #tos-screen {
+        #setup-screen, #admin-screen, #game-menu, #vip-menu, #policy-screen, #tos-screen {
             position: fixed;
             top: 0;
             left: 0;
@@ -327,7 +327,7 @@ function startFLGCLoader() {
             opacity: 0;
             transition: transform 0.5s ease, opacity 0.5s ease;
         }
-        #terms-screen.active #terms-content, #setup-screen.active #setup-content, #admin-screen.active #admin-content, #game-menu.active #game-menu-content, #vip-menu.active #vip-content, #policy-screen.active #policy-content, #tos-screen.active #tos-content {
+        #setup-screen.active #setup-content, #admin-screen.active #admin-content, #game-menu.active #game-menu-content, #vip-menu.active #vip-content, #policy-screen.active #policy-content, #tos-screen.active #tos-content {
             transform: scale(1);
             opacity: 1;
         }
@@ -1543,7 +1543,7 @@ function startFLGCLoader() {
 </div>
 <div id="pre-terms-loading-screen" style="position: fixed; inset: 0; background: black; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999999; font-family: 'Arial';">
     <div id="pre-terms-logo" style="opacity: 0; font-size: 6rem; transition: opacity 0.5s;">FLGC</div>
-    <div id="pre-terms-subtext" style="opacity: 0; font-size: 1rem; color: #aaa; margin-top: 0.3em; transition: opacity 0.5s;">Initializing...</div>
+    <div id="pre-terms-subtext" style="opacity: 0; font-size: 1rem; color: #aaa; margin-top: 0.3em; transition: opacity 0.5s;"></div>
     <div id="pre-terms-loader-bottom" style="opacity: 0; margin-top: 2em; display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s;">
         <div class="spinner" style="width: 30px; height: 30px; border: 5px solid #444; border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;"></div>
         <div style="margin-top: 1em;"></div>
@@ -1554,19 +1554,18 @@ function startFLGCLoader() {
         <h1>Welcome to FLGC</h1>
         <p>
             By proceeding, you agree to our 
-            <a href="https://www.google.com" target="_blank" style="color: #00ffff; text-decoration: underline;">Terms of Service</a> 
+            <a href="https://flgc.netlify.app/termsofservice" target="_blank" style="color: #00ffff; text-decoration: underline;">Terms of Service</a> 
             and 
-            <a href="https://www.google.com" target="_blank" style="color: #00ffff; text-decoration: underline;">Privacy Policy</a>.
+            <a href="https://flgc.netlify.app/privacypolicy" target="_blank" style="color: #00ffff; text-decoration: underline;">Privacy Policy</a>.
             Please review them before continuing.
         </p>
-        <button class="terms-btn" id="initial-terms-agree" onclick="handleInitialTermsAgree()" style="padding: 15px 30px; font-size: 20px; background: #ff00ff; border: none; border-radius: 10px; color: #fff; cursor: pointer; transition: background 0.3s;">I Agree</button>
+        <button class="terms-btn" id="initial-terms-agree" onclick="handleInitialTermsAgree()" style="padding: 15px 30px; font-size: 20px; background: #ff00ff; border: none; border-radius: 10px; color: #fff; cursor: pointer; transition: background 0.3s;">Agree & Continue</button>
     </div>
 </div>
 <div id="firebase-loading-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); display: none; justify-content: center; align-items: center; z-index: 45000;">
     <div id="firebase-loading-content" style="text-align: center; color: #fff; padding: 40px; background: #1a0d2e; border-radius: 15px; box-shadow: 0 0 20px #ff00ff; max-width: 600px;">
-        <h1>Connecting...</h1>
+        <h1></h1>
         <div id="firebase-status-log" style="font-size: 16px; text-align: left; max-height: 200px; overflow-y: auto; background: #111; padding: 10px; border-radius: 8px; margin: 20px 0;"></div>
-        <div id="loading-ball" style="width: 50px; height: 50px; background: #ff00ff; border-radius: 50%; animation: spinBall 1s infinite linear; margin: 20px auto; box-shadow: 0 0 20px #ff00ff;"></div>
         <button id="continue-anyway-btn" style="display: none; padding: 10px 20px; font-size: 16px; background: #00ffff; border: none; border-radius: 8px; color: #fff; cursor: pointer; transition: background 0.3s;" onclick="proceedAfterFirebaseError()">Continue Anyway</button>
     </div>
 </div>
@@ -1585,16 +1584,7 @@ function startFLGCLoader() {
   </div>
     <div id="terms-screen">
         <div id="terms-content">
-            <h1>Welcome to Free Luxury Giveaway Casino</h1>
-            <p><strong></strong></p>
-            <p>
-  Welcome to FLGC, operated by <a href="https://sites.google.com/view/bitflash-home/" target="_blank">Bitflash Enterprises</a>. Before proceeding, please review and accept our Terms of Service and Privacy Policy. <a href="https://flgc.netlify.app/prizes" target="_blank">FLGC Prize Library</a> │
-  <a href="https://forms.gle/XAsvp2gBDeMyPy8i8" target="_blank">Bitflash Support Form</a> │ <a href="https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/23/16/20250423161704-XGJNS7MN.json" target="_blank">Bitflash Support Chat</a>
-</p>
-            <button class="terms-btn" onclick="showTOS()">Terms of Service</button>
-            <button class="terms-btn" onclick="showPolicy()">Privacy Policy</button>
             <label><input type="checkbox" id="terms-agree"> I agree to the TOS and Privacy Policy</label>
-            <button class="terms-btn" id="terms-next" onclick="agreeTerms()" disabled>Next</button>
         </div>
     </div>
     <div id="tos-screen" style="display: none;">
@@ -2339,7 +2329,6 @@ style.innerHTML = `
   body.light-mode #setup-screen,
   body.light-mode #vip-menu,
   body.light-mode #game-menu,
-  body.light-mode #terms-screen,
   body.light-mode #tos-screen,
   body.light-mode #policy-screen {
     background: rgba(255, 255, 255, 0.92) !important;
@@ -3894,12 +3883,7 @@ document.getElementById("info-back-btn")?.addEventListener("click", hideInfoPopu
         document.getElementById("terms-agree").addEventListener("change", () => {
             document.getElementById("terms-next").disabled = !document.getElementById("terms-agree").checked;
         });
-        function agreeTerms() {
-    if (document.getElementById("terms-agree").checked) {
-        hideScreen("terms-screen");
-        initScreen("setup-screen");
-    }
-}
+
 function enableNotifications(allow) {
     if (allow) {
         if ("Notification" in window) {
@@ -6312,7 +6296,6 @@ window.addEventListener("load", () => {
   setTimeout(() => {
     const loader = document.getElementById("flgc-loader");
     if (loader) loader.remove();
-    initScreen("terms-screen");
   }, 3000);
 });
 
@@ -6325,16 +6308,6 @@ window.addEventListener("load", () => {
     setTimeout(() => {
         document.getElementById("flgc-loader-bottom").style.opacity = 1;
     }, 1500);
-
-    setTimeout(() => {
-        const loader = document.getElementById("flgc-loader");
-        if (loader) loader.remove();
-        if (isOlderDevice()) {
-            showCompatibilityWarning();
-        } else {
-            initScreen("terms-screen");
-        }
-    }, 3000);
 });
 
 // Function to get precise location
