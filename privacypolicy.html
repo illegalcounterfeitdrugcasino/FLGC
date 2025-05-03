@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLGC Privacy Policy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a0d2e, #2a1a4e);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ff00ff;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: #cccccc;
+            margin-top: 0.5rem;
+        }
+
+        nav {
+            background: #1a0d2e;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #00ffff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #ff00ff;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            background: #1a1a1a;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        section h2 {
+            font-size: 1.8rem;
+            color: #00ffff;
+            margin-bottom: 1rem;
+        }
+
+        section p, section ul {
+            font-size: 1rem;
+            color: #dddddd;
+        }
+
+        section ul {
+            list-style: disc;
+            padding-left: 1.5rem;
+        }
+
+        section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .faq-item {
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #222;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .faq-question:hover {
+            background: #333;
+        }
+
+        .faq-question h3 {
+            font-size: 1.2rem;
+            color: #00ffff;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            padding: 0 1rem;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .faq-answer p {
+            padding: 1rem 0;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+            padding: 1rem;
+        }
+
+        .faq-item .toggle-icon {
+            font-size: 1.2rem;
+            color: #ff00ff;
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .toggle-icon {
+            transform: rotate(45deg);
+        }
+
+        footer {
+            background: #1a0d2e;
+            padding: 2rem;
+            text-align: center;
+            color: #cccccc;
+            font-size: 0.9rem;
+            border-top: 1px solid #333;
+        }
+
+        footer a {
+            color: #00ffff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #ff00ff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 2rem; }
+            nav ul { flex-direction: column; gap: 1rem; }
+            section { padding: 1.5rem; }
+            section h2 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>FLGC Privacy Policy</h1>
+        <p>Effective Date: May 3, 2025</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#data-collection">What We Collect</a></li>
+            <li><a href="#data-usage">How We Use Data</a></li>
+            <li><a href="#data-storage">Data Storage</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="introduction">
+            <h2>Introduction</h2>
+            <p>
+                At Free Luxury Giveaway Casino (FLGC), operated by Bitflash Enterprises, we are committed to protecting your privacy. This Privacy Policy explains what data we collect, how we use it, how we store it, and your rights regarding your information. We do not sell, trade, or otherwise transfer your data to third parties for marketing purposes.
+            </p>
+        </section>
+
+        <section id="data-collection">
+            <h2>What Data We Collect</h2>
+            <p>When you access FLGC, we collect the following information to enhance your experience and ensure the functionality of our services:</p>
+            <ul>
+                <li><strong>Device Information:</strong> Browser type, operating system, screen resolution, device memory, CPU cores, WebGL renderer, and touch support capabilities.</li>
+                <li><strong>IP Address and Geolocation:</strong> Your IP address, city, region, country, postal code, latitude, longitude, organization, and autonomous system number (ASN), obtained via a third-party geolocation service (ipapi.co).</li>
+                <li><strong>Usage Data:</strong> Timestamp of your visit, referrer URL, browser language, local time and timezone.</li>
+                <li><strong>Battery Information:</strong> Battery level and charging status, if available through your browser.</li>
+                <li><strong>Display Information:</strong> Screen refresh rate and pixel density for optimizing visual performance.</li>
+            </ul>
+            <p>We collect this data only after you agree to our Terms of Service and Privacy Policy during the initial setup process.</p>
+        </section>
+
+        <section id="data-usage">
+            <h2>How We Use Your Data</h2>
+            <p>We use the collected data for the following purposes:</p>
+            <ul>
+                <li><strong>Service Optimization:</strong> To tailor the FLGC experience to your device’s capabilities, ensuring smooth performance and compatibility.</li>
+                <li><strong>Analytics:</strong> To understand user behavior, improve our services, and monitor platform usage trends.</li>
+                <li><strong>Security:</strong> To detect and prevent fraudulent activities by analyzing IP and geolocation data.</li>
+                <li><strong>Support:</strong> To assist with troubleshooting and provide personalized customer support.</li>
+            </ul>
+            <p>We do not use your data for advertising or share it with third parties for marketing purposes.</p>
+        </section>
+
+        <section id="data-storage">
+            <h2>Data Storage and Security</h2>
+            <p>
+                Your data is stored securely in Google Firebase Firestore, a cloud-based database with industry-standard encryption. We implement the following measures to protect your information:
+            </p>
+            <ul>
+                <li><strong>Encryption:</strong> Data is encrypted in transit and at rest using Firebase’s security protocols.</li>
+                <li><strong>Access Controls:</strong> Only authorized personnel at Bitflash Enterprises have access to the data, and access is strictly limited to operational needs.</li>
+                <li><strong>Retention:</strong> We retain data only as long as necessary for the purposes outlined above, typically for the duration of your interaction with FLGC, unless required by law.</li>
+            </ul>
+            <p>
+                We do not sell, trade, or transfer your data to third parties, except as required by law or to comply with legal processes (e.g., court orders). In such cases, we will notify you unless prohibited by law.
+            </p>
+        </section>
+
+        <section id="your-rights">
+            <h2>Your Rights</h2>
+            <p>You have the following rights regarding your data:</p>
+            <ul>
+                <li><strong>Access:</strong> Request a copy of the data we have collected about you.</li>
+                <li><strong>Deletion:</strong> Request the deletion of your data, subject to legal retention requirements.</li>
+                <li><strong>Objection:</strong> Object to the processing of your data for specific purposes.</li>
+            </ul>
+            <p>To exercise these rights, please contact us at <a href="mailto:cooktim.521@gmail.com">cooktim.521@gmail.com</a>.</p>
+        </section>
+
+        <section id="faq">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Why do you collect my IP address and geolocation?</h3>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>We collect IP and geolocation data to ensure platform security, detect fraud, and optimize regional content delivery. This data is not used for marketing or shared with third parties.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Is my data sold to advertisers?</h3>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>No, we do not sell or share your data with advertisers or any third parties for marketing purposes.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>How long is my data stored?</h3>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>We store your data only for as long as necessary to provide our services or comply with legal obligations, typically for the duration of your interaction with FLGC.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Contact Us</h2>
+            <p>
+                If you have any questions about this Privacy Policy or our data practices, please contact us at:
+            </p>
+            <p>
+                Bitflash Enterprises<br>
+                Email: <a href="mailto:cooktim.521@gmail.com">cooktim.521@gmail.com</a><br>
+                Website: <a href="https://sites.google.com/view/bitflash-home">www.sites.google.com/view/bitflash-home</a>
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Bitflash Enterprises. All rights reserved. <a href="https://www.sites.google.com/view/bitflash-home">Bitflash</a></p>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.faq-question').forEach(item => {
+            item.addEventListener('click', () => {
+                const parent = item.parentElement;
+                const isActive = parent.classList.contains('active');
+                
+                document.querySelectorAll('.faq-item').forEach(faq => {
+                    faq.classList.remove('active');
+                });
+
+                if (!isActive) {
+                    parent.classList.add('active');
+                }
+            });
+        });
+
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.8) {
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
