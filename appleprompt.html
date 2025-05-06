@@ -397,42 +397,37 @@ function startFLGCLoader() {
     }, 4500);
 }
 function showWebAppPromptForApple() {
-            // Check if already shown in this session
-            if (localStorage.getItem('webAppPromptShown')) {
-                return;
-            }
-
             // Detect Apple device (iOS, iPadOS, macOS)
             const isAppleDevice = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
             // Check if not in standalone mode
             const isNotStandalone = !navigator.standalone && !window.matchMedia('(display-mode: standalone)').matches;
 
             if (isAppleDevice && isNotStandalone) {
-                const message = `
-                    <p>Enhance your Free Luxury Giveaway Casino experience by adding it to your Home Screen!</p>
-                    <p><strong>Benefits:</strong></p>
-                    <ul style="text-align: left; margin: 20px;">
-                        <li>Faster access with a native app-like experience</li>
-                        <li>Play offline with limited features</li>
-                        <li>Seamless updates and notifications</li>
+                const popup = document.getElementById('web-app-popup');
+                popup.innerHTML = `
+                    <p>Enhance your Free Luxury Giveaway Casino experience!</p>
+                    <p>Add FLGC to your Home Screen for a better experience.</p>
+                    <ul>
+                        <li>Faster, app-like access</li>
+                        <li>Offline play with limited features</li>
+                        <li>Seamless updates & notifications</li>
                     </ul>
                     <p><strong>How to Add:</strong></p>
-                    <ol style="text-align: left; margin: 20px;">
-                        <li>Tap the <strong>Share</strong> icon in Safari (bottom or top bar).</li>
+                    <ol>
+                        <li>Tap the <strong>Share</strong> icon in Safari.</li>
                         <li>Select <strong>Add to Home Screen</strong>.</li>
                         <li>Tap <strong>Add</strong> to confirm.</li>
                     </ol>
+                    <button onclick="document.getElementById('web-app-popup').style.display='none'">Got It!</button>
                 `;
-                showPopup(message, `<button onclick="document.getElementById('popup').style.display='none'; localStorage.setItem('webAppPromptShown', 'true')">Got It!</button>`);
-                localStorage.setItem('webAppPromptShown', 'true'); // Prevent repeat prompts
+                popup.classList.add('active');
             }
         }
 
-        // Modified proceedAfterFirebaseSuccess
         window.proceedAfterFirebaseSuccess = function() {
             addStatusLog("All modules logged successfully.");
             document.getElementById("firebase-loading-screen").style.display = "none";
-            showWebAppPromptForApple(); // Add prompt after hiding loading screen
+            showWebAppPromptForApple(); // Trigger custom popup
             initScreen('setup-screen');
         };
 
@@ -440,7 +435,7 @@ function showWebAppPromptForApple() {
         window.proceedAfterFirebaseError = function() {
             addStatusLog("User opted to continue despite error.");
             document.getElementById("firebase-loading-screen").style.display = "none";
-            showWebAppPromptForApple(); // Add prompt after hiding loading screen
+            showWebAppPromptForApple(); // Trigger custom popup
             initScreen('setup-screen');
         };
 
@@ -448,10 +443,9 @@ function showWebAppPromptForApple() {
         window.proceedOffline = function() {
             addStatusLog("Proceeding in offline mode.");
             document.getElementById("firebase-loading-screen").style.display = "none";
-            showWebAppPromptForApple(); // Add prompt after hiding loading screen
+            showWebAppPromptForApple(); // Trigger custom popup
             initScreen('setup-screen');
         };
-        
   </script>
     <title>Free Luxury Giveaway Casino</title>
     <style>
@@ -955,6 +949,75 @@ function showWebAppPromptForApple() {
         gap: 10px;
     }
 }
+
+#web-app-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.98);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px #ff00ff;
+            z-index: 31000; /* Higher than #popup to avoid overlap */
+            width: 500px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            color: #fff;
+            font-family: monospace;
+            text-align: center;
+            display: none;
+            transition: opacity 0.3s ease;
+        }
+        #web-app-popup.active { display: block; opacity: 1; }
+        #web-app-popup p {
+            font-size: 16px;
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        #web-app-popup ul, #web-app-popup ol {
+            text-align: left;
+            margin: 15px 20px;
+            font-size: 14px;
+        }
+        #web-app-popup li {
+            margin-bottom: 8px;
+        }
+        #web-app-popup button {
+            padding: 10px 20px;
+            background: #00ffff;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 15px 0;
+            transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+        }
+        #web-app-popup button:hover {
+            background: #ff00ff;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ff00ff;
+        }
+        @media (max-width: 768px) {
+            #web-app-popup {
+                width: 90%;
+                padding: 15px;
+            }
+            #web-app-popup p {
+                font-size: 14px;
+            }
+            #web-app-popup ul, #web-app-popup ol {
+                font-size: 12px;
+                margin: 10px 15px;
+            }
+            #web-app-popup button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        
         #roulette-game h2 {
     font-size: 28px;
     margin-bottom: 20px;
