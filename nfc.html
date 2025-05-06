@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="tag scanner that probably doestn work">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>NFC Tag Writer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 300px;
+        }
+        .status {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>NFC Tag Writer</h1>
+    <input type="text" id="textToWrite" placeholder="Enter text to write to NFC tag">
+    <button id="writeButton">Write to NFC Tag</button>
+    <div class="status" id="status"></div>
+
+    <script>
+        const writeButton = document.getElementById('writeButton');
+        const textToWrite = document.getElementById('textToWrite');
+        const status = document.getElementById('status');
+
+        writeButton.addEventListener('click', async () => {
+            if (!('NDEFWriter' in window)) {
+                status.textContent = 'Web NFC is not supported on this device/browser.';
+                return;
+            }
+
+            const ndef = new NDEFWriter();
+            try {
+                await ndef.write(textToWrite.value);
+                status.textContent = '✅ NFC tag written successfully!';
+            } catch (error) {
+                console.error(error);
+                status.textContent = `❌ Error writing to NFC tag: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
