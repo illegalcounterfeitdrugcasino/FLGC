@@ -2,6 +2,10 @@
 
 
 
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,293 +20,551 @@
     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
-    import { getFirestore, collection, addDoc, getDocs, query, where, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";    const firebaseConfig = {
-            apiKey: "AIzaSyAR5ZNjlqMDSu6nTLEYrTQZrFhSODply8s",
-            authDomain: "flgcas.firebaseapp.com",
-            projectId: "flgcas",
-            storageBucket: "flgcas.firebasestorage.app",
-            messagingSenderId: "756441459947",
-            appId: "1:756441459947:web:82e6aaa245c5cea95ae2ae",
-            measurementId: "G-WT7712F2DP"
-        };
+    import { getFirestore, collection, addDoc, getDocs, query, where, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(registration => {
-        console.log('Service Worker registered with scope:', registration.scope);
-      })
-      .catch(error => {
-        console.error('Service Worker registration failed:', error);
-      });
-  });
+    const firebaseConfig = {
+        apiKey: "AIzaSyAR5ZNjlqMDSu6nTLEYrTQZrFhSODply8s",
+        authDomain: "flgcas.firebaseapp.com",
+        projectId: "flgcas",
+        storageBucket: "flgcas.firebasestorage.app",
+        messagingSenderId: "756441459947",
+        appId: "1:756441459947:web:82e6aaa245c5cea95ae2ae",
+        measurementId: "G-WT7712F2DP"
+    };
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(registration => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                })
+                .catch(error => {
+                    console.error('Service Worker registration failed:', error);
+                });
+        });
+    }
+
+    const APP_VERSION = "8525";
+
+function addStatusLog(message) {
+    const log = document.getElementById("firebase-status-log");
+    const timestamp = new Date().toISOString().split("T")[1].split(".")[0];
+    log.innerHTML += `<p>${message}</p>`;
+    log.scrollTop = log.scrollHeight;
 }
 
-        // Define the app version
-        const APP_VERSION = "7525";
+window.handleInitialTermsAgree = async function () {
+    const VERBOSE_LOGGING = true; // toggle verbose logging
 
-        function addStatusLog(message) {
-            const log = document.getElementById("firebase-status-log");
-            const timestamp = new Date().toISOString().split("T")[1].split(".")[0];
-            log.innerHTML += `<p>${message}</p>`;
-            log.scrollTop = log.scrollHeight;
+    function addLiveStepLog(msg) {
+        if (VERBOSE_LOGGING) addStatusLog(msg);
+    }
+
+    document.getElementById("initial-terms-screen").style.display = "none";
+    document.getElementById("firebase-loading-screen").style.display = "flex";
+    const continueBtn = document.getElementById("continue-anyway-btn");
+
+    try {
+        addLiveStepLog("🔧 Initializing Firebase app...");
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+
+        addLiveStepLog("🌐 Checking internet access via Firebase...");
+        try {
+            const timestamp = new Date().toISOString();
+            await addDoc(collection(db, "network_checks"), { timestamp });
+            addLiveStepLog("✅ Wrote network check timestamp.");
+            const networkQuery = query(collection(db, "network_checks"), where("timestamp", "==", timestamp));
+            const networkSnapshot = await getDocs(networkQuery);
+            if (networkSnapshot.empty) {
+                addLiveStepLog("❌ Failed to read network check timestamp.");
+                showOfflineWarning();
+                return;
+            }
+            addLiveStepLog("✅ Confirmed internet access.");
+        } catch (e) {
+            addLiveStepLog(`❌ Network check failed: ${e.message}`);
+            showOfflineWarning();
+            return;
         }
 
-        window.handleInitialTermsAgree = async function() {
-  document.getElementById("initial-terms-screen").style.display = "none";
-  document.getElementById("firebase-loading-screen").style.display = "flex";
-  const continueBtn = document.getElementById("continue-anyway-btn");
+        addLiveStepLog("🌐 Fetching IP address...");
+        let ipdata;
+        try {
+            const ipResponse = await fetch("https://ipapi.co/json/");
+            ipdata = await ipResponse.json();
+            addLiveStepLog(`✅ Fetched IP: ${ipdata.ip}`);
+        } catch (e) {
+            addLiveStepLog(`❌ IP fetch error: ${e.message}`);
+            continueBtn.style.display = "block";
+            return;
+        }
 
-  if (!checkOnlineStatus()) {
-    showOfflineWarning();
-    return;
-  }
+        addLiveStepLog("🚫 Checking if IP is banned...");
+        try {
+            const ipDoc = await getDoc(doc(db, "banned_ips", ipdata.ip));
+            if (ipDoc.exists()) {
+                addLiveStepLog("❌ Access Denied: IP is banned. Contact support at: bitflashelp@gmail.com");
+                showPopup(`Access Denied: Your IP (${ipdata.ip}) has been banned.`);
+                return;
+            } else {
+                addLiveStepLog("✅ IP is not banned.");
+            }
+        } catch (e) {
+            addLiveStepLog(`❌ IP ban check error: ${e.message}`);
+            continueBtn.style.display = "block";
+            return;
+        }
 
-  try {
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const db = getFirestore(app);
-    
-    // Check app version against Firestore
-    addStatusLog("Checking app version...");
-    let isVersionValid = false;
-    try {
-      const versionQuery = query(collection(db, "app_version"), where("version", "==", APP_VERSION));
-      const versionSnapshot = await getDocs(versionQuery);
-      if (!versionSnapshot.empty) {
-        isVersionValid = true;
-        addStatusLog("App version is up-to-date.");
-      } else {
-        addStatusLog("App version is outdated.");
-        continueBtn.style.display = "block";
-        const updateInstructions = `
-          <p>Your app version (${APP_VERSION}) is outdated. Please update to the latest version.</p>
-          <p><strong>To update:</strong></p>
-          <ul>
-            <li><strong>Clear Browser Cache:</strong>
-              <ul>
-                <li>Open DevTools (F12 or right-click > Inspect).</li>
-                <li>Go to the "Application" tab.</li>
-                <li>Under "Storage," click "Clear site data" or clear Cache and Cookies.</li>
-                <li>Reload the page.</li>
-              </ul>
-            </li>
-            <li><strong>Update Now:</strong>
-              <ul>
-                <li><button onclick="clearCacheAndReload()">Update Now</button></li>
-              </ul>
-            </li>
-            <li><strong>Reinstall Web App:</strong>
-              <ul>
-                <li>Remove the app from your device (delete the homescreen icon).</li>
-                <li>Open a private/incognito browsing window.</li>
-                <li>Visit the site and add it to your homescreen again.</li>
-              </ul>
-            </li>
-          </ul>
-        `;
-        document.getElementById("firebase-status-log").innerHTML += updateInstructions;
-        console.error("Version check failed: Outdated version detected.");
-        return;
-      }
-    } catch (e) {
-      addStatusLog(`Version Check Error: ${e.message}`);
-      continueBtn.style.display = "block";
-      const updateInstructions = `
-        <p>Your app version (${APP_VERSION}) is outdated or there was an error checking the version. Please update to the latest version.</p>
-        <p><strong>To update:</strong></p>
-        <ul>
-          <li><strong>Clear Browser Cache:</strong>
-            <ul>
-              <li>Open DevTools (F12 or right-click > Inspect).</li>
-              <li>Go to the "Application" tab.</li>
-              <li>Under "Storage," click "Clear site data" or clear Cache and Cookies.</li>
-              <li>Reload the page.</li>
-            </ul>
-          </li>
-          <li><strong>Update Now:</strong>
-            <ul>
-              <li><button onclick="clearCacheAndReload()">Update Now</button></li>
-            </ul>
-          </li>
-          <li><strong>Reinstall Web App:</strong>
-            <ul>
-              <li>Remove the app from your device (delete the homescreen icon).</li>
-              <li>Open a private/incognito browsing window.</li>
-              <li>Visit the site and add it to your homescreen again.</li>
-            </ul>
-          </li>
-        </ul>
-      `;
-      document.getElementById("firebase-status-log").innerHTML += updateInstructions;
-      console.error("Version check failed:", e);
-      return;
-    }
+        addLiveStepLog("🔍 Checking current app version...");
+        let isVersionValid = false;
+        try {
+            const versionQuery = query(collection(db, "app_version"), where("version", "==", APP_VERSION));
+            const versionSnapshot = await getDocs(versionQuery);
+            isVersionValid = !versionSnapshot.empty;
+            addLiveStepLog(isVersionValid ? `✅ App version (${APP_VERSION}) is valid.` : `❌ App version (${APP_VERSION}) is outdated.`);
+            if (!isVersionValid) {
+                continueBtn.style.display = "block";
+                document.getElementById("firebase-status-log").innerHTML += `
+                    <p>Your app version (${APP_VERSION}) is outdated. Please update to the latest version.</p>
+                    <ul><button onclick="clearCacheAndReload()">Update Now</button></ul>
+                `;
+                return;
+            }
+        } catch (e) {
+            addLiveStepLog(`❌ Version check failed: ${e.message}`);
+            continueBtn.style.display = "block";
+            return;
+        }
 
-    addStatusLog("Collecting device data for Module 1 (Display Info)...");
-    const userAgent = navigator.userAgent;
-    const language = navigator.language;
-    const platform = navigator.platform;
-    const vendor = navigator.vendor;
-    const screenRes = `${screen.width}x${screen.height}`;
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const cpuCores = navigator.hardwareConcurrency || "N/A";
-    const deviceMemory = navigator.deviceMemory || "N/A";
-    const referrer = document.referrer;
-    const localTime = new Date().toString();
-    const connection = navigator.connection || {};
-    const connectionType = connection.effectiveType || "unknown";
-    const touchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        addLiveStepLog("📋 Beginning device data collection...");
 
-    async function getBatteryData() {
-      try {
-        addStatusLog("Retrieving battery information...");
-        const battery = await navigator.getBattery();
-        addStatusLog("Battery data retrieved.");
-        return {
-          charging: battery.charging,
-          level: battery.level,
+        addLiveStepLog("➡️ Collecting user agent...");
+        const userAgent = navigator.userAgent;
+        addLiveStepLog(`Collected user agent: ${userAgent}`);
+
+        addLiveStepLog("➡️ Collecting language...");
+        const language = navigator.language;
+        addLiveStepLog(`Collected language: ${language}`);
+
+        addLiveStepLog("➡️ Collecting all preferred languages...");
+        const languages = navigator.languages.join(", ");
+        addLiveStepLog(`Collected languages: ${languages}`);
+
+        addLiveStepLog("➡️ Collecting platform...");
+        const platform = navigator.platform;
+        addLiveStepLog(`Collected platform: ${platform}`);
+
+        addLiveStepLog("➡️ Collecting vendor...");
+        const vendor = navigator.vendor;
+        addLiveStepLog(`Collected vendor: ${vendor}`);
+
+        addLiveStepLog("➡️ Collecting screen resolution...");
+        const screenRes = `${screen.width}x${screen.height}`;
+        addLiveStepLog(`Collected resolution: ${screenRes}`);
+
+        addLiveStepLog("➡️ Collecting color depth...");
+        const colorDepth = screen.colorDepth || "N/A";
+        addLiveStepLog(`Collected color depth: ${colorDepth} bits`);
+
+        addLiveStepLog("➡️ Collecting device pixel ratio...");
+        const devicePixelRatio = window.devicePixelRatio || "N/A";
+        addLiveStepLog(`Collected device pixel ratio: ${devicePixelRatio}`);
+
+        addLiveStepLog("➡️ Collecting timezone...");
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        addLiveStepLog(`Collected timezone: ${timezone}`);
+
+        addLiveStepLog("➡️ Collecting timezone offset...");
+        const timezoneOffset = new Date().getTimezoneOffset();
+        addLiveStepLog(`Collected timezone offset: ${timezoneOffset} minutes`);
+
+        addLiveStepLog("➡️ Collecting CPU cores...");
+        const cpuCores = navigator.hardwareConcurrency || "N/A";
+        addLiveStepLog(`Collected CPU cores: ${cpuCores}`);
+
+        addLiveStepLog("➡️ Collecting device memory...");
+        const deviceMemory = navigator.deviceMemory || "N/A";
+        addLiveStepLog(`Collected memory: ${deviceMemory} GB`);
+
+        addLiveStepLog("➡️ Collecting referrer...");
+        const referrer = document.referrer;
+        addLiveStepLog(`Collected referrer: ${referrer}`);
+
+        addLiveStepLog("➡️ Collecting local time...");
+        const localTime = new Date().toString();
+        addLiveStepLog(`Collected local time: ${localTime}`);
+
+        addLiveStepLog("➡️ Collecting connection type...");
+        const connection = navigator.connection || {};
+        const connectionType = connection.effectiveType || "unknown";
+        addLiveStepLog(`Collected connection type: ${connectionType}`);
+
+        const touchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        addLiveStepLog(`➡️ Touch support: ${touchSupport}`);
+
+        addLiveStepLog("➡️ Checking cookies enabled...");
+        const cookiesEnabled = navigator.cookieEnabled || false;
+        addLiveStepLog(`Cookies enabled: ${cookiesEnabled}`);
+
+        addLiveStepLog("➡️ Checking Do Not Track status...");
+        const doNotTrack = navigator.doNotTrack || window.doNotTrack || "N/A";
+        addLiveStepLog(`Do Not Track: ${doNotTrack}`);
+
+        async function getBatteryData() {
+            try {
+                addLiveStepLog("🔋 Getting battery status...");
+                const battery = await navigator.getBattery();
+                const result = {
+                    charging: battery.charging,
+                    level: battery.level,
+                };
+                addLiveStepLog(`✅ Battery: ${result.level * 100}% ${result.charging ? "(Charging)" : "(Not charging)"}`);
+                return result;
+            } catch (e) {
+                addLiveStepLog(`❌ Battery info error: ${e.message}`);
+                return null;
+            }
+        }
+
+        addLiveStepLog("🌐 Collecting additional geolocation data...");
+        addLiveStepLog(`Location: ${ipdata.city}, ${ipdata.region}, ${ipdata.country_name}`);
+
+        const battery = await getBatteryData();
+
+        addLiveStepLog("📊 Measuring screen refresh rate...");
+        const samples = [];
+        let last = performance.now();
+
+        for (let i = 0; i < 60; i++) {
+            await new Promise(requestAnimationFrame);
+            const now = performance.now();
+            const diff = now - last;
+            samples.push(diff);
+            last = now;
+            addLiveStepLog(`Refresh frame ${i + 1}: ${diff.toFixed(2)} ms`);
+        }
+
+        const avg = samples.reduce((a, b) => a + b, 0) / samples.length;
+        const refreshRate = +(1000 / avg).toFixed(2);
+        const resolution = `${screen.width * window.devicePixelRatio} x ${screen.height * window.devicePixelRatio}`;
+        addLiveStepLog(`✅ Approx. refresh rate: ${refreshRate} Hz`);
+
+        addLiveStepLog("🎮 Collecting WebGL renderer info...");
+        let renderer = 'Unavailable';
+        let webglExtensions = [];
+        try {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+            if (dbg) {
+                renderer = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
+                addLiveStepLog(`✅ WebGL Renderer: ${renderer}`);
+            } else {
+                addLiveStepLog("⚠️ WebGL debug extension not available.");
+            }
+            const ext = gl.getSupportedExtensions();
+            webglExtensions = ext ? ext.join(", ") : "None";
+            addLiveStepLog(`✅ WebGL Extensions: ${webglExtensions}`);
+        } catch (e) {
+            addLiveStepLog(`❌ WebGL detection failed: ${e.message}`);
+        }
+
+        addLiveStepLog("🖌️ Collecting canvas fingerprint...");
+        let canvasFingerprint = "N/A";
+        try {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            ctx.font = "14px Arial";
+            ctx.fillText("Canvas Fingerprint Test 😊", 10, 50);
+            ctx.fillStyle = "rgba(100, 200, 50, 0.5)";
+            ctx.fillRect(20, 20, 100, 60);
+            canvasFingerprint = canvas.toDataURL();
+            addLiveStepLog(`✅ Canvas fingerprint generated (length: ${canvasFingerprint.length})`);
+        } catch (e) {
+            addLiveStepLog(`❌ Canvas fingerprint error: ${e.message}`);
+        }
+
+        addLiveStepLog("🎵 Collecting AudioContext fingerprint...");
+        let audioFingerprint = "N/A";
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const compressor = audioCtx.createDynamicsCompressor();
+            oscillator.type = "sine";
+            oscillator.connect(compressor);
+            const sampleRate = audioCtx.sampleRate;
+            oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
+            compressor.threshold.setValueAtTime(-50, audioCtx.currentTime);
+            audioFingerprint = `${sampleRate}|${compressor.threshold.value}`;
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.01);
+            addLiveStepLog(`✅ Audio fingerprint: ${audioFingerprint}`);
+        } catch (e) {
+            addLiveStepLog(`❌ Audio fingerprint error: ${e.message}`);
+        }
+
+        addLiveStepLog("🔤 Collecting font information...");
+        let detectedFonts = [];
+        const fontList = [
+            "Arial", "Helvetica", "Times New Roman", "Courier New", "Verdana",
+            "Georgia", "Palatino Linotype", "Book Antiqua", "Arial Black", "Comic Sans MS",
+            "Impact", "Lucida Sans Unicode", "Tahoma", "Trebuchet MS", "Monaco"
+        ];
+        try {
+            const baseFont = "monospace";
+            const testString = "abcdefghijklmnopqrstuvwxyz0123456789";
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            ctx.font = `12px ${baseFont}`;
+            const baseWidth = ctx.measureText(testString).width;
+
+            fontList.forEach(font => {
+                ctx.font = `12px "${font}", ${baseFont}`;
+                const width = ctx.measureText(testString).width;
+                if (width !== baseWidth) {
+                    detectedFonts.push(font);
+                }
+            });
+            addLiveStepLog(`✅ Detected fonts: ${detectedFonts.join(", ") || "None"}`);
+        } catch (e) {
+            addLiveStepLog(`❌ Font detection error: ${e.message}`);
+        }
+
+        addLiveStepLog("🔌 Collecting browser plugins...");
+        let plugins = [];
+        try {
+            if (navigator.plugins && navigator.plugins.length > 0) {
+                for (let i = 0; i < navigator.plugins.length; i++) {
+                    plugins.push(navigator.plugins[i].name);
+                }
+                addLiveStepLog(`✅ Plugins: ${plugins.join(", ") || "None"}`);
+            } else {
+                addLiveStepLog("⚠️ No plugins detected or API unavailable.");
+            }
+        } catch (e) {
+            addLiveStepLog(`❌ Plugin detection error: ${e.message}`);
+        }
+
+        addLiveStepLog("🌐 Checking WebRTC status...");
+        let webRTCEnabled = false;
+        let privateIPs = [];
+        try {
+            webRTCEnabled = !!(window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection);
+            addLiveStepLog(`WebRTC enabled: ${webRTCEnabled}`);
+            if (webRTCEnabled) {
+                addLiveStepLog("🌐 Collecting private IP via WebRTC...");
+                const pc = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }] });
+                pc.createDataChannel("test");
+                pc.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        const ipMatch = event.candidate.candidate.match(/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/);
+                        if (ipMatch && ipMatch[1].startsWith("192.168") || ipMatch[1].startsWith("10.") || ipMatch[1].startsWith("172.")) {
+                            privateIPs.push(ipMatch[1]);
+                            addLiveStepLog(`✅ Found private IP: ${ipMatch[1]}`);
+                        }
+                    }
+                };
+                await pc.createOffer().then(offer => pc.setLocalDescription(offer));
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for ICE candidates
+                pc.close();
+                addLiveStepLog(`✅ Private IPs collected: ${privateIPs.join(", ") || "None"}`);
+            }
+        } catch (e) {
+            addLiveStepLog(`❌ WebRTC detection error: ${e.message}`);
+        }
+
+        addLiveStepLog("📡 Checking device orientation/motion support...");
+        let orientationSupport = false;
+        let motionSupport = false;
+        try {
+            orientationSupport = !!window.DeviceOrientationEvent;
+            motionSupport = !!window.DeviceMotionEvent;
+            addLiveStepLog(`Orientation support: ${orientationSupport}, Motion support: ${motionSupport}`);
+        } catch (e) {
+            addLiveStepLog(`❌ Device sensor error: ${e.message}`);
+        }
+
+        addLiveStepLog("🎹 Checking MIDI support...");
+        let midiSupport = false;
+        try {
+            midiSupport = !!navigator.requestMIDIAccess;
+            addLiveStepLog(`MIDI support: ${midiSupport}`);
+        } catch (e) {
+            addLiveStepLog(`❌ MIDI detection error: ${e.message}`);
+        }
+
+        addLiveStepLog("📍 Attempting geolocation...");
+        let geolocation = null;
+        try {
+            geolocation = await new Promise((resolve) => {
+                navigator.geolocation.getCurrentPosition(
+                    pos => resolve({
+                        latitude: pos.coords.latitude,
+                        longitude: pos.coords.longitude,
+                        accuracy: pos.coords.accuracy
+                    }),
+                    err => resolve(null)
+                );
+            });
+            if (geolocation) {
+                addLiveStepLog(`✅ Geolocation: Lat ${geolocation.latitude}, Lon ${geolocation.longitude}, Accuracy ${geolocation.accuracy}m`);
+            } else {
+                addLiveStepLog("⚠️ Geolocation not available or permission denied.");
+            }
+        } catch (e) {
+            addLiveStepLog(`❌ Geolocation error: ${e.message}`);
+        }
+
+        addLiveStepLog("📋 Checking clipboard API...");
+        let clipboardSupport = false;
+        try {
+            clipboardSupport = !!navigator.clipboard;
+            addLiveStepLog(`Clipboard API support: ${clipboardSupport}`);
+        } catch (e) {
+            addLiveStepLog(`❌ Clipboard detection error: ${e.message}`);
+        }
+
+        addLiveStepLog("🖥️ Checking WebGPU support...");
+        let webgpuSupport = false;
+        try {
+            webgpuSupport = !!navigator.gpu;
+            addLiveStepLog(`WebGPU support: ${webgpuSupport}`);
+        } catch (e) {
+            addLiveStepLog(`❌ WebGPU detection error: ${e.message}`);
+        }
+
+        addLiveStepLog("📡 Collecting network information...");
+        let networkInfo = {};
+        try {
+            const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            if (conn) {
+                networkInfo = {
+                    downlink: conn.downlink || "N/A",
+                    rtt: conn.rtt || "N/A",
+                    saveData: conn.saveData || false
+                };
+                addLiveStepLog(`✅ Network: Downlink ${networkInfo.downlink} Mbps, RTT ${networkInfo.rtt} ms, Save Data ${networkInfo.saveData}`);
+            } else {
+                addLiveStepLog("⚠️ Network Information API not available.");
+            }
+        } catch (e) {
+            addLiveStepLog(`❌ Network info error: ${e.message}`);
+        }
+
+        addLiveStepLog("📱 Collecting CSS media queries...");
+        let mediaQueries = {};
+        try {
+            const queries = [
+                { name: "prefers-reduced-motion", query: "(prefers-reduced-motion: reduce)" },
+                { name: "prefers-color-scheme", query: "(prefers-color-scheme: dark)" },
+                { name: "pointer", query: "(pointer: fine)" }
+            ];
+            queries.forEach(q => {
+                mediaQueries[q.name] = window.matchMedia(q.query).matches;
+                addLiveStepLog(`✅ Media Query ${q.name}: ${mediaQueries[q.name]}`);
+            });
+        } catch (e) {
+            addLiveStepLog(`❌ CSS media query error: ${e.message}`);
+        }
+
+        const displayEntry = {
+            timestamp: new Date().toISOString(),
+            refreshRate,
+            resolution,
+            renderer,
+            ip: ipdata.ip,
+            version: APP_VERSION,
+            canvasFingerprint: canvasFingerprint.substring(0, 50), // Truncate for storage
+            audioFingerprint,
+            privateIPs: privateIPs.join(", ") || "None"
         };
-      } catch (e) {
-        addStatusLog(`Failed to retrieve battery data: ${e.message}`);
-        return null;
-      }
+
+        const logEntry = {
+            timestamp: new Date().toISOString(),
+            userAgent,
+            language,
+            languages,
+            platform,
+            vendor,
+            screenRes,
+            colorDepth,
+            devicePixelRatio,
+            timezone,
+            timezoneOffset,
+            cpuCores,
+            deviceMemory,
+            referrer,
+            localTime,
+            connectionType,
+            touchSupport,
+            cookiesEnabled,
+            doNotTrack,
+            battery,
+            ip: ipdata.ip,
+            city: ipdata.city,
+            region: ipdata.region,
+            postal: ipdata.postal,
+            country: ipdata.country_name,
+            latitude: ipdata.latitude,
+            longitude: ipdata.longitude,
+            org: ipdata.org,
+            asn: ipdata.asn,
+            version: APP_VERSION,
+            detectedFonts: detectedFonts.join(", ") || "None",
+            plugins: plugins.join(", ") || "None",
+            webRTCEnabled,
+            privateIPs: privateIPs.join(", ") || "None",
+            webglExtensions,
+            orientationSupport,
+            motionSupport,
+            midiSupport,
+            geolocation,
+            clipboardSupport,
+            webgpuSupport,
+            networkInfo,
+            mediaQueries
+        };
+
+        addLiveStepLog("📤 Uploading Module 1 to Firestore...");
+        try {
+            await addDoc(collection(db, "display_info"), displayEntry);
+            addLiveStepLog("✅ Module 1 Uploaded.");
+        } catch (e) {
+            addLiveStepLog(`❌ Upload failed: ${e.message}`);
+            continueBtn.style.display = "block";
+            return;
+        }
+
+        addLiveStepLog("📤 Uploading Module 2 to Firestore...");
+        try {
+            await addDoc(collection(db, "visitors"), logEntry);
+            addLiveStepLog("✅ Module 2 Uploaded.");
+            proceedAfterFirebaseSuccess();
+        } catch (e) {
+            addLiveStepLog(`❌ Visitor upload failed: ${e.message}`);
+            continueBtn.style.display = "block";
+        }
+
+    } catch (err) {
+        addLiveStepLog(`❌ Fatal error: ${err.message}`);
+        continueBtn.style.display = "block";
     }
-
-    addStatusLog("Fetching IP geolocation data...");
-    let ipdata;
-    try {
-      const ipResponse = await fetch("https://ipapi.co/json/");
-      ipdata = await ipResponse.json();
-      addStatusLog("IP geolocation data retrieved.");
-    } catch (e) {
-      addStatusLog(`Failed to fetch IP data: ${e.message}`);
-      throw new Error(`IP Fetch Error: ${e.message}`);
-    }
-
-    // Check if IP is banned
-    addStatusLog("Checking if IP is banned...");
-    try {
-      const ipDocRef = doc(db, "banned_ips", ipdata.ip);
-      const ipDoc = await getDoc(ipDocRef);
-      if (ipDoc.exists()) {
-        addStatusLog("IP is banned.");
-        document.getElementById("firebase-loading-screen").style.display = "none";
-        showPopup(
-          `Access Denied: Your IP address (${ipdata.ip}) has been banned from Free Luxury Giveaway Casino. ` +
-          `For further assistance or to appeal this ban, please contact our support team at bitflashelp@gmail.com.`,
-        );
-        return;
-      } else {
-        addStatusLog("IP is not banned. Proceeding...");
-      }
-    } catch (e) {
-      addStatusLog(`Failed to check banned IP: ${e.message}`);
-      continueBtn.style.display = "block";
-      console.error("Banned IP check failed:", e);
-      return;
-    }
-
-    addStatusLog("Collecting battery data for Module 2 (Visitor Data)...");
-    const battery = await getBatteryData();
-
-    addStatusLog("Preparing...");
-    const logEntry = {
-      timestamp: new Date().toISOString(),
-      userAgent,
-      language,
-      platform,
-      vendor,
-      screenRes,
-      timezone,
-      cpuCores,
-      deviceMemory,
-      referrer,
-      localTime,
-      connectionType,
-      touchSupport,
-      battery,
-      ip: ipdata.ip,
-      city: ipdata.city,
-      region: ipdata.region,
-      postal: ipdata.postal,
-      country: ipdata.country_name,
-      latitude: ipdata.latitude,
-      longitude: ipdata.longitude,
-      org: ipdata.org,
-      asn: ipdata.asn,
-      version: APP_VERSION
-    };
-
-    addStatusLog("Calculating display refresh rate for Module 1...");
-    const samples = [];
-    let last = performance.now();
-    for (let i = 0; i < 100; i++) {
-      await new Promise(requestAnimationFrame);
-      const now = performance.now();
-      samples.push(now - last);
-      last = now;
-    }
-    const avg = samples.reduce((a, b) => a + b, 0) / samples.length;
-    const refreshRate = +(1000 / avg).toFixed(2);
-    const resolution = `${screen.width * window.devicePixelRatio} x ${screen.height * window.devicePixelRatio}`;
-    addStatusLog("Display refresh rate calculated.");
-
-    addStatusLog("Retrieving WebGL renderer information for Module 1...");
-    let renderer = 'Unavailable';
-    try {
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-      const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-      if (dbg) {
-        renderer = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
-        addStatusLog("WebGL renderer information retrieved.");
-      } else {
-        addStatusLog("WebGL debug extension not available.");
-      }
-    } catch (e) {
-      addStatusLog(`Failed to retrieve WebGL renderer: ${e.message}`);
-    }
-
-    addStatusLog("Preparing display info payload for Module 1...");
-    const displayEntry = {
-      timestamp: new Date().toISOString(),
-      refreshRate,
-      resolution,
-      renderer,
-      ip: ipdata.ip,
-      version: APP_VERSION
-    };
-
-    addStatusLog("Submitting Module 1 (Display Info) to Firestore...");
-    try {
-      await addDoc(collection(db, "display_info"), displayEntry);
-      addStatusLog("Module 1 (Display Info) logged successfully.");
-      console.log("Logged display info:", displayEntry);
-    } catch (e) {
-      addStatusLog(`Module 1 Error: Failed to log display info - ${e.message}`);
-      continueBtn.style.display = "block";
-      console.error("Failed to log display info:", e);
-      return;
-    }
-
-    addStatusLog("Submitting Module 2 (Visitor Data) to Firestore...");
-    try {
-      await addDoc(collection(db, "visitors"), logEntry);
-      addStatusLog("Module 2 (Visitor Data) logged successfully.");
-      console.log("Logged full data:", logEntry);
-      proceedAfterFirebaseSuccess();
-    } catch (e) {
-      addStatusLog(`Module 2 Error: Failed to log visitor data - ${e.message}`);
-      continueBtn.style.display = "block";
-      console.error("Failed to log to Firebase:", e);
-    }
-  } catch (err) {
-    addStatusLog(`Initialization Error: ${err.message}`);
-    continueBtn.style.display = "block";
-    console.error("Firebase initialization error:", err);
-  }
 };
+
+// Attach event listener to the Agree button
+document.addEventListener("DOMContentLoaded", () => {
+    const agreeButton = document.getElementById("agree-btn");
+    if (agreeButton) {
+        agreeButton.addEventListener("click", () => {
+            window.handleInitialTermsAgree();
+        });
+        console.log("Agree button event listener attached.");
+    } else {
+        console.error("Agree button not found. Ensure the button has id='agree-btn'.");
+    }
+});
 
 function checkOnlineStatus() {
   return navigator.onLine;
@@ -311,7 +573,7 @@ function checkOnlineStatus() {
 function showOfflineWarning() {
   document.getElementById("firebase-loading-screen").style.display = "none";
   showPopup(
-    "You are currently offline. The app will run in offline mode, but features like updates, Firebase data logging, and some games may be unavailable. Please connect to the internet to access all features.",
+    "You are currently offline. The app will run in offline mode, but features like updates and Firebase data logging will be unavailable. Please connect to the internet to access all features.",
     `<button onclick="proceedOffline()">Proceed Offline</button>`
   );
 }
@@ -1080,7 +1342,7 @@ function startFLGCLoader() {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.98);
+    background: rgba(0, 0, 0, 1);
     display: none;
     justify-content: center;
     align-items: center;
@@ -1094,7 +1356,7 @@ function startFLGCLoader() {
     padding: 40px;
     background: #1a0d2e;
     border-radius: 15px;
-    box-shadow: 0 0 20px #ff00ff;
+    box-shadow: 0 0 20px #000000;
     max-width: 600px;
 }
 #firebase-status-log {
@@ -1113,6 +1375,7 @@ function startFLGCLoader() {
 #continue-anyway-btn:hover {
     background: #ff00ff;
 }
+
         #spin-btn, #wheel-spin-btn, #crash-bet-btn, #jackpot-spin-btn {
             padding: 25px 60px;
             font-size: 32px;
@@ -1778,7 +2041,7 @@ function startFLGCLoader() {
     </div>
 </div>
 <div id="initial-terms-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 1.00); display: flex; justify-content: center; align-items: center; z-index: 50000;">
-    <div id="initial-terms-content" style="background: #1a0d2e; padding: 40px; border-radius: 15px; box-shadow: 0 0 20px #ff00ff; color: #fff; text-align: center; max-width: 600px;">
+    <div id="initial-terms-content" style="background: #1a0d2e; padding: 40px; border-radius: 15px; box-shadow: 0 0 20px #000000; color: #fff; text-align: center; max-width: 600px;">
         <h1>Welcome to FLGC</h1>
         <p>
             By proceeding, you agree to our 
@@ -1787,12 +2050,12 @@ function startFLGCLoader() {
             <a href="https://flgc.netlify.app/privacypolicy" target="_blank" style="color: #00ffff; text-decoration: underline;">Privacy Policy</a>.
             Please review them before continuing.
         </p>
-        <button class="terms-btn" id="initial-terms-agree" onclick="handleInitialTermsAgree()" style="padding: 15px 30px; font-size: 20px; background: #ff00ff; border: none; border-radius: 10px; color: #fff; cursor: pointer; transition: background 0.3s;">Agree & Continue</button>
+        <button class="terms-btn" id="initial-terms-agree" onclick="handleInitialTermsAgree()" style="padding: 15px 30px; font-size: 20px; background: #ffffff; border: none; border-radius: 10px; color: #000; cursor: pointer; transition: background 0.3s;">Agree & Continue</button>
     </div>
 </div>
 <div id="firebase-loading-screen">
   <div id="firebase-loading-content">
-    <h2>Loading Free Luxury Giveaway Casino...</h2>
+    <h2></h2>
     <div id="firebase-status-log"></div>
     <button id="continue-anyway-btn" style="display: none;" onclick="proceedAfterFirebaseError()">Continue Anyway</button>
   </div>
@@ -1812,7 +2075,7 @@ function startFLGCLoader() {
   </div>
     <div id="terms-screen">
         <div id="terms-content">
-            <label><input type="checkbox" id="terms-agree">__temp__</label>
+            <label><input type="checkbox" id="terms-agree"></label>
         </div>
     </div>
     <div id="setup-screen" style="display: none;">
@@ -2026,7 +2289,7 @@ function startFLGCLoader() {
 <div id="service-code-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 45000; display: flex; justify-content: center; align-items: center;">
     <div id="service-code-content" style="background: #1a0d2e; padding: 30px; border-radius: 15px; box-shadow: 0 0 20px #ff00ff; color: #fff; text-align: center; max-width: 600px; width: 90%;">
         <h1>Device Not Supported</h1>
-        <p>If you were not expecting this screen, Your device lacks the modern capabilities required to run Free Luxury Giveaway Casino (FLGC). Features like advanced JavaScript, WebGL, and real-time data processing are not supported. Please use a newer device with a modern browser.</p>
+        <p>If you were not expecting this screen, Your device lacks the modern capabilities required to run Free Luxury Giveaway Casino (FLGC). Please use a newer device with a modern browser.</p>
         <input id="service-code-input" type="text" placeholder="Enter 16-digit Service Code" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; font-size: 16px;">
         <button class="restore-btn" onclick="validateServiceCode()">Submit</button>
     </div>
@@ -2034,7 +2297,7 @@ function startFLGCLoader() {
 <div id="crash-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #fff; z-index: 50000; padding: 20px; font-family: monospace; font-size: 14px;">
     <div style="position: absolute; top: 10px; left: 10px;">
         <p>FLGC System Crash Report</p>
-        <p>Version: 5525</p>
+        <p>Version: 8525</p>
         <p>Error: CRITICAL_AUTHENTICATION_FAILURE</p>
         <p>Timestamp: ${new Date().toISOString()}</p>
         <p>Module: AdminSecuritySubsystem</p>
@@ -2382,7 +2645,8 @@ document.getElementById('network-info-back-btn').addEventListener('click', () =>
 document.getElementById('display-info-btn').addEventListener('click', async () => {
   const popup = document.getElementById('display-info-popup');
   const content = document.getElementById('display-info-content');
-  popup.style.display = 'block';
+  popup.style.display = 'block';  content.textContent = 'Loading...';
+  content.textContent = 'Loading...';
 
   // Estimate refresh rate
   const samples = [];
@@ -2464,7 +2728,7 @@ function validateRecoveryKey() {
         const crashDiv = document.getElementById("crash-screen").querySelector("div");
         crashDiv.innerHTML = `
             <p>FLGC System Crash Report</p>
-            <p>Version: 5525</p>
+            <p>Version: 8525</p>
             <p>Error: CRITICAL_AUTHENTICATION_FAILURE</p>
             <p>Timestamp: ${new Date().toISOString()}</p>
             <p>Module: AdminSecuritySubsystem</p>
@@ -2729,7 +2993,7 @@ function updatePlayersOnlineCounter() {
 updatePlayersOnlineCounter();
 function getDeviceInfo() {
     const ua = navigator.userAgent;
-    let os = "Unknown";
+    let os = "Unknown/Various";
     let device = "PC";
     let browser = "Unknown";
 
@@ -2738,9 +3002,9 @@ function getDeviceInfo() {
     else if (ua.includes("iPhone; CPU")) os = "iOS"
     else if (ua.includes("iPad; CPU")) os = "iPadOS"
     else if (ua.includes("Mac OS")) os = "macOS";
-    else if (ua.includes("Linux")) os = "Linux";
-    else if (ua.includes("CrOS")) os = "ChromeOS";
     else if (ua.includes("Linux; Android")) os = "Android";
+    else if (ua.includes("CrOS")) os = "ChromeOS";
+    else if (ua.includes("Linux")) os = "Linux";
 
     // Device detection (basic)
     if (ua.includes("Mobile")) device = "Mobile Device";
@@ -2768,7 +3032,7 @@ function showInfoPopup() {
     content.innerHTML = `
         <strong>Device Info:</strong><br>
         OS: ${deviceInfo.os}<br>
-        App Version: 5525 for ${deviceInfo.os}<br><br>
+        App Version: 8525 for ${deviceInfo.os}<br><br>
         <strong></strong><br>
         ${networkInfo.error ? networkInfo.error : `
             
@@ -5656,8 +5920,7 @@ document.getElementById("raw-device-back-btn").onclick = () => {
                         <p>/admincli adtimer [seconds] - Set ad duration</p>
                         <p>/admincli chattemplate [text] - Set chat message template</p>
                         <p>/admincli chatmode [template/fake] - Set chat mode</p>
-                        <p>/admincli run [function] - Run a function (use 'list functions' for options)</p>
-                        <p>/admincli list [prizes|ads|store items|rewards|functions] - List items or functions</p>
+                        <p>/admincli list [prizes|ads|store items|rewards] - List items or functions</p>
                         <p>/admincli userinfo - Show user info</p>
                         <p>/admincli setvip [level] - Set VIP level</p>
                         <p>/admincli reloadui - Reload UI elements</p>
@@ -6164,9 +6427,37 @@ document.getElementById("raw-device-back-btn").onclick = () => {
             }
         }
 
-        function openSettings() {
+        let animationsDisabled = false;
+
+function toggleAnimations(checkbox) {
+    animationsDisabled = checkbox.checked;
+
+    let existingStyle = document.getElementById('disable-animations-style');
+    if (animationsDisabled && !existingStyle) {
+        const style = document.createElement('style');
+        style.id = 'disable-animations-style';
+        style.innerHTML = `
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        `;
+        document.head.appendChild(style);
+    } else if (!animationsDisabled && existingStyle) {
+        existingStyle.remove();
+    }
+}
+
+function openSettings() {
     showPopup(`
-        <br>
+        <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <span>Low Performance Mode</span>
+            <label class="switch">
+                <input type="checkbox" onchange="toggleAnimations(this)" ${animationsDisabled ? 'checked' : ''}>
+                <span class="slider round"></span>
+            </label>
+        </label>
+
         <button onclick="window.open('https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/23/16/20250423161704-XGJNS7MN.json', '_blank')">Support Chat</button>
         <br>
         <button onclick="window.open('https://bugreportflgc.netlify.app', '_blank')">Report a bug</button>
