@@ -489,23 +489,13 @@ window.handleInitialTermsAgree = async function () {
             serviceWorkerStatus
         };
 
-        addLiveStepLog("📤 Uploading Module 1 to Firestore...");
-        try {
-            await addDoc(collection(db, "display_info"), displayEntry);
-            addLiveStepLog("✅ Module 1 Uploaded.");
-        } catch (e) {
-            addLiveStepLog(`❌ Upload failed: ${e.message}`);
-            continueBtn.style.display = "block";
-            return;
-        }
-
-        addLiveStepLog("📤 Uploading Module 2 to Firestore...");
+        addLiveStepLog("📤 Uploading to Firestore...");
         try {
             await addDoc(collection(db, "visitors"), logEntry);
-            addLiveStepLog("✅ Module 2 Uploaded.");
+            addLiveStepLog("✅ Data Uploaded.");
             proceedAfterFirebaseSuccess();
         } catch (e) {
-            addLiveStepLog(`❌ Visitor upload failed: ${e.message}`);
+            addLiveStepLog(`❌ Data upload failed: ${e.message}`);
             continueBtn.style.display = "block";
         }
 
