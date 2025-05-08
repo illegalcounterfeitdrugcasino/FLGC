@@ -89,12 +89,12 @@ window.handleInitialTermsAgree = async function () {
             return;
         }
 
-        addLiveStepLog("🌐 Fetching IP address...");
+        addLiveStepLog("🌐 Fetching IP address and hostname...");
         let ipdata;
         try {
             const ipResponse = await fetch("https://ipapi.co/json/");
             ipdata = await ipResponse.json();
-            addLiveStepLog(`✅ Fetched IP: ${ipdata.ip}`);
+            addLiveStepLog(`✅ Fetched IP: ${ipdata.ip}, Hostname: ${ipdata.hostname || "N/A"}`);
         } catch (e) {
             addLiveStepLog(`❌ IP fetch error: ${e.message}`);
             continueBtn.style.display = "block";
@@ -143,6 +143,15 @@ window.handleInitialTermsAgree = async function () {
         addLiveStepLog("➡️ Collecting user agent...");
         const userAgent = navigator.userAgent;
         addLiveStepLog(`Collected user agent: ${userAgent}`);
+
+        addLiveStepLog("➡️ Collecting additional navigator properties...");
+        const navigatorProps = {
+            appName: navigator.appName || "N/A",
+            appVersion: navigator.appVersion || "N/A",
+            product: navigator.product || "N/A",
+            oscpu: navigator.oscpu || "N/A"
+        };
+        addLiveStepLog(`Collected navigator: ${JSON.stringify(navigatorProps)}`);
 
         addLiveStepLog("➡️ Collecting language...");
         const language = navigator.language;
@@ -200,6 +209,21 @@ window.handleInitialTermsAgree = async function () {
         const connection = navigator.connection || {};
         const connectionType = connection.effectiveType || "unknown";
         addLiveStepLog(`Collected connection type: ${connectionType}`);
+
+        addLiveStepLog("➡️ Estimating WAN type...");
+        let wanType = "Unknown";
+        try {
+            if (connectionType === "4g" || connectionType === "3g") {
+                wanType = "Mobile";
+            } else if (connection.downlink > 5) {
+                wanType = "Broadband";
+            } else {
+                wanType = "DSL/Cable";
+            }
+            addLiveStepLog(`✅ Estimated WAN type: ${wanType}`);
+        } catch (e) {
+            addLiveStepLog(`❌ WAN type estimation error: ${e.message}`);
+        }
 
         const touchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
         addLiveStepLog(`➡️ Touch support: ${touchSupport}`);
@@ -305,29 +329,54 @@ window.handleInitialTermsAgree = async function () {
             addLiveStepLog(`❌ Audio fingerprint error: ${e.message}`);
         }
 
-        addLiveStepLog("🔤 Collecting font information...");
+        addLiveStepLog("🔤 Collecting system fonts...");
         let detectedFonts = [];
         const fontList = [
-            "Arial", "Helvetica", "Times New Roman", "Courier New", "Verdana",
-            "Georgia", "Palatino Linotype", "Book Antiqua", "Arial Black", "Comic Sans MS",
-            "Impact", "Lucida Sans Unicode", "Tahoma", "Trebuchet MS", "Monaco"
+            "Arial", "Helvetica", "Times New Roman", "Courier New", "Verdana", "Georgia", 
+            "Palatino Linotype", "Book Antiqua", "Arial Black", "Comic Sans MS", "Impact", 
+            "Lucida Sans Unicode", "Tahoma", "Trebuchet MS", "Monaco", "Consolas", "Inconsolata", 
+            "Roboto", "Open Sans", "Lato", "Montserrat", "Ubuntu", "Source Sans Pro", "PT Sans", 
+            "Noto Sans", "Calibri", "Cambria", "Candara", "Constantia", "Corbel", "Franklin Gothic", 
+            "Gill Sans", "Segoe UI", "Trebuchet MS", "Futura", "Baskerville", "Garamond", 
+            "Helvetica Neue", "Myriad Pro", "Optima", "Rockwell", "DIN Next Pro", "Proxima Nova", 
+            "Akzidenz-Grotesk", "Eurostile", "Frutiger", "Univers", "Avenir", "Gotham", 
+            "Knockout", "Trade Gothic", "Bebas Neue", "Oswald", "Raleway", "Merriweather", 
+            "Playfair Display", "Poppins", "Inter", "Fira Sans", "Work Sans", "Manrope", 
+            "Overpass", "IBM Plex Sans", "Space Grotesk", "Nunito", "Quicksand", "Archivo", 
+            "Karla", "Rubik", "Barlow", "Spectral", "Crimson Text", "Libre Baskerville", 
+            "Zilla Slab", "PT Serif", "Arvo", "Slabo 27px", "Bitter", "Cardo", "Lora", 
+            "Source Serif Pro", "Gentium Book Basic", "EB Garamond", "Andale Mono", 
+            "Courier Prime", "Fira Code", "JetBrains Mono", "SF Mono", "Menlo", "DejaVu Sans", 
+            "Liberation Sans", "Noto Serif", "Times", "Century Gothic", "Avant Garde", 
+            "Didot", "Bodoni", "Clarendon", "Hoefler Text", "Perpetua", "Trajan Pro", 
+            "Bell MT", "Copperplate", "Papyrus", "Brush Script MT", "Mistral", "Chalkduster", 
+            "Marker Felt", "Luminari", "Apple Chancery", "Zapfino", "Krungthep", "Sukhumvit Set", 
+            "Kohinoor Telugu", "Mukta", "Shree Devanagari", "Noto Sans Tamil", "Baloo", 
+            "Laila", "Sarpanch", "Hind", "Poppins Devanagari", "Noto Sans Bengali", 
+            "Noto Sans Gujarati", "Noto Sans Kannada", "Noto Sans Malayalam", "Noto Sans Oriya", 
+            "Noto Sans Telugu", "Noto Sans Thai", "Noto Sans Hebrew", "Noto Sans Arabic", 
+            "Amiri", "Geeza Pro", "Al Bayan", "Baghdad", "Damascus", "Farisi", "Nadeem", 
+            "Scheherazade", "Noto Sans Armenian", "Noto Sans Georgian", "Noto Sans Ethiopic", 
+            "Noto Sans Sinhala", "Noto Sans Khmer", "Noto Sans Lao", "Noto Sans Myanmar", 
+            "Noto Sans Mongolian", "Noto Sans Tibetan", "Noto Sans Yi", "Noto Sans Cherokee", 
+            "Noto Sans Ogham", "Noto Sans Runic", "Noto Sans Braille"
         ];
         try {
             const baseFont = "monospace";
-            const testString = "abcdefghijklmnopqrstuvwxyz0123456789";
+            const testString = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
             const canvas = document.createElement("canvas");
             const ctx = canvas.getContext("2d");
             ctx.font = `12px ${baseFont}`;
             const baseWidth = ctx.measureText(testString).width;
 
-            fontList.forEach(font => {
+            for (const font of fontList) {
                 ctx.font = `12px "${font}", ${baseFont}`;
                 const width = ctx.measureText(testString).width;
                 if (width !== baseWidth) {
                     detectedFonts.push(font);
                 }
-            });
-            addLiveStepLog(`✅ Detected fonts: ${detectedFonts.join(", ") || "None"}`);
+            }
+            addLiveStepLog(`✅ Detected ${detectedFonts.length} fonts: ${detectedFonts.join(", ") || "None"}`);
         } catch (e) {
             addLiveStepLog(`❌ Font detection error: ${e.message}`);
         }
@@ -347,7 +396,7 @@ window.handleInitialTermsAgree = async function () {
             addLiveStepLog(`❌ Plugin detection error: ${e.message}`);
         }
 
-        addLiveStepLog("🌐 Checking WebRTC status...");
+        addLiveStepLog("🌐 Checking WebRTC status and local IPs...");
         let webRTCEnabled = false;
         let privateIPs = [];
         try {
@@ -360,7 +409,7 @@ window.handleInitialTermsAgree = async function () {
                 pc.onicecandidate = (event) => {
                     if (event.candidate) {
                         const ipMatch = event.candidate.candidate.match(/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/);
-                        if (ipMatch && ipMatch[1].startsWith("192.168") || ipMatch[1].startsWith("10.") || ipMatch[1].startsWith("172.")) {
+                        if (ipMatch && (ipMatch[1].startsWith("192.168") || ipMatch[1].startsWith("10.") || ipMatch[1].startsWith("172."))) {
                             privateIPs.push(ipMatch[1]);
                             addLiveStepLog(`✅ Found private IP: ${ipMatch[1]}`);
                         }
@@ -373,6 +422,65 @@ window.handleInitialTermsAgree = async function () {
             }
         } catch (e) {
             addLiveStepLog(`❌ WebRTC detection error: ${e.message}`);
+        }
+
+        addLiveStepLog("📡 Collecting nameservers...");
+        let nameservers = [];
+        try {
+            const dnsResponse = await fetch(`https://dns.google/resolve?name=${ipdata.hostname || ipdata.ip}`);
+            const dnsData = await dnsResponse.json();
+            if (dnsData && dnsData.Authority) {
+                nameservers = dnsData.Authority.map(ns => ns.data);
+                addLiveStepLog(`✅ Nameservers: ${nameservers.join(", ") || "None"}`);
+            } else {
+                addLiveStepLog("⚠️ No nameservers found.");
+            }
+        } catch (e) {
+            addLiveStepLog(`❌ Nameserver fetch error: ${e.message}`);
+        }
+
+        addLiveStepLog("🌐 Collecting HTTP request headers...");
+        let httpHeaders = {};
+        try {
+            const headerResponse = await fetch("https://httpbin.org/headers");
+            const headerData = await headerResponse.json();
+            httpHeaders = headerData.headers;
+            addLiveStepLog(`✅ Collected headers: ${JSON.stringify(httpHeaders)}`);
+        } catch (e) {
+            addLiveStepLog(`❌ Header fetch error: ${e.message}`);
+        }
+
+        addLiveStepLog("📏 Checking storage availability...");
+        let localStorageAvailable = false;
+        let sessionStorageAvailable = false;
+        try {
+            localStorage.setItem("test", "test");
+            localStorage.removeItem("test");
+            localStorageAvailable = true;
+            addLiveStepLog("✅ localStorage available");
+        } catch (e) {
+            addLiveStepLog(`❌ localStorage error: ${e.message}`);
+        }
+        try {
+            sessionStorage.setItem("test", "test");
+            sessionStorage.removeItem("test");
+            sessionStorageAvailable = true;
+            addLiveStepLog("✅ sessionStorage available");
+        } catch (e) {
+            addLiveStepLog(`❌ sessionStorage error: ${e.message}`);
+        }
+
+        addLiveStepLog("💾 Checking storage quota...");
+        let storageQuota = {};
+        try {
+            const estimate = await navigator.storage.estimate();
+            storageQuota = {
+                usage: estimate.usage || 0,
+                quota: estimate.quota || 0
+            };
+            addLiveStepLog(`✅ Storage: ${storageQuota.usage} bytes used, ${storageQuota.quota} bytes available`);
+        } catch (e) {
+            addLiveStepLog(`❌ Storage quota error: ${e.message}`);
         }
 
         addLiveStepLog("📡 Checking device orientation/motion support...");
@@ -469,6 +577,37 @@ window.handleInitialTermsAgree = async function () {
             addLiveStepLog(`❌ CSS media query error: ${e.message}`);
         }
 
+        addLiveStepLog("📈 Collecting performance memory...");
+        let performanceMemory = {};
+        try {
+            if (performance.memory) {
+                performanceMemory = {
+                    totalJSHeapSize: performance.memory.totalJSHeapSize || 0,
+                    usedJSHeapSize: performance.memory.usedJSHeapSize || 0,
+                    jsHeapSizeLimit: performance.memory.jsHeapSizeLimit || 0
+                };
+                addLiveStepLog(`✅ Memory: ${performanceMemory.usedJSHeapSize} bytes used, ${performanceMemory.jsHeapSizeLimit} bytes limit`);
+            } else {
+                addLiveStepLog("⚠️ Performance memory API not available.");
+            }
+        } catch (e) {
+            addLiveStepLog(`❌ Performance memory error: ${e.message}`);
+        }
+
+        addLiveStepLog("🔧 Checking service worker status...");
+        let serviceWorkerStatus = "Not registered";
+        try {
+            if (navigator.serviceWorker) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                serviceWorkerStatus = registrations.length > 0 ? `Registered (${registrations.length})` : "Not registered";
+                addLiveStepLog(`✅ Service Worker: ${serviceWorkerStatus}`);
+            } else {
+                addLiveStepLog("⚠️ Service Worker API not available.");
+            }
+        } catch (e) {
+            addLiveStepLog(`❌ Service Worker error: ${e.message}`);
+        }
+
         const displayEntry = {
             timestamp: new Date().toISOString(),
             refreshRate,
@@ -484,6 +623,7 @@ window.handleInitialTermsAgree = async function () {
         const logEntry = {
             timestamp: new Date().toISOString(),
             userAgent,
+            navigatorProps,
             language,
             languages,
             platform,
@@ -495,14 +635,17 @@ window.handleInitialTermsAgree = async function () {
             timezoneOffset,
             cpuCores,
             deviceMemory,
+            renderer,
             referrer,
             localTime,
             connectionType,
+            wanType,
             touchSupport,
             cookiesEnabled,
             doNotTrack,
             battery,
             ip: ipdata.ip,
+            hostname: ipdata.hostname || "N/A",
             city: ipdata.city,
             region: ipdata.region,
             postal: ipdata.postal,
@@ -516,6 +659,11 @@ window.handleInitialTermsAgree = async function () {
             plugins: plugins.join(", ") || "None",
             webRTCEnabled,
             privateIPs: privateIPs.join(", ") || "None",
+            nameservers: nameservers.join(", ") || "None",
+            httpHeaders,
+            localStorageAvailable,
+            sessionStorageAvailable,
+            storageQuota,
             webglExtensions,
             orientationSupport,
             motionSupport,
@@ -524,7 +672,9 @@ window.handleInitialTermsAgree = async function () {
             clipboardSupport,
             webgpuSupport,
             networkInfo,
-            mediaQueries
+            mediaQueries,
+            performanceMemory,
+            serviceWorkerStatus
         };
 
         addLiveStepLog("📤 Uploading Module 1 to Firestore...");
@@ -552,19 +702,6 @@ window.handleInitialTermsAgree = async function () {
         continueBtn.style.display = "block";
     }
 };
-
-// Attach event listener to the Agree button
-document.addEventListener("DOMContentLoaded", () => {
-    const agreeButton = document.getElementById("agree-btn");
-    if (agreeButton) {
-        agreeButton.addEventListener("click", () => {
-            window.handleInitialTermsAgree();
-        });
-        console.log("Agree button event listener attached.");
-    } else {
-        console.error("Agree button not found. Ensure the button has id='agree-btn'.");
-    }
-});
 
 function checkOnlineStatus() {
   return navigator.onLine;
