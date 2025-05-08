@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -89,18 +81,22 @@ window.handleInitialTermsAgree = async function () {
             return;
         }
 
-        addLiveStepLog("🌐 Fetching IP address and hostname...");
+        addLiveStepLog("🌐 Fetching IP address...");
         let ipdata;
         try {
             const ipResponse = await fetch("https://ipapi.co/json/");
             ipdata = await ipResponse.json();
-            addLiveStepLog(`✅ Fetched IP: ${ipdata.ip}, Hostname: ${ipdata.hostname || "N/A"}`);
+            addLiveStepLog(`✅ Fetched IP: ${ipdata.ip}`);
         } catch (e) {
             addLiveStepLog(`❌ IP fetch error: ${e.message}`);
             continueBtn.style.display = "block";
             return;
         }
 
+        addLiveStepLog("🌐 Fetching Subnet...");
+        const subnet = ipdata.network;
+        addLiveStepLog(`Fetched Subnet: ${ipdata.network}`);
+        
         addLiveStepLog("🚫 Checking if IP is banned...");
         try {
             const ipDoc = await getDoc(doc(db, "banned_ips", ipdata.ip));
@@ -205,26 +201,6 @@ window.handleInitialTermsAgree = async function () {
         const localTime = new Date().toString();
         addLiveStepLog(`Collected local time: ${localTime}`);
 
-        addLiveStepLog("➡️ Collecting connection type...");
-        const connection = navigator.connection || {};
-        const connectionType = connection.effectiveType || "unknown";
-        addLiveStepLog(`Collected connection type: ${connectionType}`);
-
-        addLiveStepLog("➡️ Estimating WAN type...");
-        let wanType = "Unknown";
-        try {
-            if (connectionType === "4g" || connectionType === "3g") {
-                wanType = "Mobile";
-            } else if (connection.downlink > 5) {
-                wanType = "Broadband";
-            } else {
-                wanType = "DSL/Cable";
-            }
-            addLiveStepLog(`✅ Estimated WAN type: ${wanType}`);
-        } catch (e) {
-            addLiveStepLog(`❌ WAN type estimation error: ${e.message}`);
-        }
-
         const touchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
         addLiveStepLog(`➡️ Touch support: ${touchSupport}`);
 
@@ -295,92 +271,6 @@ window.handleInitialTermsAgree = async function () {
             addLiveStepLog(`❌ WebGL detection failed: ${e.message}`);
         }
 
-        addLiveStepLog("🖌️ Collecting canvas fingerprint...");
-        let canvasFingerprint = "N/A";
-        try {
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d");
-            ctx.font = "14px Arial";
-            ctx.fillText("Canvas Fingerprint Test 😊", 10, 50);
-            ctx.fillStyle = "rgba(100, 200, 50, 0.5)";
-            ctx.fillRect(20, 20, 100, 60);
-            canvasFingerprint = canvas.toDataURL();
-            addLiveStepLog(`✅ Canvas fingerprint generated (length: ${canvasFingerprint.length})`);
-        } catch (e) {
-            addLiveStepLog(`❌ Canvas fingerprint error: ${e.message}`);
-        }
-
-        addLiveStepLog("🎵 Collecting AudioContext fingerprint...");
-        let audioFingerprint = "N/A";
-        try {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioCtx.createOscillator();
-            const compressor = audioCtx.createDynamicsCompressor();
-            oscillator.type = "sine";
-            oscillator.connect(compressor);
-            const sampleRate = audioCtx.sampleRate;
-            oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
-            compressor.threshold.setValueAtTime(-50, audioCtx.currentTime);
-            audioFingerprint = `${sampleRate}|${compressor.threshold.value}`;
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.01);
-            addLiveStepLog(`✅ Audio fingerprint: ${audioFingerprint}`);
-        } catch (e) {
-            addLiveStepLog(`❌ Audio fingerprint error: ${e.message}`);
-        }
-
-        addLiveStepLog("🔤 Collecting system fonts...");
-        let detectedFonts = [];
-        const fontList = [
-            "Arial", "Helvetica", "Times New Roman", "Courier New", "Verdana", "Georgia", 
-            "Palatino Linotype", "Book Antiqua", "Arial Black", "Comic Sans MS", "Impact", 
-            "Lucida Sans Unicode", "Tahoma", "Trebuchet MS", "Monaco", "Consolas", "Inconsolata", 
-            "Roboto", "Open Sans", "Lato", "Montserrat", "Ubuntu", "Source Sans Pro", "PT Sans", 
-            "Noto Sans", "Calibri", "Cambria", "Candara", "Constantia", "Corbel", "Franklin Gothic", 
-            "Gill Sans", "Segoe UI", "Trebuchet MS", "Futura", "Baskerville", "Garamond", 
-            "Helvetica Neue", "Myriad Pro", "Optima", "Rockwell", "DIN Next Pro", "Proxima Nova", 
-            "Akzidenz-Grotesk", "Eurostile", "Frutiger", "Univers", "Avenir", "Gotham", 
-            "Knockout", "Trade Gothic", "Bebas Neue", "Oswald", "Raleway", "Merriweather", 
-            "Playfair Display", "Poppins", "Inter", "Fira Sans", "Work Sans", "Manrope", 
-            "Overpass", "IBM Plex Sans", "Space Grotesk", "Nunito", "Quicksand", "Archivo", 
-            "Karla", "Rubik", "Barlow", "Spectral", "Crimson Text", "Libre Baskerville", 
-            "Zilla Slab", "PT Serif", "Arvo", "Slabo 27px", "Bitter", "Cardo", "Lora", 
-            "Source Serif Pro", "Gentium Book Basic", "EB Garamond", "Andale Mono", 
-            "Courier Prime", "Fira Code", "JetBrains Mono", "SF Mono", "Menlo", "DejaVu Sans", 
-            "Liberation Sans", "Noto Serif", "Times", "Century Gothic", "Avant Garde", 
-            "Didot", "Bodoni", "Clarendon", "Hoefler Text", "Perpetua", "Trajan Pro", 
-            "Bell MT", "Copperplate", "Papyrus", "Brush Script MT", "Mistral", "Chalkduster", 
-            "Marker Felt", "Luminari", "Apple Chancery", "Zapfino", "Krungthep", "Sukhumvit Set", 
-            "Kohinoor Telugu", "Mukta", "Shree Devanagari", "Noto Sans Tamil", "Baloo", 
-            "Laila", "Sarpanch", "Hind", "Poppins Devanagari", "Noto Sans Bengali", 
-            "Noto Sans Gujarati", "Noto Sans Kannada", "Noto Sans Malayalam", "Noto Sans Oriya", 
-            "Noto Sans Telugu", "Noto Sans Thai", "Noto Sans Hebrew", "Noto Sans Arabic", 
-            "Amiri", "Geeza Pro", "Al Bayan", "Baghdad", "Damascus", "Farisi", "Nadeem", 
-            "Scheherazade", "Noto Sans Armenian", "Noto Sans Georgian", "Noto Sans Ethiopic", 
-            "Noto Sans Sinhala", "Noto Sans Khmer", "Noto Sans Lao", "Noto Sans Myanmar", 
-            "Noto Sans Mongolian", "Noto Sans Tibetan", "Noto Sans Yi", "Noto Sans Cherokee", 
-            "Noto Sans Ogham", "Noto Sans Runic", "Noto Sans Braille"
-        ];
-        try {
-            const baseFont = "monospace";
-            const testString = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d");
-            ctx.font = `12px ${baseFont}`;
-            const baseWidth = ctx.measureText(testString).width;
-
-            for (const font of fontList) {
-                ctx.font = `12px "${font}", ${baseFont}`;
-                const width = ctx.measureText(testString).width;
-                if (width !== baseWidth) {
-                    detectedFonts.push(font);
-                }
-            }
-            addLiveStepLog(`✅ Detected ${detectedFonts.length} fonts: ${detectedFonts.join(", ") || "None"}`);
-        } catch (e) {
-            addLiveStepLog(`❌ Font detection error: ${e.message}`);
-        }
-
         addLiveStepLog("🔌 Collecting browser plugins...");
         let plugins = [];
         try {
@@ -424,21 +314,6 @@ window.handleInitialTermsAgree = async function () {
             addLiveStepLog(`❌ WebRTC detection error: ${e.message}`);
         }
 
-        addLiveStepLog("📡 Collecting nameservers...");
-        let nameservers = [];
-        try {
-            const dnsResponse = await fetch(`https://dns.google/resolve?name=${ipdata.hostname || ipdata.ip}`);
-            const dnsData = await dnsResponse.json();
-            if (dnsData && dnsData.Authority) {
-                nameservers = dnsData.Authority.map(ns => ns.data);
-                addLiveStepLog(`✅ Nameservers: ${nameservers.join(", ") || "None"}`);
-            } else {
-                addLiveStepLog("⚠️ No nameservers found.");
-            }
-        } catch (e) {
-            addLiveStepLog(`❌ Nameserver fetch error: ${e.message}`);
-        }
-
         addLiveStepLog("🌐 Collecting HTTP request headers...");
         let httpHeaders = {};
         try {
@@ -448,39 +323,6 @@ window.handleInitialTermsAgree = async function () {
             addLiveStepLog(`✅ Collected headers: ${JSON.stringify(httpHeaders)}`);
         } catch (e) {
             addLiveStepLog(`❌ Header fetch error: ${e.message}`);
-        }
-
-        addLiveStepLog("📏 Checking storage availability...");
-        let localStorageAvailable = false;
-        let sessionStorageAvailable = false;
-        try {
-            localStorage.setItem("test", "test");
-            localStorage.removeItem("test");
-            localStorageAvailable = true;
-            addLiveStepLog("✅ localStorage available");
-        } catch (e) {
-            addLiveStepLog(`❌ localStorage error: ${e.message}`);
-        }
-        try {
-            sessionStorage.setItem("test", "test");
-            sessionStorage.removeItem("test");
-            sessionStorageAvailable = true;
-            addLiveStepLog("✅ sessionStorage available");
-        } catch (e) {
-            addLiveStepLog(`❌ sessionStorage error: ${e.message}`);
-        }
-
-        addLiveStepLog("💾 Checking storage quota...");
-        let storageQuota = {};
-        try {
-            const estimate = await navigator.storage.estimate();
-            storageQuota = {
-                usage: estimate.usage || 0,
-                quota: estimate.quota || 0
-            };
-            addLiveStepLog(`✅ Storage: ${storageQuota.usage} bytes used, ${storageQuota.quota} bytes available`);
-        } catch (e) {
-            addLiveStepLog(`❌ Storage quota error: ${e.message}`);
         }
 
         addLiveStepLog("📡 Checking device orientation/motion support...");
@@ -543,24 +385,6 @@ window.handleInitialTermsAgree = async function () {
             addLiveStepLog(`❌ WebGPU detection error: ${e.message}`);
         }
 
-        addLiveStepLog("📡 Collecting network information...");
-        let networkInfo = {};
-        try {
-            const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-            if (conn) {
-                networkInfo = {
-                    downlink: conn.downlink || "N/A",
-                    rtt: conn.rtt || "N/A",
-                    saveData: conn.saveData || false
-                };
-                addLiveStepLog(`✅ Network: Downlink ${networkInfo.downlink} Mbps, RTT ${networkInfo.rtt} ms, Save Data ${networkInfo.saveData}`);
-            } else {
-                addLiveStepLog("⚠️ Network Information API not available.");
-            }
-        } catch (e) {
-            addLiveStepLog(`❌ Network info error: ${e.message}`);
-        }
-
         addLiveStepLog("📱 Collecting CSS media queries...");
         let mediaQueries = {};
         try {
@@ -608,18 +432,6 @@ window.handleInitialTermsAgree = async function () {
             addLiveStepLog(`❌ Service Worker error: ${e.message}`);
         }
 
-        const displayEntry = {
-            timestamp: new Date().toISOString(),
-            refreshRate,
-            resolution,
-            renderer,
-            ip: ipdata.ip,
-            version: APP_VERSION,
-            canvasFingerprint: canvasFingerprint.substring(0, 50), // Truncate for storage
-            audioFingerprint,
-            privateIPs: privateIPs.join(", ") || "None"
-        };
-
         const logEntry = {
             timestamp: new Date().toISOString(),
             userAgent,
@@ -640,12 +452,14 @@ window.handleInitialTermsAgree = async function () {
             localTime,
             connectionType,
             wanType,
+            resolution,
             touchSupport,
             cookiesEnabled,
             doNotTrack,
+            refreshrate,
             battery,
             ip: ipdata.ip,
-            hostname: ipdata.hostname || "N/A",
+            subnet: ipdata.network,
             city: ipdata.city,
             region: ipdata.region,
             postal: ipdata.postal,
