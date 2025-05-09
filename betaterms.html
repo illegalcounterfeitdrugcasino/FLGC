@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLGC Terms of Service</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a0d2e, #2a1a4e);
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #ff00ff;
+            text-shadow: 0 0 12px rgba(255, 0, 255, 0.6);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: #cccccc;
+            margin-top: 0.5rem;
+        }
+
+        nav {
+            background: #1a0d2e;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #00ffff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #ff00ff;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            background: #1a1a1a;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        section h2 {
+            font-size: 2rem;
+            color: #00ffff;
+            margin-bottom: 1.2rem;
+        }
+
+        section h3 {
+            font-size: 1.4rem;
+            color: #ff00ff;
+            margin: 1rem 0 0.5rem;
+        }
+
+        section p, section ul {
+            font-size: 1rem;
+            color: #dddddd;
+        }
+
+        section ul {
+            list-style: disc;
+            padding-left: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        section ul li {
+            margin-bottom: 0.6rem;
+        }
+
+        .disclaimer {
+            background: #2a1a4e;
+            padding: 1.2rem;
+            border-left: 5px solid #ff00ff;
+            margin: 1.2rem 0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .faq-item {
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem;
+            background: #222;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+
+        .faq-question:hover {
+            background: #333;
+        }
+
+        .faq-question h3 {
+            font-size: 1.3rem;
+            color: #00ffff;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            padding: 0 1.2rem;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .faq-answer p {
+            padding: 1.2rem 0;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+            padding: 1.2rem;
+        }
+
+        .faq-item .toggle-icon {
+            font-size: 1.3rem;
+            color: #ff00ff;
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .toggle-icon {
+            transform: rotate(45deg);
+        }
+
+        footer {
+            background: #1a0d2e;
+            padding: 2.5rem;
+            text-align: center;
+            color: #cccccc;
+            font-size: 0.95rem;
+            border-top: 1px solid #333;
+        }
+
+        footer a {
+            color: #00ffff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #ff00ff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 2.2rem; }
+            header p { font-size: 1rem; }
+            nav ul { flex-direction: column; gap: 1rem; }
+            section { padding: 1.8rem; }
+            section h2 { font-size: 1.6rem; }
+            section h3 { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>FLGC Terms of Service</h1>
+        <p>Effective Date: May 9, 2025</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#nature-of-platform">Nature of Platform</a></li>
+            <li><a href="#eligibility">Eligibility</a></li>
+            <li><a href="#platform-use">Platform Use</a></li>
+            <li><a href="#data-collection">Data Collection</a></li>
+            <li><a href="#ip-banning">IP Banning</a></li>
+            <li><a href="#game-mechanics">Game Mechanics</a></li>
+            <li><a href="#prizes">Prizes Disclaimer</a></li>
+            <li><a href="#gambling">Gambling Warning</a></li>
+            <li><a href="#advertising">Advertising Content</a></li>
+            <li><a href="#admin-mode">Admin Mode</a></li>
+            <li><a href="#frontend">Frontend Limitations</a></li>
+            <li><a href="#liability">Liability</a></li>
+            <li><a href="#termination">Termination</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="introduction">
+            <h2>Introduction</h2>
+            <p>
+                Welcome to Free Luxury Giveaway Casino (FLGC), a promotional and entertainment platform operated by Bitflash Enterprises. These Terms of Service ("Terms") govern your access to and use of FLGC, including all content, features, and services provided through the platform. By accessing FLGC, you agree to be bound by these Terms and our <a href="/privacy-policy.html">Privacy Policy</a>. If you do not agree, you must immediately cease using the platform.
+            </p>
+            <p>
+                FLGC is a frontend-only, browser-based application designed to simulate a giveaway and casino-like experience for entertainment purposes only. It uses Google Firebase for data logging and analytics, with extensive data collection performed upon agreeing to these Terms. The platform includes simulated games, fictional prizes, and promotional content, all of which are not real and are intended solely for thematic entertainment. These Terms provide comprehensive details about the platform’s operations, limitations, data practices, game mechanics, administrative controls, and disclaimers, particularly regarding its fictional nature and simulated content.
+            </p>
+            <div class="disclaimer">
+                <p>
+                    <strong>DISCLAIMER:</strong> FLGC is a fictional entertainment platform. No real prizes, money, or goods are awarded. All references to gambling, prizes, black markets, or illegal activities are purely fictional and for thematic purposes only. FLGC does not engage in real-world transactions, gambling, or illegal activities.
+                </p>
+            </div>
+        </section>
+
+        <section id="nature-of-platform">
+            <h2>Nature of the FLGC Platform</h2>
+            <h3>Promotional and Fictional Experience</h3>
+            <p>
+                FLGC is not a real casino, gambling platform, or prize distribution service. It is a fictional, promotional platform that simulates the experience of participating in giveaways and casino-like activities. All content, including references to "prizes," "luxury items," "black markets," "illegal activities," or "jackpots," is purely fictional and intended for entertainment purposes only. The platform operates as a single-page application within your web browser, using HTML, CSS, and JavaScript, with data logging handled by Google Firebase Firestore.
+            </p>
+            <h3>Frontend-Only Architecture</h3>
+            <p>
+                FLGC operates entirely within your web browser, with no backend server for user account management, authentication, or real-time moderation. Key characteristics include:
+            </p>
+            <ul>
+                <li>No user accounts are created or stored; all interactions are anonymous and client-side.</li>
+                <li>Data logging occurs via Firebase Firestore, capturing device, network, and usage information as detailed in the Data Collection section.</li>
+                <li>Simulated games (e.g., Slots, Wheel, Crash, Plinko, Roulette, Blackjack) run locally in the browser using JavaScript-based randomization.</li>
+                <li>Administrative controls, such as IP banning or content moderation, are limited by the frontend-only design and rely on Firebase security rules and browser-based checks.</li>
+            </ul>
+            <div class="disclaimer">
+                <p>
+                    <strong>DISCLAIMER:</strong> FLGC’s frontend-only nature means we cannot enforce real-time user-specific restrictions or bans beyond IP-based checks via Firebase. References to "banning" or "termination" are aspirational and reflect our intent to maintain a safe environment, but technical enforcement is limited.
+                </p>
+            </div>
+            <h3>Service Worker and Offline Mode</h3>
+            <p>
+                FLGC uses a Service Worker to cache assets for faster loading and limited offline functionality. In offline mode, features requiring internet access (e.g., Firebase data logging, IP banning checks, or version validation) are unavailable, and the platform operates in a reduced-capacity state. Users are prompted to reconnect to the internet to access full functionality.
+            </p>
+        </section>
+
+        <section id="eligibility">
+            <h2>Eligibility</h2>
+            <p>
+                To access FLGC, you must meet the following criteria:
+            </p>
+            <ul>
+                <li>Reside in a jurisdiction where access to simulated giveaway or casino-like platforms is not prohibited by law.</li>
+                <li>Not be located in a country or region subject to international sanctions, embargoes, or restrictions that prohibit access to FLGC (e.g., jurisdictions listed by OFAC or other regulatory bodies).</li>
+                <li>Have a compatible device and browser (e.g., modern versions of Chrome, Firefox, Safari, or Edge) capable of running FLGC’s JavaScript-based features, WebGL, and Firebase integration.</li>
+                <li>Not have an IP address listed in FLGC’s Firebase "banned_ips" collection, as checked during the initial terms agreement process.</li>
+                <li>Agree to comply with all applicable local, state, national, and international laws, including those related to simulated gambling, data privacy, and online conduct.</li>
+            </ul>
+            <p>
+                You are solely responsible for verifying that your use of FLGC complies with all applicable laws. Bitflash Enterprises reserves the right to limit access based on device compatibility, legal restrictions, or IP bans, though such limitations are enforced via frontend checks and Firebase queries only.
+            </p>
+            <div class="disclaimer">
+                <p>
+                    <strong>DISCLAIMER:</strong> FLGC does not verify your location or legal eligibility beyond IP-based checks. It is your responsibility to ensure compliance with all applicable laws before using the platform.
+                </p>
+            </div>
+        </section>
+
+        <section id="platform-use">
+            <h2>Platform Use and Restrictions</h2>
+            <h3>Permitted Use</h3>
+            <p>
+                FLGC is provided solely for personal, non-commercial entertainment. You may use the platform to engage with its simulated games (Slots, Wheel, Crash, Plinko, Roulette, Blackjack), view fictional promotional content, and interact with features like the chat system, provided you adhere to these Terms.
+            </p>
+            <h3>Prohibited Activities</h3>
+            <p>
+                You agree not to engage in any of the following activities:
+            </p>
+            <ul>
+                <li>Attempting to access or manipulate the platform’s admin mode, Firebase Firestore data, or other restricted systems without authorization.</li>
+                <li>Using automated tools, bots, or scripts to interact with FLGC, scrape content, simulate user activity, or bypass spin limits.</li>
+                <li>Engaging in any activity that disrupts, overloads, or impairs the platform’s performance, such as denial-of-service attacks.</li>
+                <li>Using FLGC to promote or engage in illegal activities, including but not limited to black market transactions, illegal advertising, or unauthorized prize distributions.</li>
+                <li>Reverse-engineering, decompiling, or otherwise attempting to extract the platform’s source code, Firebase configuration, or data.</li>
+                <li>Attempting to bypass IP bans or other restrictions implemented via Firebase or browser-based checks.</li>
+            </ul>
+            <p>
+                Enforcement of these restrictions relies on Firebase security rules, browser-based checks, and IP banning via the "banned_ips" collection. Violations may result in an IP ban or legal action if they involve illegal conduct. Due to the frontend-only architecture, immediate enforcement of user-specific bans is not feasible.
+            </p>
+            <div class="disclaimer">
+                <p>
+                    <strong>DISCLAIMER:</strong> FLGC’s enforcement mechanisms are limited by its frontend-only design. We rely on users to act in good faith and report violations to <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>.
+                </p>
+            </div>
+        </section>
+
+        <section id="data-collection">
+            <h2>Data Collection and Privacy</h2>
+            <h3>Data Collected</h3>
+            <p>
+                FLGC collects extensive data via Google Firebase Firestore upon your agreement to these Terms during the initial setup process. The data includes:
+            </p>
+            <ul>
+                <li><strong>Device Information:</strong> Browser type and version, operating system, screen resolution (e.g., 1920x1080), pixel density, device memory, CPU cores, WebGL renderer, touch support, battery level, charging status, screen refresh rate, and supported CSS media queries (e.g., prefers-reduced-motion).</li>
+                <li><strong>IP Address and Geolocation:</strong> IP address, subnet, city, region, postal code, country, latitude, longitude, organization, and autonomous system number (ASN), obtained via ipapi.co. Precise geolocation (latitude, longitude, accuracy) is collected if permitted by your browser.</li>
+                <li><strong>Usage Data:</strong> Timestamp of access, referrer URL, browser language, all preferred languages, local time, timezone, timezone offset, and network connection type.</li>
+                <li><strong>Browser Capabilities:</strong> WebGL extensions, browser plugins, WebRTC status, private IPs (via WebRTC), HTTP request headers, device orientation/motion support, MIDI support, clipboard API support, WebGPU support, and service worker status.</li>
+                <li><strong>Performance Metrics:</strong> JavaScript heap size, memory usage, and performance memory limits (if supported).</li>
+                <li><strong>Location Data:</strong> Precise geolocation (city, country) obtained via reverse geocoding using BigDataCloud API, logged to Firebase’s "locations" collection.</li>
+            </ul>
+            <h3>Purpose of Collection</h3>
+            <p>
+                The collected data is used exclusively for:
+            </p>
+            <ul>
+                <li>Generating aggregated analytics to improve platform functionality, user experience, and performance optimization.</li>
+                <li>Enhancing security by detecting potential fraud, abuse, or unauthorized access (e.g., via IP analysis or device fingerprinting).</li>
+                <li>Validating platform compatibility and version status (e.g., checking APP_VERSION against Firebase’s "app_version" collection).</li>
+                <li>Logging user interactions for debugging and ensuring compliance with these Terms.</li>
+            </ul>
+            <h3>User Consent and Rights</h3>
+            <p>
+                By using FLGC, you consent to this data collection and agree that:
+            </p>
+            <ul>
+                <li>Data collection occurs only after your explicit agreement during the initial terms screen, as implemented in the <code>handleInitialTermsAgree</code> function.</li>
+                <li>Data is stored securely in Firebase Firestore with encryption and access controls, as detailed in the <a href="/privacy-policy.html">Privacy Policy</a>.</li>
+                <li>Data is not sold, shared with third parties for marketing, or used for advertising purposes beyond FLGC’s fictional promotional content.</li>
+                <li>You have the right to request access to, deletion of, or objection to the processing of your data, subject to legal requirements, by contacting <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>.</li>
+            </ul>
+            <div class="disclaimer">
+                <p>
+                    <strong>DISCLAIMER:</strong> FLGC collects extensive device and usage data to ensure functionality and security. You are responsible for understanding the scope of this collection, as outlined above and in the Privacy Policy, before agreeing to these Terms.
+                </p>
+            </div>
+        </section>
+
+        <section id="ip-banning">
+            <h2>IP Banning and Access Restrictions</h2>
+            <h3>IP Ban Implementation</h3>
+            <p>
+                FLGC implements IP-based access restrictions using Firebase Firestore’s "banned_ips" collection. During the initial terms agreement process (<code>handleInitialTermsAgree</code>), the platform:
+            </p>
+            <ul>
+                <li>Fetches your IP address via ipapi.co.</li>
+                <li>Queries the "banned_ips" collection to check if your IP is listed.</li>
+                <li>Denies access if your IP is banned, displaying a popup with instructions to contact <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>.</li>
+            </ul>
+            <h3>Reasons for IP Banning</h3>
+            <p>
+                Your IP may be banned for reasons including:
+            </p>
+            <ul>
+                <li>Violating these Terms (e.g., attempting to access admin mode without authorization).</li>
+                <li>Engaging in suspected fraudulent, abusive, or illegal activity (e.g., using bots or scripts).</li>
+                <li>Repeated attempts to bypass platform restrictions or security measures.</li>
+                <li>Requests by law enforcement or government authorities.</li>
+            </ul>
+            <h3>Appealing an IP Ban</h3>
+            <p>
+                If your IP is banned, you may contact <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a> to appeal. Appeals must include your IP address, a description of the issue, and any relevant evidence. Bitflash Enterprises reserves the right to uphold or lift bans at its discretion.
+            </p>
+            <div class="disclaimer">
+                <p>
+                    <strong>DISCLAIMER:</strong> IP banning is the primary enforcement mechanism due to FLGC’s frontend-only design. Bans are not user-specific and may affect other users sharing the same IP (e.g., on a shared network). Bitflash Enterprises is not liable for access issues resulting from IP bans.
+                </p>
+            </div>
+        </section>
+
+        <section id="prizes">
+            <h2>Prizes and Giveaways Disclaimer</h2>
+            <div class="disclaimer">
+                <p>
+                    <strong>DISCLAIMER:</strong> FLGC is a fictional platform. No prizes, goods, services, or rewards of any kind are awarded, delivered, or redeemable through FLGC. All references to "prizes," "luxury items," "giveaways," "jackpots," or "illegal prizes" are purely fictional and for entertainment purposes only. FLGC does not engage in or facilitate real-world prize distributions, black market activities, or any form of real-world transactions.
+                </p>
+            </div>
+            <h3>User Responsibility</h3>
+            <p>
+                You are responsible for understanding that FLGC’s prize-related content is fictional. If you believe you have been misled or have concerns about the platform’s content, please contact us immediately at <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>.
+            </p>
+        </section>
+
+        <section id="gambling">
+            <h2>Gambling and Simulated Casino Experience</h2>
+            <div class="disclaimer">
+                <p>
+                    <strong>WARNING:</strong> FLGC is not a gambling platform and does not offer real-money wagering, betting, or gambling services. The platform provides a simulated casino-like experience for entertainment purposes only. Participation in FLGC involves no financial risk or reward, but you should be aware of the risks associated with gambling-like activities and their legal status in your jurisdiction.
+                </p>
+            </div>
+            <h3>Simulated Experience</h3>
+            <p>
+                FLGC’s casino-like features, such as Slots, Wheel, Crash, Plinko, Roulette, and Blackjack, are designed to mimic the aesthetics of a casino without involving real money or gambling mechanics. You acknowledge that:
+            </p>
+            <ul>
+                <li>FLGC does not accept, process, or facilitate real-money bets, wagers, deposits, or withdrawals.</li>
+                <li>The platform does not comply with gambling regulations, as it is not a gambling service.</li>
+                <li>All outcomes, rewards, or interactions within FLGC’s simulated games are predetermined or random for entertainment purposes and have no real-world value.</li>
+                <li>You are responsible for ensuring that participation in a simulated casino platform is legal in your jurisdiction.</li>
+            </ul>
+            <h3>Gambling Risks</h3>
+            <p>
+                While FLGC involves no financial risk, the simulated casino experience may evoke gambling-like behaviors. You agree that:
+            </p>
+            <ul>
+                <li>FLGC is not liable for any psychological, financial, or legal consequences arising from your participation or misinterpretation of the platform as real gambling.</li>
+                <li>If you or someone you know struggles with gambling addiction, you should seek help from professional organizations, such as Gamblers Anonymous (<a href="https://www.gamblersanonymous.org">www.gamblersanonymous.org</a>) or the National Council on Problem Gambling (<a href="https://www.ncpgambling.org">www.ncpgambling.org</a>).</li>
+            </ul>
+        </section>
+
+        <section id="advertising">
+            <h2>Advertising and Promotional Content</h2>
+            <div class="disclaimer">
+                <p>
+                    <strong>DISCLAIMER:</strong> All advertising or promotional content on FLGC, including references to "illegal ads," "black markets," or other controversial themes, is fictional and part of the platform’s entertainment narrative. FLGC does not host, display, or distribute real advertisements, illegal or otherwise.
+                </p>
+            </div>
+            <h3>Fictional Advertising</h3>
+            <p>
+                FLGC includes simulated advertisements stored in the <code>adContent</code> array, displayed via popups or in-game prompts. This content may reference:
+            </p>
+            <ul>
+                <li>"Illegal ads" (e.g., promotions for prohibited goods or services).</li>
+                <li>"Black markets" (e.g., fictional marketplaces for illicit items).</li>
+                <li>Other controversial or exaggerated themes to enhance the platform’s narrative.</li>
+            </ul>
+            <p>
+                You acknowledge that:
+            </p>
+            <ul>
+                <li>All such content is entirely fictional and not connected to real-world products, services, or activities.</li>
+                <li>FLGC does not engage in or endorse illegal advertising, black market activities, or any real-world promotional campaigns.</li>
+                <li>You will not rely on or act upon any simulated advertising content, as it is for entertainment purposes only.</li>
+            </ul>
+            <h3>User Responsibility</h3>
+            <p>
+                You are responsible for distinguishing between FLGC’s fictional content and real-world advertising. If you encounter content that appears misleading or concerning, please report it to <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>.
+            </p>
+        </section>
+
+        <section id="frontend">
+            <h2>Frontend-Only Limitations</h2>
+            <h3>No Backend Enforcement</h3>
+            <p>
+                FLGC’s frontend-only architecture means it operates entirely within your browser, with data logging handled by Firebase. As a result:
+            </p>
+            <ul>
+                <li>There is no server-side user management, authentication, or moderation system.</li>
+                <li>Real-time bans or suspensions are limited to IP-based restrictions via Firebase.</li>
+                <li>Compatibility checks and restrictions are implemented via JavaScript and can be bypassed by technically savvy users.</li>
+                <li>Security relies on Firebase’s access controls and browser-based protections, not active server monitoring.</li>
+            </ul>
+            <h3>Implications for Users</h3>
+            <p>
+                You acknowledge that:
+            </p>
+            <ul>
+                <li>References to "banning" or "termination" reflect our intent to maintain a safe environment but are not fully enforceable.</li>
+                <li>FLGC cannot prevent repeat access by users who violate these Terms, except through IP bans or legal action.</li>
+                <li>You are responsible for using FLGC in good faith and reporting misuse to <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>.</li>
+            </ul>
+            <div class="disclaimer">
+                <p>
+                    <strong>DISCLAIMER:</strong> Due to FLGC’s frontend-only design, we cannot guarantee the prevention of unauthorized access or misuse by other users. Bitflash Enterprises is not liable for any damages resulting from the platform’s technical limitations.
+                </p>
+            </div>
+        </section>
+
+        <section id="liability">
+            <h2>Limitation of Liability and Disclaimers</h2>
+            <h3>General Disclaimer</h3>
+            <p>
+                FLGC is provided "as is" and "as available" without warranties of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement. Bitflash Enterprises does not guarantee that:
+            </p>
+            <ul>
+                <li>The platform will be uninterrupted, error-free, or secure.</li>
+                <li>The simulated content (e.g., prizes, ads, games) will meet your expectations or be free from misinterpretation.</li>
+                <li>The platform will be compatible with all devices or browsers.</li>
+                <li>Data collection or IP banning will prevent all unauthorized access or misuse.</li>
+            </ul>
+            <h3>Specific Liabilities</h3>
+            <p>
+                To the fullest extent permitted by law, Bitflash Enterprises shall not be liable for:
+            </p>
+            <ul>
+                <li>Any direct, indirect, incidental, consequential, or punitive damages arising from your use of FLGC.</li>
+                <li>Any errors, inaccuracies, or omissions in the platform’s content, including simulated prizes, ads, or game outcomes.</li>
+                <li>Any losses or damages resulting from reliance on FLGC’s fictional giveaways, casino-like features, or promotional content.</li>
+                <li>Any legal consequences arising from your use of FLGC in violation of applicable laws.</li>
+                <li>Any issues arising from the frontend-only architecture, including inability to enforce bans or prevent misuse.</li>
+            </ul>
+            <div class="disclaimer">
+                <p>
+                    <strong>DISCLAIMER:</strong> FLGC does not engage in, endorse, or facilitate illegal activities, including black market transactions, illegal advertising, or unauthorized prize distributions. All references to such activities are fictional and for entertainment purposes only. Bitflash Enterprises is not responsible for user misinterpretation, misuse, or illegal actions related to the platform.
+                </p>
+            </div>
+        </section>
+
+        <section id="termination">
+            <h2>Termination</h2>
+            <p>
+                Bitflash Enterprises may attempt to limit your access to FLGC for reasons including:
+            </p>
+            <ul>
+                <li>Violation of these Terms (e.g., attempting to access admin mode or manipulate Firebase data).</li>
+                <li>Suspected fraudulent, abusive, or illegal activity (e.g., bot usage, illegal content in chat).</li>
+                <li>Requests by law enforcement or government authorities.</li>
+                <li>Repeated attempts to bypass IP bans or other restrictions.</li>
+            </ul>
+            <p>
+                Due to FLGC’s frontend-only nature, termination is implemented via:
+            </p>
+            <ul>
+                <li>Adding your IP to the "banned_ips" collection in Firebase.</li>
+                <li>Browser-based restrictions (e.g., compatibility warnings).</li>
+                <li>Legal action for serious violations, such as unauthorized access or illegal conduct.</li>
+            </ul>
+            <div class="disclaimer">
+                <p>
+                    <strong>DISCLAIMER:</strong> Termination is limited to IP-based restrictions, which may not prevent access from other IPs or devices. Bitflash Enterprises is not liable for continued access by terminated users.
+                </p>
+            </div>
+        </section>
+
+        <section id="faq">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Are the prizes or black market references on FLGC real?</h3>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>No, all prizes, giveaways, and references to black markets or illegal activities are fictional and for entertainment purposes only. No real prizes are awarded, and FLGC does not engage in illegal activities.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Is FLGC a real gambling platform?</h3>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>No, FLGC simulates a casino-like experience for entertainment. It does not involve real-money gambling, wagering, or financial transactions.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Can I be banned from FLGC?</h3>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Your IP may be banned for violating these Terms, checked via Firebase during the terms agreement process. Due to the frontend-only design, bans are IP-based and may not prevent access from other IPs. Contact <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a> to appeal.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Are the ads on FLGC real?</h3>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>No, all advertising content, including references to "illegal ads" or "black markets," is fictional and part of FLGC’s entertainment narrative. FLGC does not display real advertisements.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>What data does FLGC collect?</h3>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>FLGC collects extensive device, IP, geolocation, usage, and browser capability data via Firebase Firestore, as detailed in the Data Collection section. This data is used for analytics, security, and compatibility checks.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>What is Admin Mode?</h3>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Admin Mode is a password-protected interface for managing FLGC’s settings, such as game mechanics, chat, and content. It is intended for authorized personnel only, and unauthorized access is prohibited.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Contact Us</h2>
+            <p>
+                If you have any questions about these Terms, the FLGC platform, or our practices, please contact us at:
+            </p>
+            <p>
+                Bitflash Enterprises<br>
+                Email: <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a><br>
+                Website: <a href="https://www.sites.google.com/view/bitflash-home">www.sites.google.com/view/bitflash-home</a>
+            </p>
+            <p>
+                We aim to respond to all inquiries within 5 business days.
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Bitflash Enterprises. All rights reserved. <a href="/privacy-policy.html">Privacy Policy</a> | <a href="/termsofservice.html">Terms of Service</a></p>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.faq-question').forEach(item => {
+            item.addEventListener('click', () => {
+                const parent = item.parentElement;
+                const isActive = parent.classList.contains('active');
+                
+                document.querySelectorAll('.faq-item').forEach(faq => {
+                    faq.classList.remove('active');
+                });
+
+                if (!isActive) {
+                    parent.classList.add('active');
+                }
+            });
+        });
+
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.8) {
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
