@@ -4385,14 +4385,17 @@ function enableNotifications(allow) {
                 } else {
                     showPopup("Notifications blocked! Skipping...", "OK");
                     finalizeSetup();
+                    startAutoSave();
                 }
             });
         } else {
             showPopup("Your browser doesn’t support notifications!", "OK");
             finalizeSetup();
+            startAutoSave();
         }
     } else {
         finalizeSetup(); // Skip notifications
+        startAutoSave();
     }
 }
 function sendTestNotification() {
@@ -4409,6 +4412,7 @@ function sendTestNotification() {
     } else {
         showPopup("Notification permission not granted!", "OK");
         finalizeSetup();
+        startAutoSave();
     }
 }
 function verifyTestCode() {
@@ -4416,6 +4420,7 @@ function verifyTestCode() {
     if (enteredCode === testCode) {
         showPopup("Notifications verified!");
         finalizeSetup();
+        startAutoSave();
     } else {
         showPopup("Incorrect code!", "OK");
         document.getElementById("verify-code").value = "";
@@ -4443,6 +4448,7 @@ function verifyTestCode() {
     userName = document.getElementById("setup-name").value || "";
     userLocation = document.getElementById("setup-location").value || "";
     finalizeSetup();
+    startAutoSave();
 }
         function previewTheme(theme) {
             const preview = document.getElementById("theme-preview");
@@ -4507,7 +4513,6 @@ function verifyTestCode() {
             }
         }
         function finalizeSetup() {
-    startAutoSave();
     document.getElementById("setup-screen").style.opacity = "0";
     setTimeout(() => {
         document.getElementById("setup-screen").style.display = "none";
