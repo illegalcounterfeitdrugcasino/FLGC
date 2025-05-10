@@ -38,7 +38,7 @@
         });
     }
 
-    const APP_VERSION = "9525";
+    const APP_VERSION = "10525";
 
 function addStatusLog(message) {
     const log = document.getElementById("firebase-status-log");
@@ -578,7 +578,8 @@ window.clearCacheAndReload = function() {
 window.proceedAfterFirebaseError = function() {
     addStatusLog("User opted to continue despite error.");
     document.getElementById("firebase-loading-screen").style.display = "none";
-    initScreen('setup-screen')
+    initGame();
+    initScreen('main-container')
 };
 
 window.proceedAfterFirebaseSuccess = function() {
