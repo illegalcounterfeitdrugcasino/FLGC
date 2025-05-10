@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="FLGC">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -4547,8 +4547,7 @@ async function pasteSavedData() {
     }
 }
 
-        function loadSavedData() {
-    const data = JSON.parse(document.getElementById("saved-data").value);
+        function loadSavedDataFromObject(data) {
     spinsLeft = data.spinsLeft || 3;
     bitflashBucks = data.bitflashBucks || 0;
     jackpotProgress = data.jackpotProgress || 0;
@@ -4569,10 +4568,10 @@ async function pasteSavedData() {
     adContent = data.adContent || adContent;
     fakeMessages = data.fakeMessages || fakeMessages;
     bannedWords = data.bannedWords || bannedWords;
-    adminPassword = data.adminPassword === "default" ? "5820320" : data.adminPassword || "5820320";
-    soundEnabled = data.soundEnabled !== undefined ? data.soundEnabled : true;
-    notificationPreference = data.notificationPreference || "popup";
-    notificationPrefs = data.notificationPrefs || { ads: false, wins: false, daily: false, events: false };
+    adminPassword = data.adminPassword === "default" ? "5820320" : data.adminPassword;
+    soundEnabled = data.soundEnabled || true;
+    notificationPreference = data.notificationPreference || true;
+    notificationPrefs = data.notificationPrefs || notificationPrefs;
     popup.style.display = "none";
     document.getElementById("setup-screen").style.display = "none";
     document.getElementById("main-container").style.display = "flex";
