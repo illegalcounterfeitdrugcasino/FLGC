@@ -191,9 +191,11 @@
 
     <nav>
         <ul>
+            <li><a href="#introduction">Introduction</a></li>
             <li><a href="#data-collection">What We Collect</a></li>
             <li><a href="#data-usage">How We Use Data</a></li>
             <li><a href="#data-storage">Data Storage</a></li>
+            <li><a href="#account-security">Account Security</a></li>
             <li><a href="#your-rights">Your Rights</a></li>
             <li><a href="#faq">FAQ</a></li>
             <li><a href="#contact">Contact Us</a></li>
@@ -204,70 +206,95 @@
         <section id="introduction">
             <h2>Introduction</h2>
             <p>
-                At Free Luxury Giveaway Casino (FLGC), operated by Bitflash Enterprises, we prioritize your privacy and are committed to transparency regarding our data practices. This Privacy Policy outlines the types of data we collect, how we use it, how it is stored, and your rights to manage your information. We do not sell, trade, or transfer your data to third parties for marketing purposes.
+                At Free Luxury Giveaway Casino (FLGC), operated by Bitflash Enterprises, we prioritize your privacy and are committed to transparency regarding our data practices. This Privacy Policy outlines the types of data we collect, including account-related data, how we use it, how it is stored, and your rights to manage your information. FLGC uses a key-based account system stored in Google Firebase Firestore to personalize your experience, and this policy details the associated data practices. We do not sell, trade, or transfer your data to third parties for marketing purposes.
+            </p>
+            <p>
+                By using FLGC, you consent to the data collection practices described in this policy and our <a href="/termsofservice.html">Terms of Service</a>. If you do not agree, please do not use the platform.
             </p>
         </section>
 
         <section id="data-collection">
             <h2>What Data We Collect</h2>
             <p>
-                FLGC collects various types of data when you interact with our platform. This collection occurs only after you consent to our Terms of Service and Privacy Policy. The data includes:
+                FLGC collects various types of data when you interact with our platform, including during account setup and gameplay. This collection occurs only after you consent to our Terms of Service and Privacy Policy during the initial setup process. The data includes:
             </p>
             <ul>
+                <li><strong>Account Data:</strong> Your unique <code>accountKey</code>, display name, location (provided manually or via geolocation, if permitted), gameplay progress (e.g., Bitflash Bucks, spins, VIP level, jackpot progress, streak count), and customizations.</li>
                 <li><strong>Device Information:</strong> User agent, browser type, app/site version, product, OS CPU, platform, vendor, screen resolution, color depth, device pixel ratio, CPU cores, device memory, touch support, WebGL renderer, WebGL extensions, browser plugins, service worker status, and CSS media queries (e.g., prefers-reduced-motion, prefers-color-scheme, pointer).</li>
-                <li><strong>IP Address and Geolocation:</strong> IP address, subnet, city, region, postal code, country, latitude, longitude, organization, autonomous system number (ASN), and private IPs (via WebRTC, if enabled), obtained through a third-party service (ipapi.co) or browser APIs.</li>
-                <li><strong>Usage and Browser Data:</strong> Timestamp of visit, referrer URL, browser language, all preferred languages, local time, timezone, timezone offset, cookies enabled status, HTTP request headers, and clipboard API support.</li>
+                <li><strong>IP Address and Geolocation:</strong> IP address, subnet, city, region, postal code, country, latitude, longitude, organization, autonomous system number (ASN), and private IPs (via WebRTC, if enabled), obtained through a third-party service (ipapi.co) or browser APIs. Precise geolocation (latitude, longitude, accuracy) is collected if permission is granted.</li>
+                <li><strong>Usage and Browser Data:</strong> Timestamp of visit, referrer URL, browser language, all preferred languages, local time, timezone, timezone offset, cookies enabled status, HTTP request headers, clipboard API support, and performance metrics (e.g., JavaScript heap size, memory usage).</li>
                 <li><strong>Device Status:</strong> Battery level and charging status, screen refresh rate, device orientation and motion support, MIDI support, WebGPU support, and precise geolocation (latitude, longitude, accuracy) if permission is granted.</li>
-                <li><strong>Network and Connectivity:</strong> WebRTC status and network check timestamps to verify internet access.</li>
+                <li><strong>Network and Connectivity:</strong> WebRTC status, network connection type, and network check timestamps to verify internet access.</li>
+                <li><strong>Location Data:</strong> Precise geolocation (city, country) obtained via reverse geocoding using BigDataCloud API, logged to Firebase’s "locations" collection.</li>
             </ul>
             <p>
-                All collected data is stored securely and used solely to ensure platform security and improve our services.
+                All collected data is stored securely and used solely to ensure platform functionality, security, and user experience, as outlined below.
             </p>
         </section>
 
         <section id="data-usage">
             <h2>How We Use Your Data</h2>
             <p>
-                The data we collect is used to deliver a seamless, secure, and optimized experience on the FLGC platform. Specific uses include:
+                The data we collect is used to deliver a seamless, secure, and personalized experience on the FLGC platform. Specific uses include:
             </p>
             <ul>
-                <li><strong>Analytics:</strong> Analyzing user behavior and platform usage trends to improve functionality, user experience, and service offerings.</li>
-                <li><strong>Security:</strong> Monitoring IP addresses, geolocation, and device data to detect and prevent fraudulent activities or unauthorized access.</li>
-                <li><strong>Troubleshooting and Support:</strong> Using device and usage data to diagnose issues and provide personalized customer support.</li>
-                <li><strong>Compliance:</strong> Verifying app version compatibility and ensuring adherence to platform policies.</li>
+                <li><strong>Account Management:</strong> Maintaining and syncing your account data across devices using your <code>accountKey</code>, including gameplay progress, and customizations.</li>
+                <li><strong>Analytics:</strong> Analyzing user behavior, account interactions, and platform usage trends to improve functionality, user experience, and service offerings.</li>
+                <li><strong>Security:</strong> Monitoring IP addresses, geolocation, device data, and account activity to detect and prevent fraudulent activities, unauthorized access, or misuse of <code>accountKey</code>s.</li>
+                <li><strong>Troubleshooting and Support:</strong> Using device, usage, and account data to diagnose issues and provide personalized customer support.</li>
+                <li><strong>Compliance:</strong> Verifying app version compatibility, checking IP bans via Firebase’s "banned_ips" collection, and ensuring adherence to platform policies.</li>
+                <li><strong>Platform Optimization:</strong> Using device and performance data to optimize visuals, gameplay, and compatibility across different devices and browsers.</li>
             </ul>
             <p>
-                We do not use your data for advertising purposes or share it with third parties for marketing.
+                We do not use your data for advertising purposes or share it with third parties for marketing. All data usage is limited to the purposes outlined in this policy and the <a href="/termsofservice.html">Terms of Service</a>.
             </p>
         </section>
 
         <section id="data-storage">
             <h2>Data Storage and Security</h2>
             <p>
-                Your data is stored securely in Google Firebase Firestore, a cloud-based database with robust encryption protocols. We employ the following measures to safeguard your information:
+                Your data, including account data associated with your <code>accountKey</code>, is stored securely in Google Firebase Firestore, a cloud-based database with robust encryption protocols. We employ the following measures to safeguard your information:
             </p>
             <ul>
                 <li><strong>Encryption:</strong> Data is encrypted both in transit and at rest using Firebase’s industry-standard security protocols.</li>
-                <li><strong>Access Controls:</strong> Access to your data is restricted to authorized Bitflash Enterprises personnel and is limited to operational necessities.</li>
+                <li><strong>Access Controls:</strong> Access to your data is restricted to authorized Bitflash Enterprises personnel and is limited to operational necessities, such as account management and security monitoring.</li>
+                <li><strong>Firebase Security Rules:</strong> Firebase Firestore uses strict security rules to prevent unauthorized access to your account data, ensuring that only users with the correct <code>accountKey</code> can access their data.</li>
             </ul>
             <p>
-                We do not sell, trade, or transfer your data to third parties, except as required by law or legal processes (e.g., court orders). In such cases, we will notify you unless prohibited by law.
+                We do not sell, trade, or transfer your data to third parties, except as required by law or legal processes (e.g., court orders). In such cases, we will notify you unless prohibited by law. Due to FLGC’s frontend-only architecture, you are responsible for securing your <code>accountKey</code>, as anyone with access to it can view or modify your account data.
+            </p>
+        </section>
+
+        <section id="account-security">
+            <h2>Account Security and Your Responsibilities</h2>
+            <p>
+                FLGC uses a key-based account system where your <code>accountKey</code> serves as the primary means of accessing your account. The following outlines your responsibilities and our security practices:
+            </p>
+            <ul>
+                <li><strong>Your Responsibility:</strong> You are solely responsible for keeping your <code>accountKey</code> secure. Anyone with access to your key can log in to your account, view your data, and modify your gameplay progress (e.g., spend Bitflash Bucks, use spins).</li>
+                <li><strong>Backup Options:</strong> You can copy your <code>accountKey</code> and account data to your clipboard using the platform’s interface or save it to <code>localStorage</code>. Always store this information securely.</li>
+                <li><strong>Loss of Key:</strong> Bitflash Enterprises does not store your <code>accountKey</code> on your behalf. If you lose your key, you may lose access to your account, and recovery options are limited due to the frontend-only design.</li>
+                <li><strong>Unauthorized Access:</strong> If you suspect unauthorized access to your account, contact <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a> immediately. We will investigate and may apply IP bans if necessary, but we cannot guarantee account recovery.</li>
+                <li><strong>Our Security Measures:</strong> Your account data is protected by Firebase Firestore’s encryption and access controls. We monitor account activity for suspicious behavior, but the frontend-only architecture limits our ability to prevent unauthorized access without your cooperation in securing your <code>accountKey</code>.</li>
+            </ul>
+            <p>
+                For more details on the account system, see the <a href="/termsofservice.html#account-system">Terms of Service</a>.
             </p>
         </section>
 
         <section id="your-rights">
             <h2>Your Rights</h2>
             <p>
-                You have the following rights regarding your personal data:
+                You have the following rights regarding your personal data, including account data:
             </p>
             <ul>
-                <li><strong>Access:</strong> Request a copy of all data we have collected about you.</li>
-                <li><strong>Deletion:</strong> Request the deletion of your data, subject to any legal retention requirements.</li>
-                <li><strong>Objection:</strong> Object to specific uses or processing of your data.</li>
-                <li><strong>Correction:</strong> Request corrections to inaccurate or incomplete data.</li>
+                <li><strong>Access:</strong> Request a copy of all data we have collected about you, including your <code>accountKey</code>, gameplay progress, and associated device and usage data.</li>
+                <li><strong>Deletion:</strong> Request the deletion of your data, including your account data stored in Firebase Firestore, subject to any legal retention requirements.</li>
+                <li><strong>Objection:</strong> Object to specific uses or processing of your data, such as analytics or security monitoring.</li>
+                <li><strong>Correction:</strong> Request corrections to inaccurate or incomplete data, such as your display name or location.</li>
             </ul>
             <p>
-                To exercise these rights, contact us at <a href="mailto:cooktim.521@gmail.com">cooktim.521@gmail.com</a>. We will respond to your request within 30 days, in accordance with applicable laws.
+                To exercise these rights, contact us at <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>. We will respond to your request within 30 days, in accordance with applicable laws. Note that deleting your account data may prevent you from accessing your account unless you have saved your <code>accountKey</code> locally.
             </p>
         </section>
 
@@ -275,12 +302,34 @@
             <h2>Frequently Asked Questions</h2>
             <div class="faq-item">
                 <div class="faq-question">
+                    <h3>Why do you collect account data and my <code>accountKey</code>?</h3>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>
+                        We collect account data, including your <code>accountKey</code>, display name, and gameplay progress, to personalize your experience and sync your data across devices. The <code>accountKey</code> ensures secure access to your account, but you must keep it safe, as anyone with it can access your data.
+                    </p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>What happens if I lose my <code>accountKey</code>?</h3>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>
+                        If you lose your <code>accountKey</code>, you may lose access to your account, as we do not store it on your behalf. Always save your key securely using the platform’s copy function or local storage. Contact <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a> for assistance, but recovery options are limited.
+                    </p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
                     <h3>Why do you collect such detailed device and geolocation data?</h3>
                     <span class="toggle-icon">+</span>
                 </div>
                 <div class="faq-answer">
                     <p>
-                        We collect detailed data to ensure platform security, and prevent fraud. For example, device data helps us tailor visuals, while IP and geolocation data help us detect unauthorized access. This data is not used for marketing or shared with third parties.
+                        We collect detailed data to ensure platform functionality, security, and compatibility. For example, device data helps us optimize visuals, account data enables personalized gameplay, and IP and geolocation data help us detect unauthorized access. This data is not used for marketing or shared with third parties.
                     </p>
                 </div>
             </div>
@@ -291,7 +340,7 @@
                 </div>
                 <div class="faq-answer">
                     <p>
-                        No, we do not sell, trade, or transfer your data to third parties for marketing or advertising purposes. Your data is used solely for the purposes outlined in this policy.
+                        No, we do not sell, trade, or transfer your data, including account data, to third parties for marketing or advertising purposes. Your data is used solely for the purposes outlined in this policy.
                     </p>
                 </div>
             </div>
@@ -302,27 +351,27 @@
                 </div>
                 <div class="faq-answer">
                     <p>
-                        You can request the deletion of your data by contacting us at <a href="mailto:cooktim.521@gmail.com">cooktim.521@gmail.com</a>. We will process your request within 30 days, subject to any legal retention requirements.
+                        You can request the deletion of your data, including your account data, by contacting us at <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>. We will process your request within 30 days, subject to any legal retention requirements. Note that deletion may prevent account access unless you have saved your <code>accountKey</code>.
                     </p>
                 </div>
             </div>
-          </section>
+        </section>
 
         <section id="contact">
             <h2>Contact Us</h2>
             <p>
-                For questions about this Privacy Policy or our data practices, please reach out to:
+                For questions about this Privacy Policy, our data practices, or your account, please reach out to:
             </p>
             <p>
                 Bitflash Enterprises<br>
-                Email: <a href="mailto:cooktim.521@gmail.com">cooktim.521@gmail.com</a><br>
+                Email: <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a><br>
                 Website: <a href="https://sites.google.com/view/bitflash-home">sites.google.com/view/bitflash-home</a>
             </p>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2025 Bitflash Enterprises. All rights reserved. <a href="https://sites.google.com/view/bitflash-home">Bitflash</a></p>
+        <p>&copy; 2025 Bitflash Enterprises. All rights reserved. <a href="/termsofservice.html">Terms of Service</a> | <a href="/privacypolicy.html">Privacy Policy</a></p>
     </footer>
 
     <script>
