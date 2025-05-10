@@ -211,6 +211,7 @@
     <nav>
         <ul>
             <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#account-system">Account System</a></li>
             <li><a href="#nature-of-platform">Nature of Platform</a></li>
             <li><a href="#eligibility">Eligibility</a></li>
             <li><a href="#platform-use">Platform Use</a></li>
@@ -231,10 +232,10 @@
         <section id="introduction">
             <h2>Introduction</h2>
             <p>
-                Welcome to Free Luxury Giveaway Casino (FLGC), a promotional and entertainment platform operated by Bitflash Enterprises. These Terms of Service ("Terms") govern your access to and use of FLGC, including all content, features, and services provided through the platform. By accessing FLGC, you agree to be bound by these Terms and our <a href="/privacy-policy.html">Privacy Policy</a>. If you do not agree, you must immediately cease using the platform.
+                Welcome to Free Luxury Giveaway Casino (FLGC), a promotional and entertainment platform operated by Bitflash Enterprises. These Terms of Service ("Terms") govern your access to and use of FLGC, including all content, features, services, and the account system provided through the platform. By accessing FLGC, you agree to be bound by these Terms and our <a href="/privacy-policy.html">Privacy Policy</a>. If you do not agree, you must immediately cease using the platform.
             </p>
             <p>
-                FLGC is a frontend-only, browser-based application designed to simulate a giveaway and casino-like experience for entertainment purposes only. It uses Google Firebase for data logging and analytics, with extensive data collection performed upon agreeing to these Terms. The platform includes simulated games, fictional prizes, and promotional content, all of which are not real and are intended solely for thematic entertainment. These Terms provide comprehensive details about the platform’s operations, limitations, data practices, game mechanics, administrative controls, and disclaimers, particularly regarding its fictional nature and simulated content.
+                FLGC is a frontend-only, browser-based application designed to simulate a giveaway and casino-like experience for entertainment purposes only. It uses Google Firebase for data logging, analytics, and account management, with extensive data collection performed upon agreeing to these Terms. The platform includes simulated games, fictional prizes, promotional content, and an account system for personalized gameplay, all of which are not real and are intended solely for thematic entertainment. These Terms provide comprehensive details about the platform’s operations, limitations, data practices, game mechanics, administrative controls, account system, and disclaimers, particularly regarding its fictional nature and simulated content.
             </p>
             <div class="disclaimer">
                 <p>
@@ -243,18 +244,61 @@
             </div>
         </section>
 
+        <section id="account-system">
+            <h2>Account System</h2>
+            <h3>Account Creation and Key-Based Authentication</h3>
+            <p>
+                FLGC uses a key-based account system to provide a personalized experience without requiring traditional user accounts or passwords. Upon first accessing the platform, you will be prompted to set up an account through the setup screen, where you provide a display name and location (auto-filled via geolocation, if permitted). After agreeing to these Terms, the platform generates a unique <code>accountKey</code> for you, stored in Firebase Firestore under the "accounts" collection and is NOT linked to other collected data.
+            </p>
+            <ul>
+                <li><strong>Account Key:</strong> The <code>accountKey</code> is a unique identifier that links your gameplay data (e.g., Bitflash Bucks, spins, VIP level, jackpot progress) to your session. It is generated client-side and sent to Firebase during the initial setup process.</li>
+                <li><strong>Storage:</strong> Your account data, including the <code>accountKey</code>, display name, location, and gameplay progress, is stored securely in Firebase Firestore with encryption and access controls, as detailed in the <a href="/privacypolicy.html">Privacy Policy</a>.</li>
+                <li><strong>Login:</strong> To log in on a new device or browser, you must provide your <code>accountKey</code>. This key allows anyone possessing it to access your account, including all associated data and progress. You are responsible for keeping your <code>accountKey</code> secure and not sharing it with others.</li>
+                <li><strong>Data Persistence:</strong> Account data is saved to Firebase Firestore whenever you select "Log out & Save".</li>
+            </ul>
+            <h3>Account Key Security</h3>
+            <p>
+                Your <code>accountKey</code> is critical to maintaining the security of your account. Be aware that:
+            </p>
+            <ul>
+                <li>Anyone with access to your <code>accountKey</code> can log in to your account, view your data, and modify your gameplay progress (e.g., spend Bitflash Bucks, use spins).</li>
+                <li>Bitflash Enterprises does not store or manage your <code>accountKey</code> on your behalf. If you lose your key, you may lose access to your account unless you have saved it locally (e.g., via <code>localStorage</code> or clipboard).</li>
+                <li>If you suspect unauthorized access to your account, contact <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a> immediately. Note that recovery options are limited due to the frontend-only architecture.</li>
+            </ul>
+            <h3>Account Data Management</h3>
+            <p>
+                Your account data includes:
+            </p>
+            <ul>
+                <li>Gameplay progress (e.g., Bitflash Bucks, spins left, VIP level, jackpot progress, streak count).</li>
+                <li>Customizations (e.g., display name, location).</li>
+            </ul>
+            <p>
+                You can manage your account data through the platform’s interface, including:
+            </p>
+            <ul>
+                <li>Requesting access to or deletion of your data by contacting <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>, subject to legal requirements.</li>
+                <li>Restoring your account on a new device by entering your <code>accountKey</code> in the account login screen.</li>
+            </ul>
+            <div class="disclaimer">
+                <p>
+                    <strong>DISCLAIMER:</strong> You are solely responsible for securing your <code>accountKey</code>. Bitflash Enterprises is not liable for unauthorized access, loss of account data, or misuse resulting from sharing or losing your key. Due to the frontend-only design, account recovery options are limited.
+                </p>
+            </div>
+        </section>
+
         <section id="nature-of-platform">
             <h2>Nature of the FLGC Platform</h2>
             <h3>Promotional and Fictional Experience</h3>
             <p>
-                FLGC is not a real casino, gambling platform, or prize distribution service. It is a fictional, promotional platform that simulates the experience of participating in giveaways and casino-like activities. All content, including references to "prizes," "luxury items," "black markets," "illegal activities," or "jackpots," is purely fictional and intended for entertainment purposes only. The platform operates as a single-page application within your web browser, using HTML, CSS, and JavaScript, with data logging handled by Google Firebase Firestore.
+                FLGC is not a real casino, gambling platform, or prize distribution service. It is a fictional, promotional platform that simulates the experience of participating in giveaways and casino-like activities. All content, including references to "prizes," "luxury items," "black markets," "illegal activities," or "jackpots," is purely fictional and intended for entertainment purposes only. The platform operates as a single-page application within your web browser, using HTML, CSS, and JavaScript, with data logging and account management handled by Google Firebase Firestore.
             </p>
             <h3>Frontend-Only Architecture</h3>
             <p>
                 FLGC operates entirely within your web browser, with no backend server for user account management, authentication, or real-time moderation. Key characteristics include:
             </p>
             <ul>
-                <li>No user accounts are created or stored; all interactions are anonymous and client-side.</li>
+                <li>Account data is managed client-side and stored in Firebase Firestore using a unique <code>accountKey</code>.</li>
                 <li>Data logging occurs via Firebase Firestore, capturing device, network, and usage information as detailed in the Data Collection section.</li>
                 <li>Simulated games (e.g., Slots, Wheel, Crash, Plinko, Roulette, Blackjack) run locally in the browser using JavaScript-based randomization.</li>
                 <li>Administrative controls, such as IP banning or content moderation, are limited by the frontend-only design and rely on Firebase security rules and browser-based checks.</li>
@@ -266,7 +310,7 @@
             </div>
             <h3>Service Worker and Offline Mode</h3>
             <p>
-                FLGC uses a Service Worker to cache assets for faster loading and limited offline functionality. In offline mode, features requiring internet access (e.g., Firebase data logging, IP banning checks, or version validation) are unavailable, and the platform operates in a reduced-capacity state. Users are prompted to reconnect to the internet to access full functionality.
+                FLGC uses a Service Worker to cache assets for faster loading and limited offline functionality. In offline mode, features requiring internet access (e.g., Firebase data logging, IP banning checks, version validation, or account data syncing) are unavailable, and the platform operates in a reduced-capacity state. Users are prompted to reconnect to the internet to access full functionality, including account login and data persistence.
             </p>
         </section>
 
@@ -296,7 +340,7 @@
             <h2>Platform Use and Restrictions</h2>
             <h3>Permitted Use</h3>
             <p>
-                FLGC is provided solely for personal, non-commercial entertainment. You may use the platform to engage with its simulated games (Slots, Wheel, Crash, Plinko, Roulette, Blackjack), view fictional promotional content, and interact with features like the chat system, provided you adhere to these Terms.
+                FLGC is provided solely for personal, non-commercial entertainment. You may use the platform to engage with its simulated games (Slots, Wheel, Crash, Plinko, Roulette, Blackjack), view fictional promotional content, interact with features like the chat system, and manage your account, provided you adhere to these Terms.
             </p>
             <h3>Prohibited Activities</h3>
             <p>
@@ -304,6 +348,7 @@
             </p>
             <ul>
                 <li>Attempting to access or manipulate the platform’s admin mode, Firebase Firestore data, or other restricted systems without authorization.</li>
+                <li>Sharing or misusing another user’s <code>accountKey</code> to access their account without permission.</li>
                 <li>Using automated tools, bots, or scripts to interact with FLGC, scrape content, simulate user activity, or bypass spin limits.</li>
                 <li>Engaging in any activity that disrupts, overloads, or impairs the platform’s performance, such as denial-of-service attacks.</li>
                 <li>Using FLGC to promote or engage in illegal activities, including but not limited to black market transactions, illegal advertising, or unauthorized prize distributions.</li>
@@ -327,6 +372,7 @@
                 FLGC collects extensive data via Google Firebase Firestore upon your agreement to these Terms during the initial setup process. The data includes:
             </p>
             <ul>
+                <li><strong>Account Data:</strong> Your <code>accountKey</code>, display name, location (provided or geolocation-based), and gameplay progress (e.g., Bitflash Bucks, spins, VIP level).</li>
                 <li><strong>Device Information:</strong> Browser type and version, operating system, screen resolution (e.g., 1920x1080), pixel density, device memory, CPU cores, WebGL renderer, touch support, battery level, charging status, screen refresh rate, and supported CSS media queries (e.g., prefers-reduced-motion).</li>
                 <li><strong>IP Address and Geolocation:</strong> IP address, subnet, city, region, postal code, country, latitude, longitude, organization, and autonomous system number (ASN), obtained via ipapi.co. Precise geolocation (latitude, longitude, accuracy) is collected if permitted by your browser.</li>
                 <li><strong>Usage Data:</strong> Timestamp of access, referrer URL, browser language, all preferred languages, local time, timezone, timezone offset, and network connection type.</li>
@@ -339,6 +385,7 @@
                 The collected data is used exclusively for:
             </p>
             <ul>
+                <li>Maintaining and syncing your account data across devices using the <code>accountKey</code>.</li>
                 <li>Generating aggregated analytics to improve platform functionality, user experience, and performance optimization.</li>
                 <li>Enhancing security by detecting potential fraud, abuse, or unauthorized access (e.g., via IP analysis or device fingerprinting).</li>
                 <li>Validating platform compatibility and version status (e.g., checking APP_VERSION against Firebase’s "app_version" collection).</li>
@@ -350,13 +397,13 @@
             </p>
             <ul>
                 <li>Data collection occurs only after your explicit agreement during the initial terms screen, as implemented in the <code>handleInitialTermsAgree</code> function.</li>
-                <li>Data is stored securely in Firebase Firestore with encryption and access controls, as detailed in the <a href="/privacy-policy.html">Privacy Policy</a>.</li>
+                <li>Data is stored securely in Firebase Firestore with encryption and access controls, as detailed in the <a href="/privacypolicy.html">Privacy Policy</a>.</li>
                 <li>Data is not sold, shared with third parties for marketing, or used for advertising purposes beyond FLGC’s fictional promotional content.</li>
                 <li>You have the right to request access to, deletion of, or objection to the processing of your data, subject to legal requirements, by contacting <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>.</li>
             </ul>
             <div class="disclaimer">
                 <p>
-                    <strong>DISCLAIMER:</strong> FLGC collects extensive device and usage data to ensure functionality and security. You are responsible for understanding the scope of this collection, as outlined above and in the Privacy Policy, before agreeing to these Terms.
+                    <strong>DISCLAIMER:</strong> FLGC collects extensive device, account, and usage data to ensure functionality and security. You are responsible for understanding the scope of this collection, as outlined above and in the Privacy Policy, before agreeing to these Terms.
                 </p>
             </div>
         </section>
@@ -377,7 +424,7 @@
                 Your IP may be banned for reasons including:
             </p>
             <ul>
-                <li>Violating these Terms (e.g., attempting to access admin mode without authorization).</li>
+                <li>Violating these Terms (e.g., attempting to access admin mode without authorization or misusing another user’s <code>accountKey</code>).</li>
                 <li>Engaging in suspected fraudulent, abusive, or illegal activity (e.g., using bots or scripts).</li>
                 <li>Repeated attempts to bypass platform restrictions or security measures.</li>
                 <li>Requests by law enforcement or government authorities.</li>
@@ -467,11 +514,12 @@
             <h2>Frontend-Only Limitations</h2>
             <h3>No Backend Enforcement</h3>
             <p>
-                FLGC’s frontend-only architecture means it operates entirely within your browser, with data logging handled by Firebase. As a result:
+                FLGC’s frontend-only architecture means it operates entirely within your browser, with data logging and account management handled by Firebase. As a result:
             </p>
             <ul>
-                <li>There is no server-side user management, authentication, or moderation system.</li>
+                <li>There is no server-side user management, authentication, or moderation system beyond Firebase Firestore.</li>
                 <li>Real-time bans or suspensions are limited to IP-based restrictions via Firebase.</li>
+                <li>Account security relies on the secrecy of your <code>accountKey</code>, and unauthorized access cannot be fully prevented without IP bans.</li>
                 <li>Compatibility checks and restrictions are implemented via JavaScript and can be bypassed by technically savvy users.</li>
                 <li>Security relies on Firebase’s access controls and browser-based protections, not active server monitoring.</li>
             </ul>
@@ -482,11 +530,11 @@
             <ul>
                 <li>References to "banning" or "termination" reflect our intent to maintain a safe environment but are not fully enforceable.</li>
                 <li>FLGC cannot prevent repeat access by users who violate these Terms, except through IP bans or legal action.</li>
-                <li>You are responsible for using FLGC in good faith and reporting misuse to <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>.</li>
+                <li>You are responsible for securing your <code>accountKey</code> and using FLGC in good faith, reporting misuse to <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>.</li>
             </ul>
             <div class="disclaimer">
                 <p>
-                    <strong>DISCLAIMER:</strong> Due to FLGC’s frontend-only design, we cannot guarantee the prevention of unauthorized access or misuse by other users. Bitflash Enterprises is not liable for any damages resulting from the platform’s technical limitations.
+                    <strong>DISCLAIMER:</strong> Due to FLGC’s frontend-only design, we cannot guarantee the prevention of unauthorized access or misuse by other users. Bitflash Enterprises is not liable for any damages resulting from the platform’s technical limitations or loss of account data.
                 </p>
             </div>
         </section>
@@ -501,7 +549,7 @@
                 <li>The platform will be uninterrupted, error-free, or secure.</li>
                 <li>The simulated content (e.g., prizes, ads, games) will meet your expectations or be free from misinterpretation.</li>
                 <li>The platform will be compatible with all devices or browsers.</li>
-                <li>Data collection or IP banning will prevent all unauthorized access or misuse.</li>
+                <li>Data collection, IP banning, or account management will prevent all unauthorized access or misuse.</li>
             </ul>
             <h3>Specific Liabilities</h3>
             <p>
@@ -512,11 +560,11 @@
                 <li>Any errors, inaccuracies, or omissions in the platform’s content, including simulated prizes, ads, or game outcomes.</li>
                 <li>Any losses or damages resulting from reliance on FLGC’s fictional giveaways, casino-like features, or promotional content.</li>
                 <li>Any legal consequences arising from your use of FLGC in violation of applicable laws.</li>
-                <li>Any issues arising from the frontend-only architecture, including inability to enforce bans or prevent misuse.</li>
+                <li>Any issues arising from the frontend-only architecture, including inability to enforce bans, prevent misuse, or recover lost account data.</li>
             </ul>
             <div class="disclaimer">
                 <p>
-                    <strong>DISCLAIMER:</strong> FLGC does not engage in, endorse, or facilitate illegal activities, including black market transactions, illegal advertising, or unauthorized prize distributions. All references to such activities are fictional and for entertainment purposes only. Bitflash Enterprises is not responsible for user misinterpretation, misuse, or illegal actions related to the platform.
+                    <strong>DISCLAIMER:</strong> FLGC does not engage in, endorse, or facilitate illegal activities, including black market transactions, illegal advertising, or unauthorized prize distributions. All references to such activities are fictional and for entertainment purposes only. Bitflash Enterprises is not responsible for user misinterpretation, misuse, or illegal actions related to the platform, including loss of account access due to sharing or losing your <code>accountKey</code>.
                 </p>
             </div>
         </section>
@@ -527,7 +575,7 @@
                 Bitflash Enterprises may attempt to limit your access to FLGC for reasons including:
             </p>
             <ul>
-                <li>Violation of these Terms (e.g., attempting to access admin mode or manipulate Firebase data).</li>
+                <li>Violation of these Terms (e.g., attempting to access admin mode, manipulating Firebase data, or misusing another user’s <code>accountKey</code>).</li>
                 <li>Suspected fraudulent, abusive, or illegal activity (e.g., bot usage, illegal content in chat).</li>
                 <li>Requests by law enforcement or government authorities.</li>
                 <li>Repeated attempts to bypass IP bans or other restrictions.</li>
@@ -542,13 +590,31 @@
             </ul>
             <div class="disclaimer">
                 <p>
-                    <strong>DISCLAIMER:</strong> Termination is limited to IP-based restrictions, which may not prevent access from other IPs or devices. Bitflash Enterprises is not liable for continued access by terminated users.
+                    <strong>DISCLAIMER:</strong> Termination is limited to IP-based restrictions, which may not prevent access from other IPs or devices. Bitflash Enterprises is not liable for continued access by terminated users or loss of account data.
                 </p>
             </div>
         </section>
 
         <section id="faq">
             <h2>Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>How does the account system work?</h3>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>FLGC uses a key-based account system. Upon setup, you receive a unique <code>accountKey</code> stored in Firebase Firestore. This key links your gameplay data and allows you to log in on any device. Keep your key secure, as anyone with it can access your account. You can copy your key to the clipboard or save it locally for backup.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>What happens if I lose my account key?</h3>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>If you lose your <code>accountKey</code>, you may lose access to your account. Bitflash Enterprises does not store your key on your behalf. Always save your key securely using the platform’s copy function or local storage. Contact <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a> for assistance, but recovery options are limited.</p>
+                </div>
+            </div>
             <div class="faq-item">
                 <div class="faq-question">
                     <h3>Are the prizes or black market references on FLGC real?</h3>
@@ -591,7 +657,7 @@
                     <span class="toggle-icon">+</span>
                 </div>
                 <div class="faq-answer">
-                    <p>FLGC collects extensive device, IP, geolocation, usage, and browser capability data via Firebase Firestore, as detailed in the Data Collection section. This data is used for analytics, security, and compatibility checks.</p>
+                    <p>FLGC collects extensive device, IP, geolocation, usage, account, and browser capability data via Firebase Firestore, as detailed in the Data Collection section. This data is used for analytics, security, compatibility checks, and account management.</p>
                 </div>
             </div>
             <div class="faq-item">
@@ -608,7 +674,7 @@
         <section id="contact">
             <h2>Contact Us</h2>
             <p>
-                If you have any questions about these Terms, the FLGC platform, or our practices, please contact us at:
+                If you have any questions about these Terms, the FLGC platform, your account, or our practices, please contact us at:
             </p>
             <p>
                 Bitflash Enterprises<br>
@@ -622,7 +688,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 Bitflash Enterprises. All rights reserved. <a href="/privacy-policy.html">Privacy Policy</a> | <a href="/termsofservice.html">Terms of Service</a></p>
+        <p>&copy; 2025 Bitflash Enterprises. All rights reserved. <a href="/privacypolicy.html">Privacy Policy</a> | <a href="/termsofservice.html">Terms of Service</a></p>
     </footer>
 
     <script>
