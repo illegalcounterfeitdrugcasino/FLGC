@@ -232,7 +232,7 @@
         <section id="introduction">
             <h2>Introduction</h2>
             <p>
-                Welcome to Free Luxury Giveaway Casino (FLGC), a promotional and entertainment platform operated by Bitflash Enterprises. These Terms of Service ("Terms") govern your access to and use of FLGC, including all content, features, services, and the account system provided through the platform. By accessing FLGC, you agree to be bound by these Terms and our <a href="/privacy-policy.html">Privacy Policy</a>. If you do not agree, you must immediately cease using the platform.
+                Welcome to Free Luxury Giveaway Casino (FLGC), a promotional and entertainment platform operated by Bitflash Enterprises. These Terms of Service ("Terms") govern your access to and use of FLGC, including all content, features, services, and the account system provided through the platform. By accessing FLGC, you agree to be bound by these Terms and our <a href="/privacypolicy.html">Privacy Policy</a>. If you do not agree, you must immediately cease using the platform.
             </p>
             <p>
                 FLGC is a frontend-only, browser-based application designed to simulate a giveaway and casino-like experience for entertainment purposes only. It uses Google Firebase for data logging, analytics, and account management, with extensive data collection performed upon agreeing to these Terms. The platform includes simulated games, fictional prizes, promotional content, and an account system for personalized gameplay, all of which are not real and are intended solely for thematic entertainment. These Terms provide comprehensive details about the platform’s operations, limitations, data practices, game mechanics, administrative controls, account system, and disclaimers, particularly regarding its fictional nature and simulated content.
@@ -263,7 +263,7 @@
             <ul>
                 <li>Anyone with access to your <code>accountKey</code> can log in to your account, view your data, and modify your gameplay progress (e.g., spend Bitflash Bucks, use spins).</li>
                 <li>Bitflash Enterprises does not store or manage your <code>accountKey</code> on your behalf. If you lose your key, you may lose access to your account unless you have saved it locally (e.g., via <code>localStorage</code> or clipboard).</li>
-                <li>If you suspect unauthorized access to your account, contact <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a> immediately. Note that recovery options are limited due to the frontend-only architecture.</li>
+                <li>If you suspect unauthorized access to your account, contact <a href="bitflashelp@gmail.com"><span class="__cf_email__" data-cfemail="3e5c574a585255475c5158497e59535f5752105d5153">[email&#160;protected]</span></a> immediately. Note that recovery options are limited due to the frontend-only architecture.</li>
             </ul>
             <h3>Account Data Management</h3>
             <p>
@@ -277,7 +277,7 @@
                 You can manage your account data through the platform’s interface, including:
             </p>
             <ul>
-                <li>Requesting access to or deletion of your data by contacting <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>, subject to legal requirements.</li>
+                <li>Requesting access to or deletion of your data by contacting <a href="/cdn-cgi/l/email-protection#b7d5dec3d1dbd6c4dfd2dbc7f7d0dad6dedb99d4d8da"><span class="__cf_email__" data-cfemail="5f3d362b39333e2c373a332f1f38323e3633713c3032">[email&#160;protected]</span></a>, subject to legal requirements.</li>
                 <li>Restoring your account on a new device by entering your <code>accountKey</code> in the account login screen.</li>
             </ul>
             <div class="disclaimer">
@@ -360,7 +360,7 @@
             </p>
             <div class="disclaimer">
                 <p>
-                    <strong>DISCLAIMER:</strong> FLGC’s enforcement mechanisms are limited by its frontend-only design. We rely on users to act in good faith and report violations to <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>.
+                    <strong>DISCLAIMER:</strong> FLGC’s enforcement mechanisms are limited by its frontend-only design. We rely on users to act in good faith and report violations to <a href="/cdn-cgi/l/email-protection#f4969d80929c91a39a978e92b49399959297da979b99"><span class="__cf_email__" data-cfemail="8fe1eaf7e5ebe6f4ede0f9e5cfe8e2eee6e3a1ece0e2">[email&#160;protected]</span></a>.
                 </p>
             </div>
         </section>
@@ -373,11 +373,66 @@
             </p>
             <ul>
                 <li><strong>Account Data:</strong> Your <code>accountKey</code>, display name, location (provided or geolocation-based), and gameplay progress (e.g., Bitflash Bucks, spins, VIP level).</li>
-                <li><strong>Device Information:</strong> Browser type and version, operating system, screen resolution (e.g., 1920x1080), pixel density, device memory, CPU cores, WebGL renderer, touch support, battery level, charging status, screen refresh rate, and supported CSS media queries (e.g., prefers-reduced-motion).</li>
-                <li><strong>IP Address and Geolocation:</strong> IP address, subnet, city, region, postal code, country, latitude, longitude, organization, and autonomous system number (ASN), obtained via ipapi.co. Precise geolocation (latitude, longitude, accuracy) is collected if permitted by your browser.</li>
-                <li><strong>Usage Data:</strong> Timestamp of access, referrer URL, browser language, all preferred languages, local time, timezone, timezone offset, and network connection type.</li>
-                <li><strong>Browser Capabilities:</strong> WebGL extensions, browser plugins, WebRTC status, private IPs (via WebRTC), HTTP request headers, device orientation/motion support, MIDI support, clipboard API support, WebGPU support, and service worker status.</li>
-                <li><strong>Performance Metrics:</strong> JavaScript heap size, memory usage, and performance memory limits (if supported).</li>
+                <li><strong>Timestamp:</strong> The exact time of your interaction, recorded as <code>new Date().toISOString()</code>.</li>
+                <li><strong>User Agent:</strong> Information about your browser or device, such as browser type and version.</li>
+                <li><strong>Navigator Properties:</strong> Browser-specific properties (<code>navigatorProps</code>) describing the browser environment.</li>
+                <li><strong>Language:</strong> Your browser’s primary language setting.</li>
+                <li><strong>Languages:</strong> All preferred languages set in your browser.</li>
+                <li><strong>Platform:</strong> The operating system or platform your device is running (e.g., Windows, macOS, Android).</li>
+                <li><strong>Vendor:</strong> The browser vendor (e.g., Google, Mozilla).</li>
+                <li><strong>Screen Resolution:</strong> The resolution of your device’s screen (e.g., width and height in pixels).</li>
+                <li><strong>Color Depth:</strong> The color depth of your device’s display.</li>
+                <li><strong>Device Pixel Ratio:</strong> The ratio of device pixels to CSS pixels.</li>
+                <li><strong>Timezone:</strong> Your device’s timezone setting.</li>
+                <li><strong>Timezone Offset:</strong> The offset of your timezone from UTC.</li>
+                <li><strong>CPU Cores:</strong> The number of CPU cores available on your device.</li>
+                <li><strong>Device Memory:</strong> The amount of memory available on your device.</li>
+                <li><strong>Renderer:</strong> The WebGL renderer used by your device for graphics rendering.</li>
+                <li><strong>Referrer:</strong> The URL of the page that referred you to FLGC.</li>
+                <li><strong>Local Time:</strong> The local time on your device at the time of interaction.</li>
+                <li><strong>Resolution:</strong> Additional resolution details, such as screen width and height.</li>
+                <li><strong>Touch Support:</strong> Whether your device supports touch input.</li>
+                <li><strong>Cookies Enabled:</strong> Whether cookies are enabled in your browser.</li>
+                <li><strong>Do Not Track:</strong> Your browser’s Do Not Track setting status.</li>
+                <li><strong>Refresh Rate:</strong> The refresh rate of your device’s screen.</li>
+                <li><strong>Battery:</strong> Battery level and charging status of your device.</li>
+                <li><strong>IP Address:</strong> Your IP address, obtained via ipapi.co.</li>
+                <li><strong>Hostname:</strong> The hostname associated with your IP address.</li>
+                <li><strong>Subnet:</strong> The network subnet of your IP address.</li>
+                <li><strong>City:</strong> The city associated with your IP address.</li>
+                <li><strong>Region:</strong> The region or state associated with your IP address.</li>
+                <li><strong>Postal Code:</strong> The postal code associated with your IP address.</li>
+                <li><strong>Country:</strong> The country associated with your IP address.</li>
+                <li><strong>Latitude and Longitude:</strong> Approximate geographic coordinates of your location, if permitted.</li>
+                <li><strong>Organization:</strong> The organization associated with your IP address.</li>
+                <li><strong>ASN:</strong> The autonomous system number associated with your IP address.</li>
+                <li><strong>Version:</strong> The version of the FLGC app or site you are using (<code>APP_VERSION</code>).</li>
+                <li><strong>Plugins:</strong> A list of browser plugins installed, joined as a comma-separated string or "None" if none are present.</li>
+                <li><strong>WebRTC Enabled:</strong> Whether WebRTC is enabled in your browser.</li>
+                <li><strong>Private IPs:</strong> Private IP addresses detected via WebRTC, joined as a comma-separated string or "None" if none are detected.</li>
+                <li><strong>HTTP Headers:</strong> HTTP request headers sent by your browser.</li>
+                <li><strong>WebGL Extensions:</strong> WebGL extensions supported by your browser.</li>
+                <li><strong>Orientation Support:</strong> Whether your device supports orientation detection.</li>
+                <li><strong>MIDI Support:</strong> Whether your browser supports MIDI functionality.</li>
+                <li><strong>Geolocation:</strong> Precise geolocation data (latitude, longitude, accuracy), if permission is granted.</li>
+                <li><strong>Clipboard Support:</strong> Whether your browser supports the Clipboard API.</li>
+                <li><strong>WebGPU Support:</strong> Whether your browser supports WebGPU.</li>
+                <li><strong>Media Queries:</strong> CSS media query results, such as prefers-reduced-motion, prefers-color-scheme, and pointer.</li>
+                <li><strong>Service Worker Status:</strong> The status of service workers in your browser.</li>
+                <li><strong>Window Dimensions:</strong> Inner and outer width and height of your browser window (<code>windowInnerWidth</code>, <code>windowInnerHeight</code>, <code>windowOuterWidth</code>, <code>windowOuterHeight</code>).</li>
+                <li><strong>Document Dimensions:</strong> Client and offset width and height of the document (<code>docClientWidth</code>, <code>docClientHeight</code>, <code>docOffsetWidth</code>, <code>docOffsetHeight</code>).</li>
+                <li><strong>Online Status:</strong> Whether your device is online (<code>isOnline</code>).</li>
+                <li><strong>Network Info:</strong> Network connection type and other network-related details.</li>
+                <li><strong>URL Details:</strong> Information about the current URL, such as protocol and path.</li>
+                <li><strong>Max Touch Points:</strong> The maximum number of touch points supported by your device.</li>
+                <li><strong>MIME Types:</strong> MIME types supported by your browser.</li>
+                <li><strong>Screen Orientation:</strong> The orientation of your device’s screen.</li>
+                <li><strong>WebDriver:</strong> Whether your browser is controlled by a WebDriver (automation detection).</li>
+                <li><strong>Media Capabilities:</strong> Your browser’s media playback capabilities.</li>
+                <li><strong>History Length:</strong> The length of your browser’s history.</li>
+                <li><strong>Visibility State:</strong> The visibility state of the current document (e.g., visible, hidden).</li>
+                <li><strong>User Activation:</strong> Information about user interaction with the page.</li>
+                <li><strong>API Availability:</strong> Availability of specific browser APIs.</li>
                 <li><strong>Location Data:</strong> Precise geolocation (city, country) obtained via reverse geocoding using BigDataCloud API, logged to Firebase’s "locations" collection.</li>
             </ul>
             <h3>Purpose of Collection</h3>
@@ -388,22 +443,23 @@
                 <li>Maintaining and syncing your account data across devices using the <code>accountKey</code>.</li>
                 <li>Generating aggregated analytics to improve platform functionality, user experience, and performance optimization.</li>
                 <li>Enhancing security by detecting potential fraud, abuse, or unauthorized access (e.g., via IP analysis or device fingerprinting).</li>
-                <li>Validating platform compatibility and version status (e.g., checking APP_VERSION against Firebase’s "app_version" collection).</li>
+                <li>Validating platform compatibility and version status (e.g., checking <code>APP_VERSION</code> against Firebase’s "app_version" collection).</li>
                 <li>Logging user interactions for debugging and ensuring compliance with these Terms.</li>
             </ul>
             <h3>User Consent and Rights</h3>
             <p>
-                By using FLGC, you consent to this data collection and agree that:
+                By using FLGC, you consent to this extensive data collection and agree that:
             </p>
             <ul>
                 <li>Data collection occurs only after your explicit agreement during the initial terms screen, as implemented in the <code>handleInitialTermsAgree</code> function.</li>
                 <li>Data is stored securely in Firebase Firestore with encryption and access controls, as detailed in the <a href="/privacypolicy.html">Privacy Policy</a>.</li>
                 <li>Data is not sold, shared with third parties for marketing, or used for advertising purposes beyond FLGC’s fictional promotional content.</li>
-                <li>You have the right to request access to, deletion of, or objection to the processing of your data, subject to legal requirements, by contacting <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>.</li>
+                <li>You have the right to request access to, deletion of, or objection to the processing of your data, subject to legal requirements, by contacting <a href="/cdn-cgi/l/email-protection#8ae8e3feece6ebf9e2efe6facae3e9e5ede8a4e9e5e7"><span class="__cf_email__" data-cfemail="7c1e1508111b16041f121b073c151f131b1e521f1311">[email&#160;protected]</span></a>.</li>
+                <li>You are responsible for reviewing the full scope of data collection in the <a href="/privacypolicy.html">Privacy Policy</a> before agreeing to these Terms.</li>
             </ul>
             <div class="disclaimer">
                 <p>
-                    <strong>DISCLAIMER:</strong> FLGC collects extensive device, account, and usage data to ensure functionality and security. You are responsible for understanding the scope of this collection, as outlined above and in the Privacy Policy, before agreeing to these Terms.
+                    <strong>DISCLAIMER:</strong> FLGC collects extensive device, account, and usage data to ensure functionality, security, and compatibility. You are responsible for understanding the scope of this collection, as outlined above and in the <a href="/privacypolicy.html">Privacy Policy</a>, before agreeing to these Terms.
                 </p>
             </div>
         </section>
@@ -417,7 +473,7 @@
             <ul>
                 <li>Fetches your IP address via ipapi.co.</li>
                 <li>Queries the "banned_ips" collection to check if your IP is listed.</li>
-                <li>Denies access if your IP is banned, displaying a popup with instructions to contact <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>.</li>
+                <li>Denies access if your IP is banned, displaying a popup with instructions to contact <a href="/cdn-cgi/l/email-protection#4c2e25382a202d3f242920370c2b212d2520622f2321"><span class="__cf_email__" data-cfemail="5e3c372a38323f2d363b322e1e39333f3732703d3133">[email&#160;protected]</span></a>.</li>
             </ul>
             <h3>Reasons for IP Banning</h3>
             <p>
@@ -431,7 +487,7 @@
             </ul>
             <h3>Appealing an IP Ban</h3>
             <p>
-                If your IP is banned, you may contact <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a> to appeal. Appeals must include your IP address, a description of the issue, and any relevant evidence. Bitflash Enterprises reserves the right to uphold or lift bans at its discretion.
+                If your IP is banned, you may contact <a href="/cdn-cgi/l/email-protection#593b302d3f35382a313c3529193e34383035773a3634"><span class="__cf_email__" data-cfemail="5c3e35283a303d2f3439302c1c3b313d3530723f3331">[email&#160;protected]</span></a> to appeal. Appeals must include your IP address, a description of the issue, and any relevant evidence. Bitflash Enterprises reserves the right to uphold or lift bans at its discretion.
             </p>
             <div class="disclaimer">
                 <p>
@@ -449,7 +505,7 @@
             </div>
             <h3>User Responsibility</h3>
             <p>
-                You are responsible for understanding that FLGC’s prize-related content is fictional. If you believe you have been misled or have concerns about the platform’s content, please contact us immediately at <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>.
+                You are responsible for understanding that FLGC’s prize-related content is fictional. If you believe you have been misled or have concerns about the platform’s content, please contact us immediately at <a href="/cdn-cgi/l/email-protection#b4d6ddc0d2d8d5c7dcd1d8c4f4d3d9d5ddd89ad7dbd9"><span class="__cf_email__" data-cfemail="8deff4e9fbf1fceef5f8f1edcdeae0ece4e1a3eee2e0">[email&#160;protected]</span></a>.
             </p>
         </section>
 
@@ -506,7 +562,7 @@
             </ul>
             <h3>User Responsibility</h3>
             <p>
-                You are responsible for distinguishing between FLGC’s fictional content and real-world advertising. If you encounter content that appears misleading or concerning, please report it to <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>.
+                You are responsible for distinguishing between FLGC’s fictional content and real-world advertising. If you encounter content that appears misleading or concerning, please report it to <a href="/cdn-cgi/l/email-protection#86e4eff2e0eae7f5eee3eaf6c6e1ebe7efeaa8e5e9eb"><span class="__cf_email__" data-cfemail="2f4d465b494346544f424b576f48424e4641034e4240">[email&#160;protected]</span></a>.
             </p>
         </section>
 
@@ -530,7 +586,7 @@
             <ul>
                 <li>References to "banning" or "termination" reflect our intent to maintain a safe environment but are not fully enforceable.</li>
                 <li>FLGC cannot prevent repeat access by users who violate these Terms, except through IP bans or legal action.</li>
-                <li>You are responsible for securing your <code>accountKey</code> and using FLGC in good faith, reporting misuse to <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>.</li>
+                <li>You are responsible for securing your <code>accountKey</code> and using FLGC in good faith, reporting misuse to <a href="/cdn-cgi/l/email-protection#89ebe0fdeff5f8eaf1fce5f9c9eee4e8e0e5a7eae6e4"><span class="__cf_email__" data-cfemail="2f4d465b494346544f424b576f48424e4641034e4240">[email&#160;protected]</span></a>.</li>
             </ul>
             <div class="disclaimer">
                 <p>
@@ -612,7 +668,7 @@
                     <span class="toggle-icon">+</span>
                 </div>
                 <div class="faq-answer">
-                    <p>If you lose your <code>accountKey</code>, you may lose access to your account. Bitflash Enterprises does not store your key on your behalf. Always save your key securely using the platform’s copy function or local storage. Contact <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a> for assistance, but recovery options are limited.</p>
+                    <p>If you lose your <code>accountKey</code>, you may lose access to your account. Bitflash Enterprises does not store your key on your behalf. Always save your key securely using the platform’s copy function or local storage. Contact <a href="/cdn-cgi/l/email-protection#7e1c170a18121f0d161b120e3e19131f1712501d1113"><span class="__cf_email__" data-cfemail="4c2e253829232e3c272a233f0c2b212d2520622f2321">[email&#160;protected]</span></a> for assistance, but recovery options are limited.</p>
                 </div>
             </div>
             <div class="faq-item">
@@ -639,7 +695,7 @@
                     <span class="toggle-icon">+</span>
                 </div>
                 <div class="faq-answer">
-                    <p>Your IP may be banned for violating these Terms, checked via Firebase during the terms agreement process. Due to the frontend-only design, bans are IP-based and may not prevent access from other IPs. Contact <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a> to appeal.</p>
+                    <p>Your IP may be banned for violating these Terms, checked via Firebase during the terms agreement process. Due to the frontend-only design, bans are IP-based and may not prevent access from other IPs. Contact <a href="/cdn-cgi/l/email-protection#4a28233e2c262b39222f263a0a2d272b232664292527"><span class="__cf_email__" data-cfemail="5e3c372a38323f2d363b322e1e39333f3732703d3133">[email&#160;protected]</span></a> to appeal.</p>
                 </div>
             </div>
             <div class="faq-item">
@@ -657,7 +713,7 @@
                     <span class="toggle-icon">+</span>
                 </div>
                 <div class="faq-answer">
-                    <p>FLGC collects extensive device, IP, geolocation, usage, account, and browser capability data via Firebase Firestore, as detailed in the Data Collection section. This data is used for analytics, security, compatibility checks, and account management.</p>
+                    <p>FLGC collects extensive device, IP, geolocation, usage, account, and browser capability data via Firebase Firestore, as detailed in the Data Collection section and the <a href="/privacypolicy.html">Privacy Policy</a>. This data is used for analytics, security, compatibility checks, and account management.</p>
                 </div>
             </div>
             <div class="faq-item">
@@ -678,7 +734,7 @@
             </p>
             <p>
                 Bitflash Enterprises<br>
-                Email: <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a><br>
+                Email: <a href="/cdn-cgi/l/email-protection#3f1d160b19131e0c171a130f3f18121e1613511c1012"><span class="__cf_email__" data-cfemail="1e7c776a78727f6d767b726e5e79737f7772307d7173">[email&#160;protected]</span></a><br>
                 Website: <a href="https://www.sites.google.com/view/bitflash-home">www.sites.google.com/view/bitflash-home</a>
             </p>
             <p>
@@ -691,7 +747,7 @@
         <p>&copy; 2025 Bitflash Enterprises. All rights reserved. <a href="/privacypolicy.html">Privacy Policy</a> | <a href="/termsofservice.html">Terms of Service</a></p>
     </footer>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         document.querySelectorAll('.faq-question').forEach(item => {
             item.addEventListener('click', () => {
                 const parent = item.parentElement;
@@ -718,5 +774,5 @@
             });
         });
     </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93e39454bdeb53da',t:'MTc0Njk4NjQ2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
