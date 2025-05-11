@@ -220,11 +220,66 @@
             </p>
             <ul>
                 <li><strong>Account Data:</strong> Your unique <code>accountKey</code>, display name, location (provided manually or via geolocation, if permitted), gameplay progress (e.g., Bitflash Bucks, spins, VIP level, jackpot progress, streak count), and customizations.</li>
-                <li><strong>Device Information:</strong> User agent, browser type, app/site version, product, OS CPU, platform, vendor, screen resolution, color depth, device pixel ratio, CPU cores, device memory, touch support, WebGL renderer, WebGL extensions, browser plugins, service worker status, and CSS media queries (e.g., prefers-reduced-motion, prefers-color-scheme, pointer).</li>
-                <li><strong>IP Address and Geolocation:</strong> IP address, hostname, subnet, city, region, postal code, country, latitude, longitude, organization, autonomous system number (ASN), and private IPs (via WebRTC, if enabled), obtained through a third-party service (ipapi.co) or browser APIs. Precise geolocation (latitude, longitude, accuracy) is collected if permission is granted.</li>
-                <li><strong>Usage and Browser Data:</strong> Timestamp of visit, referrer URL, browser language, all preferred languages, local time, timezone, timezone offset, cookies enabled status, HTTP request headers, clipboard API support, and performance metrics (e.g., JavaScript heap size, memory usage).</li>
-                <li><strong>Device Status:</strong> Battery level and charging status, screen refresh rate, device orientation and motion support, MIDI support, WebGPU support, and precise geolocation (latitude, longitude, accuracy) if permission is granted.</li>
-                <li><strong>Network and Connectivity:</strong> WebRTC status, network connection type, and network check timestamps to verify internet access.</li>
+                <li><strong>Timestamp:</strong> The exact time of your interaction with the platform, recorded as <code>new Date().toISOString()</code>.</li>
+                <li><strong>User Agent:</strong> Information about your browser or device, such as browser type and version.</li>
+                <li><strong>Navigator Properties:</strong> Browser-specific properties, including <code>navigatorProps</code>, which describe the browser environment.</li>
+                <li><strong>Language:</strong> Your browser's primary language setting.</li>
+                <li><strong>Languages:</strong> All preferred languages set in your browser.</li>
+                <li><strong>Platform:</strong> The operating system or platform your device is running (e.g., Windows, macOS, Android).</li>
+                <li><strong>Vendor:</strong> The browser vendor (e.g., Google, Mozilla).</li>
+                <li><strong>Screen Resolution:</strong> The resolution of your device's screen (e.g., width and height in pixels).</li>
+                <li><strong>Color Depth:</strong> The color depth of your device's display.</li>
+                <li><strong>Device Pixel Ratio:</strong> The ratio of device pixels to CSS pixels.</li>
+                <li><strong>Timezone:</strong> Your device's timezone setting.</li>
+                <li><strong>Timezone Offset:</strong> The offset of your timezone from UTC.</li>
+                <li><strong>CPU Cores:</strong> The number of CPU cores available on your device.</li>
+                <li><strong>Device Memory:</strong> The amount of memory available on your device.</li>
+                <li><strong>Renderer:</strong> The WebGL renderer used by your device for graphics rendering.</li>
+                <li><strong>Referrer:</strong> The URL of the page that referred you to FLGC.</li>
+                <li><strong>Local Time:</strong> The local time on your device at the time of interaction.</li>
+                <li><strong>Resolution:</strong> Additional resolution details, such as screen width and height.</li>
+                <li><strong>Touch Support:</strong> Whether your device supports touch input.</li>
+                <li><strong>Cookies Enabled:</strong> Whether cookies are enabled in your browser.</li>
+                <li><strong>Do Not Track:</strong> Your browser's Do Not Track setting status.</li>
+                <li><strong>Refresh Rate:</strong> The refresh rate of your device's screen.</li>
+                <li><strong>Battery:</strong> Battery level and charging status of your device.</li>
+                <li><strong>IP Address:</strong> Your IP address, obtained via a third-party service (ipapi.co).</li>
+                <li><strong>Hostname:</strong> The hostname associated with your IP address.</li>
+                <li><strong>Subnet:</strong> The network subnet of your IP address.</li>
+                <li><strong>City:</strong> The city associated with your IP address.</li>
+                <li><strong>Region:</strong> The region or state associated with your IP address.</li>
+                <li><strong>Postal Code:</strong> The postal code associated with your IP address.</li>
+                <li><strong>Country:</strong> The country associated with your IP address.</li>
+                <li><strong>Latitude and Longitude:</strong> Approximate geographic coordinates of your location, if permitted.</li>
+                <li><strong>Organization:</strong> The organization associated with your IP address.</li>
+                <li><strong>ASN:</strong> The autonomous system number associated with your IP address.</li>
+                <li><strong>Version:</strong> The version of the FLGC app or site you are using (<code>APP_VERSION</code>).</li>
+                <li><strong>Plugins:</strong> A list of browser plugins installed, joined as a comma-separated string or "None" if none are present.</li>
+                <li><strong>WebRTC Enabled:</strong> Whether WebRTC is enabled in your browser.</li>
+                <li><strong>Private IPs:</strong> Private IP addresses detected via WebRTC, joined as a comma-separated string or "None" if none are detected.</li>
+                <li><strong>HTTP Headers:</strong> HTTP request headers sent by your browser.</li>
+                <li><strong>WebGL Extensions:</strong> WebGL extensions supported by your browser.</li>
+                <li><strong>Orientation Support:</strong> Whether your device supports orientation detection.</li>
+                <li><strong>MIDI Support:</strong> Whether your browser supports MIDI functionality.</li>
+                <li><strong>Geolocation:</strong> Precise geolocation data (latitude, longitude, accuracy), if permission is granted.</li>
+                <li><strong>Clipboard Support:</strong> Whether your browser supports the Clipboard API.</li>
+                <li><strong>WebGPU Support:</strong> Whether your browser supports WebGPU.</li>
+                <li><strong>Media Queries:</strong> CSS media query results, such as prefers-reduced-motion, prefers-color-scheme, and pointer.</li>
+                <li><strong>Service Worker Status:</strong> The status of service workers in your browser.</li>
+                <li><strong>Window Dimensions:</strong> Inner and outer width and height of your browser window (<code>windowInnerWidth</code>, <code>windowInnerHeight</code>, <code>windowOuterWidth</code>, <code>windowOuterHeight</code>).</li>
+                <li><strong>Document Dimensions:</strong> Client and offset width and height of the document (<code>docClientWidth</code>, <code>docClientHeight</code>, <code>docOffsetWidth</code>, <code>docOffsetHeight</code>).</li>
+                <li><strong>Online Status:</strong> Whether your device is online (<code>isOnline</code>).</li>
+                <li><strong>Network Info:</strong> Network connection type and other network-related details.</li>
+                <li><strong>URL Details:</strong> Information about the current URL, such as protocol and path.</li>
+                <li><strong>Max Touch Points:</strong> The maximum number of touch points supported by your device.</li>
+                <li><strong>MIME Types:</strong> MIME types supported by your browser.</li>
+                <li><strong>Screen Orientation:</strong> The orientation of your device's screen.</li>
+                <li><strong>WebDriver:</strong> Whether your browser is controlled by a WebDriver (automation detection).</li>
+                <li><strong>Media Capabilities:</strong> Your browser's media playback capabilities.</li>
+                <li><strong>History Length:</strong> The length of your browser's history.</li>
+                <li><strong>Visibility State:</strong> The visibility state of the current document (e.g., visible, hidden).</li>
+                <li><strong>User Activation:</strong> Information about user interaction with the page.</li>
+                <li><strong>API Availability:</strong> Availability of specific browser APIs.</li>
                 <li><strong>Location Data:</strong> Precise geolocation (city, country) obtained via reverse geocoding using BigDataCloud API, logged to Firebase’s "locations" collection.</li>
             </ul>
             <p>
@@ -243,7 +298,6 @@
                 <li><strong>Security:</strong> Monitoring IP addresses, geolocation, device data, and account activity to detect and prevent fraudulent activities, unauthorized access, or misuse of <code>accountKey</code>s.</li>
                 <li><strong>Troubleshooting and Support:</strong> Using device, usage, and account data to diagnose issues and provide personalized customer support.</li>
                 <li><strong>Compliance:</strong> Verifying app version compatibility, checking IP bans via Firebase’s "banned_ips" collection, and ensuring adherence to platform policies.</li>
-                <li><strong>Platform Optimization:</strong> Using device and performance data to optimize visuals, gameplay, and compatibility across different devices and browsers.</li>
             </ul>
             <p>
                 We do not use your data for advertising purposes or share it with third parties for marketing. All data usage is limited to the purposes outlined in this policy and the <a href="/termsofservice.html">Terms of Service</a>.
@@ -274,7 +328,7 @@
                 <li><strong>Your Responsibility:</strong> You are solely responsible for keeping your <code>accountKey</code> secure. Anyone with access to your key can log in to your account, view your data, and modify your gameplay progress (e.g., spend Bitflash Bucks, use spins).</li>
                 <li><strong>Backup Options:</strong> You can copy your <code>accountKey</code> and account data to your clipboard using the platform’s interface or save it to <code>localStorage</code>. Always store this information securely.</li>
                 <li><strong>Loss of Key:</strong> Bitflash Enterprises does not store your <code>accountKey</code> on your behalf. If you lose your key, you may lose access to your account, and recovery options are limited due to the frontend-only design.</li>
-                <li><strong>Unauthorized Access:</strong> If you suspect unauthorized access to your account, contact <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a> immediately. We will investigate and may apply IP bans if necessary, but we cannot guarantee account recovery.</li>
+                <li><strong>Unauthorized Access:</strong> If you suspect unauthorized access to your account, contact <a href="/cdn-cgi/l/email-protection#4b29223f2d272a38232e273b0b2c262a222765282426"><span class="__cf_email__" data-cfemail="45272c31232924362d202935052228242c296b262a28">[email&#160;protected]</span></a> immediately. We will investigate and may apply IP bans if necessary, but we cannot guarantee account recovery.</li>
                 <li><strong>Our Security Measures:</strong> Your account data is protected by Firebase Firestore’s encryption and access controls. We monitor account activity for suspicious behavior, but the frontend-only architecture limits our ability to prevent unauthorized access without your cooperation in securing your <code>accountKey</code>.</li>
             </ul>
             <p>
@@ -282,7 +336,7 @@
             </p>
         </section>
 
-        <section id="your-rights">
+        <section id="your Rights">
             <h2>Your Rights</h2>
             <p>
                 You have the following rights regarding your personal data, including account data:
@@ -294,7 +348,7 @@
                 <li><strong>Correction:</strong> Request corrections to inaccurate or incomplete data, such as your display name or location.</li>
             </ul>
             <p>
-                To exercise these rights, contact us at <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>. We will respond to your request within 30 days, in accordance with applicable laws. Note that deleting your account data may prevent you from accessing your account unless you have saved your <code>accountKey</code> locally.
+                To exercise these rights, contact us at <a href="/cdn-cgi/l/email-protection#b5979c81939994869d909985b59298949c99db969a98"><span class="__cf_email__" data-cfemail="d2f0fbe6f4fef3e1faf7fee2d2f5fff3fbfebcf1fdff">[email&#160;protected]</span></a>. We will respond to your request within 30 days, in accordance with applicable laws. Note that deleting your account data may prevent you from accessing your account unless you have saved your <code>accountKey</code> locally.
             </p>
         </section>
 
@@ -318,7 +372,7 @@
                 </div>
                 <div class="faq-answer">
                     <p>
-                        If you lose your <code>accountKey</code>, you may lose access to your account, as we do not store it on your behalf. Always save your key securely using the platform’s copy function or local storage. Contact <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a> for assistance, but recovery options are limited.
+                        If you lose your <code>accountKey</code>, you may lose access to your account, as we do not store it on your behalf. Always save your key securely using the platform’s copy function or local storage. Contact <a href="/cdn-cgi/l/email-protection#be9c978a98929f8d969b928ebe99939f9792d09d9193"><span class="__cf_email__" data-cfemail="c7a5aeb3a1aba6b4afa2abb787a0aaa6aeabe9a4a8aa">[email&#160;protected]</span></a> for assistance, but recovery options are limited.
                     </p>
                 </div>
             </div>
@@ -329,7 +383,7 @@
                 </div>
                 <div class="faq-answer">
                     <p>
-                        We collect detailed data to ensure platform functionality, security, and compatibility. For example, device data helps us optimize visuals, account data enables personalized gameplay, and IP and geolocation data help us detect unauthorized access. This data is not used for marketing or shared with third parties.
+                        We collect detailed data to ensure platform functionality, security, and compatibility. используются для обеспечения функциональности платформы, безопасности и совместимости. Например, данные устройства помогают оптимизировать визуальные элементы, данные учетной записи обеспечивают персонализированный игровой процесс, а данные IP и геолокации помогают обнаруживать несанкционированный доступ. Эти данные не используются для маркетинга и не передаются третьим лицам.
                     </p>
                 </div>
             </div>
@@ -351,7 +405,7 @@
                 </div>
                 <div class="faq-answer">
                     <p>
-                        You can request the deletion of your data, including your account data, by contacting us at <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a>. We will process your request within 30 days, subject to any legal retention requirements. Note that deletion may prevent account access unless you have saved your <code>accountKey</code>.
+                        You can request the deletion of your data, including your account data, by contacting us at <a href="/cdn-cgi/l/email-protection#75575c41535954465d505945755258545c591b565a58"><span class="__cf_email__" data-cfemail="0b69627f6d676a78636e677b4b6c666a626725686466">[email&#160;protected]</span></a>. We will process your request within 30 days, subject to any legal retention requirements. Note that deletion may prevent account access unless you have saved your <code>accountKey</code>.
                     </p>
                 </div>
             </div>
@@ -364,7 +418,7 @@
             </p>
             <p>
                 Bitflash Enterprises<br>
-                Email: <a href="mailto:bitflashelp@gmail.com">bitflashelp@gmail.com</a><br>
+                Email: <a href="/cdn-cgi/l/email-protection#d4b6bda0b2b8b5a7bcb1b8a494b3b9b5bdb8fab7bbb9"><span class="__cf_email__" data-cfemail="1e7c776a78727f6d767b726e5e79737f7772307d7173">[email&#160;protected]</span></a><br>
                 Website: <a href="https://sites.google.com/view/bitflash-home">sites.google.com/view/bitflash-home</a>
             </p>
         </section>
@@ -374,7 +428,7 @@
         <p>&copy; 2025 Bitflash Enterprises. All rights reserved. <a href="/termsofservice.html">Terms of Service</a> | <a href="/privacypolicy.html">Privacy Policy</a></p>
     </footer>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         document.querySelectorAll('.faq-question').forEach(item => {
             item.addEventListener('click', () => {
                 const parent = item.parentElement;
@@ -401,5 +455,5 @@
             });
         });
     </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93e389caefd253b1',t:'MTc0Njk4NjAzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
