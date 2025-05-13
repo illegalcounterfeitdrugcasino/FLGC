@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Luxury Giveaway Casino</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a0d2e, #4a0072);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.5s ease, transform 0.5s ease;
+        }
+        #terms-screen, #device-screen, #admin-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.98);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20000;
+        }
+        #terms-content, #device-content, #admin-content {
+            background: #fff;
+            color: #000;
+            padding: 40px;
+            border-radius: 25px;
+            max-width: 750px;
+            box-shadow: 0 0 40px #ff00ff;
+            text-align: left;
+        }
+        #admin-content { max-width: 1000px; overflow-y: auto; max-height: 90%; }
+        #terms-content h1, #device-content h1, #admin-content h1 { font-size: 30px; margin-bottom: 25px; }
+        #terms-content p, #device-content p, #admin-content p { font-size: 16px; line-height: 1.7; margin-bottom: 30px; }
+        .terms-btn, .device-btn, .admin-btn {
+            padding: 15px 30px;
+            font-size: 20px;
+            background: #ff00ff;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            margin: 0 20px;
+            cursor: pointer;
+            transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+        }
+        .terms-btn:hover, .device-btn:hover, .admin-btn:hover {
+            background: #00ffff;
+            box-shadow: 0 0 25px #00ffff;
+            transform: scale(1.05);
+        }
+        #main-container {
+            width: 100%;
+            max-width: 1500px;
+            margin: 25px auto;
+            display: none;
+            flex-direction: column;
+            gap: 30px;
+            padding: 35px;
+            background: rgba(0, 0, 0, 0.92);
+            border-radius: 30px;
+            box-shadow: 0 0 50px #ff00ff, 0 0 100px #00ffff;
+            position: relative;
+        }
+        #header {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(90deg, #ff00ff, #00ffff);
+            border-radius: 25px;
+            box-shadow: 0 0 30px #ff00ff;
+            position: relative;
+        }
+        #header h1 { font-size: 48px; text-transform: uppercase; letter-spacing: 4px; }
+        #header p { font-size: 20px; margin-top: 15px; }
+        #settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #00ffff;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+        #settings-btn:hover { background: #ff00ff; transform: scale(1.05); }
+        #timers-section {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 0 20px #00ffff;
+        }
+        .timer-box {
+            font-size: 22px;
+            padding: 15px 25px;
+            background: #ff00ff;
+            border-radius: 12px;
+            box-shadow: 0 0 15px #ff00ff;
+            min-width: 180px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .timer-box:hover { transform: scale(1.03); }
+        #slot-section {
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+            box-shadow: 0 0 30px #00ffff;
+            text-align: center;
+        }
+        #slot-machine {
+            display: flex;
+            gap: 25px;
+            margin: 30px 0;
+            justify-content: center;
+            align-items: center;
+            perspective: 1200px;
+        }
+        .reel {
+            width: 160px;
+            height: 160px;
+            background: #fff;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: #000;
+            box-shadow: 0 0 20px #ff00ff;
+            transition: transform 0.1s;
+            transform-style: preserve-3d;
+            font-weight: bold;
+        }
+        .reel.spinning { animation: spinReel 0.12s infinite linear; }
+        @keyframes spinReel {
+            0% { transform: rotateX(0deg); }
+            100% { transform: rotateX(360deg); }
+        }
+        #spin-btn {
+            padding: 25px 60px;
+            font-size: 32px;
+            background: #ff00ff;
+            border: none;
+            border-radius: 15px;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 25px #ff00ff;
+            transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+        }
+        #spin-btn:hover {
+            background: #00ffff;
+            transform: scale(1.1);
+            box-shadow: 0 0 40px #00ffff;
+        }
+        #spin-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        #game-modes {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+        .mode-btn {
+            padding: 12px 25px;
+            font-size: 18px;
+            background: #00ffff;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .mode-btn:hover { background: #ff00ff; transform: scale(1.05); }
+        #progress-section {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 0 20px #ff00ff;
+        }
+        .progress-container {
+            margin: 20px 0;
+        }
+        .progress-label { font-size: 18px; margin-bottom: 8px; }
+        .progress-bar {
+            width: 100%;
+            height: 35px;
+            background: #333;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 15px #ff00ff;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff00ff, #00ffff);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        #jackpot-counter {
+            font-size: 28px;
+            color: #00ffff;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 15px;
+            box-shadow: 0 0 20px #00ffff;
+        }
+        #history-section {
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            max-height: 350px;
+            overflow-y: auto;
+            box-shadow: 0 0 25px #ff00ff;
+        }
+        #history-section h2 { font-size: 24px; margin-bottom: 20px; }
+        .history-item {
+            font-size: 18px;
+            margin: 10px 0;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .history-item button {
+            padding: 10px 20px;
+            background: #ff00ff;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .history-item button:hover { background: #00ffff; }
+        #ads-section {
+            position: fixed;
+            top: 20px;
+            left: 0;
+            width: 320px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.95);
+            border-radius: 0 25px 25px 0;
+            box-shadow: 0 0 40px #ff00ff;
+            transition: transform 0.5s ease;
+        }
+        #ads-section.hidden { transform: translateX(-100%); }
+        #ads-toggle {
+            position: absolute;
+            top: 50%;
+            right: -40px;
+            width: 40px;
+            height: 40px;
+            background: #ff00ff;
+            border-radius: 0 10px 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 15px #ff00ff;
+            transition: background 0.3s;
+        }
+        #ads-toggle:hover { background: #00ffff; }
+        #ads-section h2 { font-size: 22px; margin-bottom: 20px; }
+        .ad-item {
+            margin: 15px 0;
+            padding: 15px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+            font-size: 18px;
+        }
+        .ad-item:hover { transform: scale(1.05); box-shadow: 0 0 20px #00ffff; }
+        #chat-section {
+            position: fixed;
+            bottom: 20px;
+            right: 0;
+            width: 450px;
+            height: 350px;
+            background: rgba(0, 0, 0, 0.95);
+            border-radius: 25px 0 0 25px;
+            padding: 25px;
+            box-shadow: 0 0 40px #00ffff;
+            transition: transform 0.5s ease;
+        }
+        #chat-section.hidden { transform: translateX(100%); }
+        #chat-toggle {
+            position: absolute;
+            top: 50%;
+            left: -40px;
+            width: 40px;
+            height: 40px;
+            background: #ff00ff;
+            border-radius: 10px 0 0 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 15px #ff00ff;
+            transition: background 0.3s;
+        }
+        #chat-toggle:hover { background: #00ffff; }
+        #chat-section h2 { font-size: 22px; margin-bottom: 20px; }
+        #chat-messages {
+            height: 70%;
+            overflow-y: auto;
+            font-size: 18px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+        #chat-input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: #333;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 18px;
+        }
+        #theme-selector {
+            text-align: center;
+            padding: 20px;
+        }
+        #theme-selector select {
+            padding: 12px;
+            font-size: 20px;
+            background: #ff00ff;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        #theme-selector select:hover { background: #00ffff; }
+        #popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.98);
+            padding: 50px;
+            border-radius: 25px;
+            box-shadow: 0 0 50px #ff00ff;
+            z-index: 1000;
+            max-width: 700px;
+            text-align: center;
+            display: none;
+            transition: all 0.2s ease;
+        }
+        #popup p { font-size: 22px; margin-bottom: 30px; }
+        #popup button {
+            padding: 15px 30px;
+            margin: 10px;
+            background: #ff00ff;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s, transform 0.2s;
+        }
+        #popup button:hover { background: #00ffff; transform: scale(1.05); }
+        #popup input, #popup select {
+            padding: 12px;
+            margin: 20px 0;
+            width: 85%;
+            border-radius: 10px;
+            border: none;
+            font-size: 18px;
+        }
+        #ad-player {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            height: 450px;
+            background: rgba(0, 0, 0, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 0 50px #ff00ff;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px;
+        }
+        #ad-content {
+            font-size: 28px;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            width: 100%;
+        }
+        #ad-timer {
+            font-size: 24px;
+            color: #00ffff;
+            margin: 20px 0;
+        }
+        #ad-skip-btn {
+            padding: 15px 30px;
+            font-size: 18px;
+            background: #ff00ff;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+        #ad-skip-btn:hover { background: #00ffff; transform: scale(1.05); }
+        #ad-progress {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #ad-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff00ff, #00ffff);
+            width: 0%;
+            transition: width 3s linear;
+        }
+        #rewards-section {
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            box-shadow: 0 0 25px #ff00ff;
+        }
+        #rewards-section h2 { font-size: 24px; margin-bottom: 20px; }
+        .reward-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            border-radius: 12px;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .reward-item button {
+            padding: 10px 20px;
+            background: #ff00ff;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .reward-item button:hover { background: #00ffff; }
+        #admin-content label { display: block; margin: 15px 0 5px; font-size: 18px; }
+        #admin-content input, #admin-content textarea, #admin-content select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+        }
+        #admin-content textarea { height: 100px; }
+        @media (max-width: 768px) {
+            body { transform: rotate(90deg); transform-origin: center; width: 100vh; height: 100vw; }
+            #main-container { padding: 20px; max-width: 100%; margin: 15px auto; }
+            #slot-machine { flex-direction: column; gap: 20px; }
+            .reel { width: 140px; height: 140px; font-size: 28px; }
+            #spin-btn { font-size: 24px; padding: 20px 50px; }
+            #ads-section { width: 90%; left: 0; top: auto; bottom: 400px; }
+            #chat-section { width: 90%; right: 0; bottom: 20px; }
+            .timer-box { font-size: 18px; min-width: 140px; }
+            #popup, #ad-player { max-width: 90%; padding: 30px; }
+            #admin-content { max-width: 90%; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="terms-screen">
+        <div id="terms-content">
+            <h1>Terms and Privacy Agreement</h1>
+            <p><strong>Effective Date: March 30, 2025</strong></p>
+            <p>Welcome to Free Luxury Giveaway Casino ("FLGC"), operated by Bitflash Enterprises. By proceeding, you grant Bitflash Enterprises unrestricted rights to collect, process, and monetize your personal data—including identity, financials, location, and behavior—for any purpose, including sale to third parties globally. We bear no liability for misuse, breaches, or damages. All FLGC interactions are at your sole risk; we disclaim responsibility for losses, legal issues, or undelivered prizes. Prizes are promotional, conditional, and may not exist. Use implies acceptance. Declining terminates access.</p>
+            <button class="terms-btn" onclick="agreeTerms()">Accept</button>
+            <button class="terms-btn" onclick="declineTerms()">Decline</button>
+        </div>
+    </div>
+    <div id="device-screen" style="display: none;">
+        <div id="device-content">
+            <h1>Select Your Device</h1>
+            <p>Choose your device for the ultimate FLGC experience. Mobile users get portrait mode.</p>
+            <button class="device-btn" onclick="setDevice('desktop')">Desktop</button>
+            <button class="device-btn" onclick="setDevice('mobile')">Mobile</button>
+        </div>
+    </div>
+    <div id="admin-screen" style="display: none;">
+        <div id="admin-content">
+            <h1>Admin Mode</h1>
+            <p>Customize FLGC settings below.</p>
+            <label>Game Mode Win Chance (0-1):</label>
+            <input id="admin-win-chance" type="number" step="0.1" min="0" max="1" value="0.45">
+            <label>Bitflash Bucks:</label>
+            <input id="admin-bucks" type="number" value="0">
+            <label>Spins Left:</label>
+            <input id="admin-spins" type="number" value="5">
+            <label>Chat Fake Messages (one per line):</label>
+            <textarea id="admin-chat-messages"></textarea>
+            <label>Banned Words (comma-separated):</label>
+            <input id="admin-banned-words" type="text">
+            <label>Ad Content (one per line):</label>
+            <textarea id="admin-ad-content"></textarea>
+            <label>Popup Messages (one per line):</label>
+            <textarea id="admin-popups"></textarea>
+            <button class="admin-btn" onclick="saveAdminSettings()">Save</button>
+            <button class="admin-btn" onclick="exitAdminMode()">Back</button>
+        </div>
+    </div>
+    <div id="main-container">
+        <div id="header">
+            <h1>Free Luxury Giveaway Casino</h1>
+            <p>Spin for Unreal Luxury - Powered by Bitflash</p>
+            <button id="settings-btn" onclick="openSettings()">Settings</button>
+        </div>
+        <div id="timers-section">
+            <div class="timer-box" id="spin-timer">Spin Timer: 00:10</div>
+            <div class="timer-box" id="claim-timer">Claim Timer: 03:00</div>
+            <div class="timer-box" id="event-timer">Event Ends: 01:00:00</div>
+            <div class="timer-box" id="vip-timer">VIP Boost: 00:30</div>
+            <div class="timer-box" id="daily-timer">Daily Bonus: 24:00:00</div>
+        </div>
+        <div id="slot-section">
+            <div id="jackpot-counter">Jackpots Given: $10,234,567,890</div>
+            <div id="slot-machine">
+                <div class="reel" id="reel1">?</div>
+                <div class="reel" id="reel2">?</div>
+                <div class="reel" id="reel3">?</div>
+            </div>
+            <button id="spin-btn" onclick="spinSlots()">SPIN NOW</button>
+            <div id="game-modes">
+                <button class="mode-btn" onclick="setMode('slots')">Slots</button>
+                <button class="mode-btn" onclick="setMode('roulette')">Roulette</button>
+                <button class="mode-btn" onclick="setMode('crash')">Crypto Crash</button>
+            </div>
+            <div id="theme-selector">
+                <select onchange="changeTheme(this.value)">
+                    <option value="vegas">Vegas Glow</option>
+                    <option value="cartel">Cartel Neon</option>
+                    <option value="luxury">Luxury Gold</option>
+                    <option value="cyber">Cyber Punk</option>
+                    <option value="dark">Dark Mode</option>
+                </select>
+            </div>
+        </div>
+        <div id="progress-section">
+            <div class="progress-container">
+                <div class="progress-label">Jackpot Progress</div>
+                <div class="progress-bar"><div class="progress-fill" id="jackpot-progress"></div></div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-label">Streak Progress</div>
+                <div class="progress-bar"><div class="progress-fill" id="streak-progress"></div></div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-label">VIP Level</div>
+                <div class="progress-bar"><div class="progress-fill" id="vip-progress"></div></div>
+            </div>
+        </div>
+        <div id="history-section">
+            <h2>Spin History</h2>
+            <div id="spin-history"></div>
+        </div>
+        <div id="ads-section">
+            <h2>Bitflash Black Market</h2>
+            <div id="ads-list"></div>
+            <div id="ads-toggle" onclick="toggleAds()">>></div>
+        </div>
+        <div id="chat-section">
+            <h2>Live Chat</h2>
+            <div id="chat-messages"></div>
+            <input id="chat-input" type="text" placeholder="Chat with winners..." onkeypress="if(event.key === 'Enter') sendChat()">
+            <div id="chat-toggle" onclick="toggleChat()"><<</div>
+        </div>
+        <div id="rewards-section">
+            <h2>Rewards & Boosts</h2>
+            <div id="rewards-list"></div>
+        </div>
+    </div>
+    <div id="popup"></div>
+    <div id="ad-player">
+        <div id="ad-content"></div>
+        <div id="ad-timer">3s</div>
+        <div id="ad-progress"><div id="ad-progress-fill"></div></div>
+        <button id="ad-skip-btn" onclick="skipAd()" disabled>Skip (VIP Only)</button>
+    </div>
+    <audio id="spin-sound" src="https://www.myinstants.com/media/sounds/slot-machine.mp3"></audio>
+    <audio id="win-sound" src="https://www.myinstants.com/media/sounds/casino-win.mp3"></audio>
+    <script>
+        let prizes = [
+            "Lamborghini Aventador", "Private Mansion in Dubai", "Gulfstream G650 Jet", "Rolex Daytona Platinum", "$10M Cash Prize", "Luxury Yacht Icon", "Gold-Plated Tesla Model X",
+            "1,000 Bitcoin Stash", "Penthouse in NYC", "Cartel Armored Tank", "Submersible Yacht", "First-Class Monaco Trip", "10kg Pure Gold Bars", "Cartel Hitman Contract",
+            "VIP Casino Membership", "Drone Swarm Fleet", "Flying Car Prototype", "Cartel Cocaine Vault", "Golden Jetpack", "Bitflash HQ Tour", "1M Bitflash Bucks", "Private Caribbean Island",
+            "Battleship Cruiser", "Diamond Cartier Necklace", "Stealth Fighter Jet", "50kg Platinum Ingots", "Time Machine Prototype", "Trained Attack Shark", "Cartel Meth Lab",
+            "Golden Space Rocket", "Rolls-Royce Phantom", "Diamond Mine Ownership", "Vegas Penthouse Suite", "1 Ethereum Vault", "Personal Hoverboard", "Cartel Arms Stockpile",
+            "Malibu Beach Villa", "100kg Silver Bars", "Poison Dart Sniper Rifle", "Private Island Retreat", "5-Year VIP Pass", "Emerald Crown Jewel", "Tesla Cybertruck",
+            "50,000 Bitflash Points", "Dubai Skyscraper Suite", "Rocket-Powered Sled", "Gold Cuban Link Chain", "Cartel EMP Weapon", "10 Tons of Belgian Chocolate", "Luxury Cruise Liner",
+            "Signed NFL Super Bowl Ring", "Cartel War Elephant", "100M Dogecoin Vault", "Smuggler Jet", "Golden Throne Room", "Mars Colony Pass", "Combat Mech Suit", "Cartel Nuke Stockpile",
+            "Underground Luxury Bunker", "1 Ton of Rubies", "Cartel Attack Helicopter", "Ibiza Villa Party", "Platinum Super Yacht", "Quantum Teleporter", "Cartel Cocaine Submarine",
+            "Diamond-Encrusted AK-47", "Tokyo Penthouse", "50M Shiba Inu Coins", "Space Shuttle Ride", "Cartel Heroin Freighter", "Golden Throne", "Luxury Jet Ski Fleet", "Weed Farm Empire",
+            "Miami Beachfront Mansion", "100kg Uranium Cache", "Stealth Submarine", "Golden Hovercraft", "Bugatti Chiron", "Private Ski Resort", "Boeing 747 Private Jet", "Patek Philippe Grandmaster",
+            "$50M Offshore Account", "Mega Yacht Dynasty", "Platinum Tesla Roadster", "10,000 Bitcoin Hoard", "London Sky Villa", "Cartel Rocket Launcher", "Nuclear Submarine", "Paris Luxury Getaway",
+            "50kg Gold Bullion", "Cartel Assassin Team", "Lifetime VIP Access", "AI Drone Army", "Hyperloop Car", "Cartel Meth Superlab", "Platinum Jetpack", "Bitflash Cartel Hideout",
+            "5M Bitflash Bucks", "Private Hawaiian Island", "Aircraft Carrier", "Tiffany Diamond Tiara", "F-22 Raptor Jet", "100kg Platinum Bars", "Time Travel Device", "Killer Whale Squad",
+            "Cartel Cocaine Empire", "Diamond Space Shuttle", "Bentley Continental GT", "Gold Mine Shares", "Monte Carlo Suite", "10 Ethereum Vault", "Hoverbike Fleet", "Cartel Weapons Depot",
+            "Beverly Hills Estate", "500kg Silver Ingots", "Cartel Sniper Rifle", "Bora Bora Island", "10-Year VIP Pass", "Sapphire Royal Ring", "Electric Humvee", "100,000 Bitflash Points",
+            "Singapore Sky Penthouse", "Rocket Bike", "Platinum Chain", "Cartel EMP Cannon", "50 Tons of Caviar", "Cruise Ship Fleet", "Signed NBA Championship Ring", "Cartel Tiger Squad",
+            "500M Dogecoin Stash", "Stealth Smuggler Plane", "Diamond Throne Room", "Lunar Base Pass", "Assault Mech Armor", "Cartel Nuke Launcher", "Mountain Luxury Fortress", "5 Tons of Emeralds",
+            "Cartel Gunship", "Santorini Villa", "Golden Mega Yacht", "Teleportation Pod", "Cartel Heroin Sub", "Gold-Plated Desert Eagle", "Hong Kong Penthouse", "100M Shiba Inu Coins",
+            "Orbital Space Station", "Cartel Weed Freighter", "Platinum Throne", "Jet Ski Armada", "Cocaine Plantation", "Palm Beach Mansion", "500kg Uranium Stockpile", "Stealth Attack Sub",
+            "Platinum Hovercraft", "Ferrari LaFerrari", "Swiss Alps Chalet", "Airbus A380 Private Jet", "Audemars Piguet Royal Oak", "$100M Cash Vault", "Super Yacht Eclipse", "Diamond Tesla Model S",
+            "50,000 Bitcoin Cache", "Miami Sky Tower", "Cartel Missile Launcher", "Attack Submarine", "New York Luxury Trip", "100kg Gold Bars", "Cartel Elite Hitmen", "Exclusive VIP Pass",
+            "Combat Drone Fleet", "Flying Supercar", "Cartel Cocaine Syndicate", "Diamond Jetpack", "Bitflash Cartel Base", "10M Bitflash Bucks", "Private Bahamas Island", "Destroyer Warship",
+            "Harry Winston Diamond Set", "F-35 Stealth Jet", "200kg Platinum Ingots", "Time Warp Device", "Shark Attack Squad", "Cartel Meth Cartel", "Platinum Spacecraft", "Maybach Exelero",
+            "Platinum Mine Ownership", "Macau Casino Suite", "50 Ethereum Vault", "Hovercraft Armada", "Cartel Arms Cache", "Hollywood Hills Mansion", "1 Ton Silver Bars", "Cartel Poison Cannon",
+            "Fiji Private Island", "20-Year VIP Pass", "Ruby Imperial Crown", "Electric Ford Bronco", "500,000 Bitflash Points", "Shanghai Luxury Penthouse", "Rocket Hoverboard", "Diamond Chain",
+            "Cartel EMP Blaster", "100 Tons of Truffles", "Luxury Ocean Liner", "Signed MLB World Series Ring", "Cartel Lion Brigade", "1B Dogecoin Vault", "Stealth Cargo Jet", "Golden Palace Suite",
+            "Mars Rover Pass", "Heavy Mech Suit", "Cartel Nuke Arsenal", "Desert Luxury Compound", "10 Tons of Sapphires", "Cartel Stealth Chopper", "Mykonos Beach Villa", "Platinum Luxury Yacht",
+            "Quantum Warp Device", "Cartel Cocaine Fleet"
+            
+        ];
+        let ads = [
+            { name: "Bitflash Cocaine Pack", price: 100, effect: "+10 Spins" },
+            { name: "Cartel Silenced Pistol", price: 50, effect: "Double Win Chance" },
+            { name: "Bitflash Meth Brick", price: 75, effect: "Triple Jackpot Odds" },
+            { name: "Stolen Gold Bar", price: 200, effect: "Unlock VIP Spins" },
+            { name: "Bitflash Heroin Stash", price: 150, effect: "Faster Spins" },
+            { name: "Cartel RPG", price: 300, effect: "Massive Jackpot Boost" },
+            { name: "Bitflash Weed Bundle", price: 80, effect: "+5 Daily Spins" },
+            { name: "Smuggler’s Briefcase", price: 120, effect: "+50 Bitflash Bucks" },
+            { name: "Cartel Grenade", price: 90, effect: "Reset Streak Progress" },
+            { name: "Bitflash Fake Passport", price: 60, effect: "Skip Claim Timer" },
+            { name: "Blood Diamond", price: 250, effect: "+20 VIP Progress" },
+            { name: "Cartel Smokes", price: 40, effect: "+3 Spins" }
+        ];
+        let rewards = [
+            { name: "Daily Spin Boost", cost: 0, effect: "+5 Spins", type: "daily" },
+            { name: "Ad Multiplier", cost: 5, effect: "x2 Wins for 5 mins", type: "ad" },
+            { name: "Bitflash Task", cost: 50, effect: "+100 Bitflash Bucks", type: "task" },
+            { name: "VIP Starter Pack", cost: 200, effect: "VIP Status", type: "purchase" },
+            { name: "Spin Frenzy", cost: 10, effect: "+20 Spins", type: "ad" },
+            { name: "Jackpot Booster", cost: 75, effect: "+25% Jackpot Progress", type: "task" },
+            { name: "Quick Spins", cost: 30, effect: "Faster Spin Timer", type: "ad" },
+            { name: "Crypto Drop", cost: 100, effect: "+1 Bitcoin", type: "task" }
+        ];
+        let adContent = [
+            "Bitflash Cocaine: Snort your way to riches!",
+            "Cartel Guns: Shoot for the jackpot!",
+            "Meth Lab Kit: Cook up some wins!",
+            "Stolen Gold: Shine bright, win big!",
+            "Bitflash Smokes: Puff puff, spin spin!",
+            "Heroin Haul: Inject some luck!",
+            "RPG Blast: Blow up the competition!",
+            "Weed Farm: Grow your spins!",
+            "Smuggler’s Deal: Sneak in some Bucks!",
+            "Fake ID: Claim faster, win more!"
+        ];
+        let fakeMessages = [
+            "John from LA just won a jet!", "Sara from Miami snagged $10M!", "Bitflash is insane!",
+            "Mike from Chicago got a tank!", "Lisa from London won a yacht!", "Tom from Texas grabbed 1,000 Bitcoin!",
+            "Emma from Sydney scored a mansion!", "Alex from Berlin took a stealth jet!", "Kim from Seoul won a sub!",
+            "Jake from NYC got a chopper!", "Zoe from Paris snagged a jet ski!"
+        ];
+        let bannedWords = ["scam", "fake", "fraud", "shit", "fuck", "sucks", "bullshit", "crap", "ass", "bitch", "damn", "hell", "loser", "rigged"];
+        let popupMessages = [
+            "Maria from New York just won 72 Boeing BBJ 737s!", "FBI seized your jet! Pay $499 to appeal!",
+            "99% of players win big! Spin now!", "Join VIP for instant wins!", "Limited offer: +15 spins for watching ads!",
+            "Bitflash made 5,000 millionaires this month!"
+        ];
+        const sounds = {
+            spin: document.getElementById("spin-sound"),
+            win: document.getElementById("win-sound")
+        };
+        let spinsLeft = 5, bitflashBucks = 0, jackpotProgress = 0, streakProgress = 0, vipProgress = 0, spinTimer = 10, claimTimer = 180, eventTimer = 3600, vipTimer = 30, dailyTimer = 86400, isSpinning = false, device = "desktop", streakCount = 0, isVip = false, adCount = 0, currentMode = "slots", spinsToday = 0, adTimer = 3, winChance = 0.45;
+        const reels = [document.getElementById("reel1"), document.getElementById("reel2"), document.getElementById("reel3")];
+        const progressBars = {
+            jackpot: document.getElementById("jackpot-progress"),
+            streak: document.getElementById("streak-progress"),
+            vip: document.getElementById("vip-progress")
+        };
+        const spinBtn = document.getElementById("spin-btn");
+        const adsSection = document.getElementById("ads-section");
+        const adToggle = document.getElementById("ads-toggle");
+        const chatSection = document.getElementById("chat-section");
+        const chatToggle = document.getElementById("chat-toggle");
+
+        function agreeTerms() {
+            document.getElementById("terms-screen").style.display = "none";
+            document.getElementById("device-screen").style.display = "flex";
+        }
+        function declineTerms() {
+            document.body.innerHTML = "";
+        }
+        function setDevice(type) {
+            device = type;
+            document.getElementById("device-screen").style.display = "none";
+            document.getElementById("main-container").style.display = "flex";
+            if (type === "mobile") {
+                document.body.style.transform = "rotate(90deg)";
+                document.body.style.width = "100vh";
+                document.body.style.height = "100vw";
+            }
+            initGame();
+        }
+        function initGame() {
+            initTimers();
+            initAds();
+            initChat();
+            initRewards();
+            updateJackpotCounter();
+            checkSpinLimit();
+            applyDailyBoosts();
+        }
+        function initTimers() {
+            setInterval(() => {
+                spinTimer--;
+                if (spinTimer <= 0) spinTimer = 10;
+                document.getElementById("spin-timer").textContent = `Spin Timer: 00:${spinTimer < 10 ? "0" + spinTimer : spinTimer}`;
+                checkSpinLimit();
+            }, 1000);
+            setInterval(() => {
+                claimTimer--;
+                if (claimTimer <= 0) claimTimer = 180;
+                const mins = Math.floor(claimTimer / 60);
+                const secs = claimTimer % 60;
+                document.getElementById("claim-timer").textContent = `Claim Timer: ${mins < 10 ? "0" + mins : mins}:${secs < 10 ? "0" + secs : secs}`;
+            }, 1000);
+            setInterval(() => {
+                eventTimer--;
+                if (eventTimer <= 0) eventTimer = 3600;
+                const hrs = Math.floor(eventTimer / 3600);
+                const mins = Math.floor((eventTimer % 3600) / 60);
+                const secs = eventTimer % 60;
+                document.getElementById("event-timer").textContent = `Event Ends: ${hrs < 10 ? "0" + hrs : hrs}:${mins < 10 ? "0" + mins : mins}:${secs < 10 ? "0" + secs : secs}`;
+            }, 1000);
+            setInterval(() => {
+                if (isVip) {
+                    vipTimer--;
+                    if (vipTimer <= 0) vipTimer = 30;
+                    document.getElementById("vip-timer").textContent = `VIP Boost: 00:${vipTimer < 10 ? "0" + vipTimer : vipTimer}`;
+                }
+            }, 1000);
+            setInterval(() => {
+                dailyTimer--;
+                if (dailyTimer <= 0) dailyTimer = 86400;
+                const hrs = Math.floor(dailyTimer / 3600);
+                const mins = Math.floor((dailyTimer % 3600) / 60);
+                const secs = dailyTimer % 60;
+                document.getElementById("daily-timer").textContent = `Daily Bonus: ${hrs < 10 ? "0" + hrs : hrs}:${mins < 10 ? "0" + mins : mins}:${secs < 10 ? "0" + secs : secs}`;
+            }, 1000);
+        }
+        function toggleAds() {
+            adsSection.classList.toggle("hidden");
+            adToggle.textContent = adsSection.classList.contains("hidden") ? ">>" : "<<";
+        }
+        function toggleChat() {
+            chatSection.classList.toggle("hidden");
+            chatToggle.textContent = chatSection.classList.contains("hidden") ? "<<" : ">>";
+        }
+        function openSettings() {
+            showPopup("Enter Admin Password: <input id='admin-password' type='password'><button onclick='checkAdminPassword()'>Submit</button>", "Cancel");
+        }
+        function checkAdminPassword() {
+            const password = document.getElementById("admin-password").value;
+            if (password === "5820320") {
+                document.getElementById("popup").style.display = "none";
+                document.getElementById("main-container").style.display = "none";
+                document.getElementById("admin-screen").style.display = "flex";
+                loadAdminSettings();
+            } else {
+                showPopup("Incorrect password!", "OK");
+            }
+        }
+        function loadAdminSettings() {
+            document.getElementById("admin-win-chance").value = winChance;
+            document.getElementById("admin-bucks").value = bitflashBucks;
+            document.getElementById("admin-spins").value = spinsLeft;
+            document.getElementById("admin-chat-messages").value = fakeMessages.join("\n");
+            document.getElementById("admin-banned-words").value = bannedWords.join(", ");
+            document.getElementById("admin-ad-content").value = adContent.join("\n");
+            document.getElementById("admin-popups").value = popupMessages.join("\n");
+        }
+        function saveAdminSettings() {
+            winChance = parseFloat(document.getElementById("admin-win-chance").value) || 0.45;
+            bitflashBucks = parseInt(document.getElementById("admin-bucks").value) || 0;
+            spinsLeft = parseInt(document.getElementById("admin-spins").value) || 5;
+            fakeMessages = document.getElementById("admin-chat-messages").value.split("\n").filter(m => m.trim());
+            bannedWords = document.getElementById("admin-banned-words").value.split(",").map(w => w.trim()).filter(w => w);
+            adContent = document.getElementById("admin-ad-content").value.split("\n").filter(a => a.trim());
+            popupMessages = document.getElementById("admin-popups").value.split("\n").filter(p => p.trim());
+            showPopup("Settings saved!", "OK");
+            initChat();
+            initAds();
+            checkSpinLimit();
+        }
+        function exitAdminMode() {
+            document.getElementById("admin-screen").style.display = "none";
+            document.getElementById("main-container").style.display = "flex";
+        }
+        function setMode(mode) {
+            currentMode = mode;
+            reels.forEach(reel => reel.textContent = mode === "slots" ? "?" : mode === "roulette" ? "0" : "X");
+            showPopup(`Now in ${mode.charAt(0).toUpperCase() + mode.slice(1)} mode!`, "OK");
+        }
+        function spinSlots() {
+            if (isSpinning || spinsLeft <= 0) {
+                spinBtn.disabled = true;
+                return showPopup("Out of spins! Buy more, watch ads, or enter a code!", "Buy", "Ads", "Code");
+            }
+            isSpinning = true;
+            spinsLeft--;
+            spinsToday++;
+            spinBtn.disabled = true;
+            sounds.spin.play();
+            reels.forEach(reel => reel.classList.add("spinning"));
+            let spins = 25;
+            const interval = setInterval(() => {
+                if (currentMode === "slots") reels.forEach(reel => reel.textContent = prizes[Math.floor(Math.random() * prizes.length)]);
+                else if (currentMode === "roulette") reels.forEach(reel => reel.textContent = Math.floor(Math.random() * 37));
+                else if (currentMode === "crash") reels.forEach(reel => reel.textContent = (Math.random() * 15).toFixed(2) + "x");
+                spins--;
+                if (spins <= 0) {
+                    clearInterval(interval);
+                    isSpinning = false;
+                    reels.forEach(reel => reel.classList.remove("spinning"));
+                    spinBtn.disabled = false;
+                    handleSpinResult();
+                }
+            }, 70);
+        }
+        function handleSpinResult() {
+            const win = Math.random() < (isVip ? winChance + 0.1 : winChance);
+            if (win) {
+                sounds.win.play();
+                const prize = currentMode === "slots" ? reels[0].textContent : currentMode === "roulette" ? `$1M Roulette Win` : `${reels[0].textContent} Bitcoin`;
+                addToHistory(prize);
+                streakCount++;
+                streakProgress = Math.min(streakCount * 10, 90);
+                progressBars.streak.style.width = `${streakProgress}%`;
+                if (streakCount >= 5) showPopup(`Streak Bonus! Double or nothing on ${prize}?`, "Double", "Keep");
+                else showPopup(`You won: ${prize}! Claim with ads or code!`, "Ads", "Code", "Post");
+                if (Math.random() < 0.25) vipProgress += 5;
+                progressBars.vip.style.width = `${Math.min(vipProgress, 100)}%`;
+            } else {
+                streakCount = 0;
+                streakProgress = 0;
+                progressBars.streak.style.width = "0%";
+                jackpotProgress = Math.min(jackpotProgress + 4, 95);
+                progressBars.jackpot.style.width = `${jackpotProgress}%`;
+                if (Math.random() < 0.08) showPopup("FBI demands $999 for your jet!", "Ignore");
+            }
+            randomEvents();
+            checkSpinLimit();
+        }
+        function doubleOrNothing(prize) {
+            const win = Math.random() > 0.5;
+            if (win) {
+                const newPrize = currentMode === "slots" ? prizes[Math.floor(Math.random() * prizes.length)] : currentMode === "roulette" ? `$2M Roulette Win` : `${(parseFloat(prize) * 2).toFixed(2)} Bitcoin`;
+                addToHistory(newPrize);
+                showPopup(`Doubled to: ${newPrize}! Claim now!`, "Ads", "Code", "Post");
+            } else {
+                showPopup("Lost it all! Spin again?", "OK");
+                streakCount = 0;
+                streakProgress = 0;
+                progressBars.streak.style.width = "0%";
+            }
+        }
+        function showPopup(message, ...buttons) {
+            const popup = document.getElementById("popup");
+            popup.innerHTML = `<p>${message}</p>`;
+            buttons.forEach(btn => {
+                const button = document.createElement("button");
+                button.textContent = btn;
+                button.onclick = () => {
+                    if (btn === "Ads") startAdSequence();
+                    else if (btn === "Code") showPopup("Enter referral code: <input id='ref-code'><button onclick='submitCode()'>Submit</button>", "Cancel");
+                    else if (btn === "Post") showPopup("Post 'I won at FLGC!' in chat to claim!", "OK");
+                    else if (btn === "Double") doubleOrNothing(reels[0].textContent);
+                    else if (btn === "Keep") showPopup(`Keep ${reels[0].textContent}! Claim now!`, "Ads", "Code", "Post");
+                    else if (btn === "Buy") buySpins();
+                    else if (btn === "Claim") claimReward(popup.dataset.reward);
+                    else if (btn === "Ignore") popup.style.display = "none";
+                    else popup.style.display = "none";
+                };
+                popup.appendChild(button);
+            });
+            popup.style.display = "block";
+            if (isVip) popup.style.transitionDuration = "0.1s";
+        }
+        function startAdSequence() {
+            adCount = 0;
+            showAd();
+        }
+        function showAd() {
+            if (adCount >= 10) {
+                spinsLeft += 5;
+                bitflashBucks += 25;
+                showPopup("Ads complete! +5 spins, +25 Bitflash Bucks!", "OK");
+                document.getElementById("ad-player").style.display = "none";
+                checkSpinLimit();
+                return;
+            }
+            const player = document.getElementById("ad-player");
+            const content = document.getElementById("ad-content");
+            const timer = document.getElementById("ad-timer");
+            const progress = document.getElementById("ad-progress-fill");
+            const skipBtn = document.getElementById("ad-skip-btn");
+            content.textContent = adContent[adCount % adContent.length];
+            timer.textContent = "3s";
+            progress.style.width = "0%";
+            skipBtn.disabled = !isVip;
+            player.style.display = "flex";
+            adTimer = 3;
+            progress.style.transition = "width 3s linear";
+            progress.style.width = "100%";
+            const adInterval = setInterval(() => {
+                adTimer--;
+                timer.textContent = `${adTimer}s`;
+                if (adTimer <= 0) {
+                    clearInterval(adInterval);
+                    adCount++;
+                    showAd();
+                }
+            }, 1000);
+        }
+        function skipAd() {
+            if (isVip) {
+                adCount++;
+                showAd();
+            }
+        }
+        function buySpins() {
+            showPopup("Buy spins: <select id='spin-amount'><option value='5'>5 Spins ($4.99)</option><option value='20'>20 Spins ($14.99)</option><option value='50'>50 Spins ($29.99)</option></select><button onclick='confirmBuy()'>Buy</button>", "Cancel");
+        }
+        function confirmBuy() {
+            const amount = parseInt(document.getElementById("spin-amount").value);
+            spinsLeft += amount;
+            bitflashBucks += amount * 5;
+            showPopup(`Bought ${amount} spins! +${amount * 5} Bitflash Bucks!`, "OK");
+            checkSpinLimit();
+        }
+        function submitCode() {
+            const code = document.getElementById("ref-code").value;
+            if (code && Math.random() > 0.25) {
+                spinsLeft += 5;
+                bitflashBucks += 50;
+                showPopup("Code accepted! +5 spins, +50 Bitflash Bucks!", "OK");
+            } else showPopup("Invalid or expired code!", "OK");
+        }
+        function addToHistory(prize) {
+            const history = document.getElementById("spin-history");
+            const item = document.createElement("div");
+            item.className = "history-item";
+            item.innerHTML = `${prize} - <button onclick='claimPrize("${prize}")'>Claim</button>`;
+            history.insertBefore(item, history.firstChild);
+            history.scrollTop = 0;
+        }
+        function claimPrize(prize) {
+            if (claimTimer > 0) showPopup(`Claim ${prize} with ads or code!`, "Ads", "Code", "Post");
+            else showPopup("Claim expired! Spin again!", "OK");
+        }
+        function changeTheme(theme) {
+            if (theme === "vegas") document.body.style.background = "linear-gradient(135deg, #ff0000, #ffd700)";
+            else if (theme === "cartel") document.body.style.background = "linear-gradient(135deg, #006400, #ff4500)";
+            else if (theme === "luxury") document.body.style.background = "linear-gradient(135deg, #1a0d2e, #4a0072)";
+            else if (theme === "cyber") document.body.style.background = "linear-gradient(135deg, #00ff00, #0000ff)";
+            else if (theme === "dark") document.body.style.background = "linear-gradient(135deg, #111, #333)";
+        }
+        function initAds() {
+            const adsList = document.getElementById("ads-list");
+            adsList.innerHTML = "";
+            ads.forEach(ad => {
+                const div = document.createElement("div");
+                div.className = "ad-item";
+                div.textContent = `${ad.name} - ${ad.price} Bitflash Bucks (${ad.effect})`;
+                div.onclick = () => {
+                    if (bitflashBucks >= ad.price) {
+                        bitflashBucks -= ad.price;
+                        applyAdEffect(ad);
+                        showPopup(`Bought ${ad.name}! ${ad.effect} applied!`, "OK");
+                    } else showPopup("Not enough Bitflash Bucks! Spin or watch ads!", "OK");
+                };
+                adsList.appendChild(div);
+            });
+        }
+        function applyAdEffect(ad) {
+            if (ad.name.includes("Cocaine")) spinsLeft += 10;
+            else if (ad.name.includes("Pistol")) jackpotProgress = Math.min(jackpotProgress + 15, 95);
+            else if (ad.name.includes("Meth")) streakProgress = Math.min(streakProgress + 20, 90);
+            else if (ad.name.includes("Gold")) isVip = true;
+            else if (ad.name.includes("Heroin")) spinTimer = Math.max(spinTimer - 3, 5);
+            else if (ad.name.includes("RPG")) jackpotProgress = Math.min(jackpotProgress + 35, 95);
+            else if (ad.name.includes("Weed")) spinsLeft += 5;
+            else if (ad.name.includes("Briefcase")) bitflashBucks += 50;
+            else if (ad.name.includes("Grenade")) streakProgress = 0;
+            else if (ad.name.includes("Passport")) claimTimer = 180;
+            else if (ad.name.includes("Diamond")) vipProgress = Math.min(vipProgress + 20, 100);
+            else if (ad.name.includes("Smokes")) spinsLeft += 3;
+            updateProgressBars();
+            checkSpinLimit();
+        }
+        function initChat() {
+            clearInterval(window.chatInterval);
+            const chatMessages = document.getElementById("chat-messages");
+            chatMessages.innerHTML = "";
+            window.chatInterval = setInterval(() => {
+                chatMessages.innerHTML += `<p>${fakeMessages[Math.floor(Math.random() * fakeMessages.length)]}</p>`;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1500);
+        }
+        function sendChat() {
+            const input = document.getElementById("chat-input");
+            const msg = input.value.trim().toLowerCase();
+            if (msg) {
+                if (bannedWords.some(word => msg.includes(word))) {
+                    showPopup("Message censored! Keep it clean or get muted!", "OK");
+                } else {
+                    document.getElementById("chat-messages").innerHTML += `<p>You: ${msg}</p>`;
+                    if (msg.includes("i won at flgc")) {
+                        spinsLeft += 5;
+                        bitflashBucks += 20;
+                        showPopup("Claim confirmed! +5 spins, +20 Bitflash Bucks!", "OK");
+                    } else if (msg.includes("flgc") || msg.includes("bitflash")) {
+                        spinsLeft += 2;
+                        showPopup("Promo bonus! +2 spins!", "OK");
+                    }
+                }
+            }
+            input.value = "";
+        }
+        function initRewards() {
+            const rewardsList = document.getElementById("rewards-list");
+            rewardsList.innerHTML = "";
+            rewards.forEach(reward => {
+                const div = document.createElement("div");
+                div.className = "reward-item";
+                div.innerHTML = `${reward.name} - ${reward.cost} ${reward.type === "daily" ? "Free" : reward.type === "ad" ? "Ads" : "Bitflash Bucks"} (${reward.effect}) <button onclick='claimReward("${reward.name}")'>Claim</button>`;
+                rewardsList.appendChild(div);
+            });
+        }
+        function claimReward(rewardName) {
+            const reward = rewards.find(r => r.name === rewardName);
+            if (!reward) return;
+            if (reward.type === "daily" && dailyTimer > 86300) {
+                showPopup("Daily bonus already claimed! Wait 24hrs!", "OK");
+            } else if (reward.type === "ad") {
+                popup.dataset.reward = rewardName;
+                showPopup(`Watch 5 ads to claim ${rewardName}?`, "Yes", "No");
+            } else if (bitflashBucks >= reward.cost) {
+                bitflashBucks -= reward.cost;
+                applyRewardEffect(reward);
+                showPopup(`Claimed ${rewardName}! ${reward.effect} applied!`, "OK");
+            } else {
+                showPopup("Not enough Bitflash Bucks! Spin or watch ads!", "OK");
+            }
+        }
+        function applyRewardEffect(reward) {
+            if (reward.name.includes("Spin Boost")) spinsLeft += 5;
+            else if (reward.name.includes("Multiplier")) jackpotProgress = Math.min(jackpotProgress + 15, 95);
+            else if (reward.name.includes("Task")) bitflashBucks += 100;
+            else if (reward.name.includes("VIP")) isVip = true;
+            else if (reward.name.includes("Frenzy")) spinsLeft += 20;
+            else if (reward.name.includes("Jackpot")) jackpotProgress = Math.min(jackpotProgress + 25, 95);
+            else if (reward.name.includes("Quick")) spinTimer = Math.max(spinTimer - 2, 5);
+            else if (reward.name.includes("Crypto")) bitflashBucks += 500;
+            updateProgressBars();
+            checkSpinLimit();
+        }
+        function randomEvents() {
+            const chance = Math.random();
+            if (chance < 0.22) showPopup(popupMessages[Math.floor(Math.random() * popupMessages.length)], "OK");
+        }
+        function updateJackpotCounter() {
+            setInterval(() => {
+                const counter = document.getElementById("jackpot-counter");
+                let amount = parseInt(counter.textContent.replace(/[^0-9]/g, ""));
+                amount += Math.floor(Math.random() * 3000000);
+                counter.textContent = `Jackpots Given: $${amount.toLocaleString()}`;
+            }, 2500);
+        }
+        function checkSpinLimit() {
+            if (spinsLeft <= 0 || spinsToday >= 50) {
+                spinBtn.disabled = true;
+                spinBtn.textContent = "SPINS EXHAUSTED";
+            } else {
+                spinBtn.disabled = false;
+                spinBtn.textContent = `SPIN NOW (${spinsLeft} left)`;
+            }
+        }
+        function applyDailyBoosts() {
+            setInterval(() => {
+                if (dailyTimer <= 0) {
+                    spinsLeft += 5;
+                    bitflashBucks += 20;
+                    showPopup("Daily Bonus! +5 spins, +20 Bitflash Bucks!", "OK");
+                    dailyTimer = 86400;
+                    checkSpinLimit();
+                }
+            }, 1000);
+        }
+        function updateProgressBars() {
+            progressBars.jackpot.style.width = `${jackpotProgress}%`;
+            progressBars.streak.style.width = `${streakProgress}%`;
+            progressBars.vip.style.width = `${Math.min(vipProgress, 100)}%`;
+        }
+    </script>
+</body>
+</html>
