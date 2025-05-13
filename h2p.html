@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Play - FLGC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #1a0d2e, #4a0072);
+            color: #fff;
+            min-height: 100vh;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 0 30px #ff00ff, 0 0 60px #00ffff;
+        }
+        h1, h2, h3 {
+            color: #00ffff;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+        h1 { font-size: 2.5em; margin-bottom: 30px; }
+        h2 { font-size: 1.8em; border-bottom: 2px solid #ff00ff; padding-bottom: 10px; margin-top: 30px; }
+        h3 { font-size: 1.4em; margin-bottom: 15px; color: #ff00ff; }
+        p { margin-bottom: 15px; }
+        .game-section {
+            display: none;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            margin-top: 20px;
+            box-shadow: 0 0 15px #00ffff;
+        }
+        .game-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .menu {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .menu button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 1em;
+            background: #ff00ff;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        }
+        .menu button:hover {
+            background: #00ffff;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+        }
+         .menu button.active {
+            background: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+        }
+        .image-placeholder {
+            width: 100%;
+            height: 200px; /* Adjust as needed */
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed #ff00ff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 1em;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .image-placeholder img {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        ul { margin-bottom: 15px; padding-left: 20px; }
+        li { margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>How to Play FLGC Games</h1>
+
+        <div class="menu">
+            <button class="game-menu-btn active" data-game="slots">Slots</button>
+            <button class="game-menu-btn" data-game="wheel">Prize Wheel</button>
+            <button class="game-menu-btn" data-game="crash">Crash</button>
+            <button class="game-menu-btn" data-game="roulette">Roulette</button>
+            <button class="game-menu-btn" data-game="plinko">Plinko</button>
+            <button class="game-menu-btn" data-game="blackjack">Blackjack</button>
+        </div>
+
+        <div id="slots-game" class="game-section active">
+            <h2>Classic Slots</h2>
+            <p>Spin the reels and match prizes to win Bitflash Bucks and Spins!</p>
+
+            <h3>How to Play:</h3>
+            <ol>
+                <li>Ensure you have enough Spins left. Your current spins are shown near the "SPIN NOW" button.</li>
+                <li>Click the "SPIN NOW" button to start the reels.</li>
+                <li>The reels will spin and then stop to reveal three items.</li>
+            </ol>
+
+            <h3>Winning:</h3>
+            <ul>
+                <li>If all three reels show the same prize, you win! You'll receive Bitflash Bucks and Spins as a reward.</li>
+                <li>Winning also increases your Streak Progress and Jackpot Progress.</li>
+                <li>A random winning prize is selected from a predefined list (managed by admins). Unlike traditional slots, the visual items on the reels directly represent the prize you might win if you get a matching combination.</li>
+            </ul>
+
+            <h3>Important Notes:</h3>
+            <ul>
+                <li>Each spin costs 1 Spin.</li>
+                <li>There is a small chance of winning on any given spin (base chance is 25%, can be increased by VIP level).</li>
+                <li>Auto-Spin is available for all VIP members.</li>
+            </ul>
+
+            <div class="image-placeholder">
+                <p>Image Placeholder: Slots Machine with a Winning Combination</p>
+                <img src="slots1.png" alt="Example of winning Slots spin">
+            </div>
+        </div>
+
+        <div id="wheel-game" class="game-section">
+            <h2>Prize Wheel</h2>
+            <p>Spin the wheel to land on a prize and win rewards!</p>
+
+            <h3>How to Play:</h3>
+            <ol>
+                <li>Ensure you have enough Spins left.</li>
+                <li>Click the "SPIN NOW" button to set the wheel in motion.</li>
+                <li>The wheel will spin and the pointer will land on a segment.</li>
+            </ol>
+
+            <h3>Winning:</h3>
+            <ul>
+                <li>The segment the pointer lands on determines your prize. Prizes are selected from a predefined list (managed by admins).</li>
+                <li>Winning grants you Bitflash Bucks and Spins, similar to Slots.</li>
+                <li>Winning also increases your Streak Progress and Jackpot Progress.</li>
+            </ul>
+
+            <h3>Important Notes:</h3>
+            <ul>
+                <li>Each spin costs 1 Spin.</li>
+                <li>Winning is based on chance determined after the spin, not solely on which segment the pointer visually lands on. The wheel animation is for presentation.</li>
+                <li>If you run out of spins and are not VIP Max, you will be prompted to buy more.</li>
+                <li>Auto-Spin is available for VIP Level 1+ members.</li>
+            </ul>
+
+             <div class="image-placeholder">
+                <p>Image Placeholder: Prize Wheel with Pointer on a Segment</p>
+                <img src="wheel1.png" alt="Example of Prize Wheel spin result">
+            </div>
+        </div>
+
+        <div id="crash-game" class="game-section">
+            <h2>Crypto Crash</h2>
+            <p>Place a bet and watch the multiplier climb! Cash out before it crashes to win your bet multiplied!</p>
+
+            <h3>How to Play:</h3>
+            <ol>
+                <li>Enter the amount of Bitflash Bucks you want to bet in the "Bet Bucks" input field.</li>
+                <li>Click the "Place Bet" button.</li>
+                <li>Watch the graph and the multiplier increase.</li>
+                <li>Click the "Cash Out" button *before* the game crashes.</li>
+            </ol>
+
+            <h3>Winning:</h3>
+            <ul>
+                <li>If you click "Cash Out" before the game crashes, you win your initial bet multiplied by the multiplier value shown at the moment you cashed out.</li>
+                <li>The multiplier increases exponentially as the game progresses.</li>
+                <li>Winning also triggers a prize message based on the multiplier value (specifically, Bucks equal to the multiplier rounded down and multiplied by 10), and increases your Streak Progress and Jackpot Progress.</li>
+            </ul>
+
+            <h3>Losing:</h3>
+            <ul>
+                <li>If the game crashes before you click "Cash Out," you lose your entire bet amount.</li>
+            </ul>
+
+            <h3>Important Notes:</h3>
+            <ul>
+                <li>The point at which the game crashes is random and determined at the start of each round.</li>
+                <li>The game can crash at any multiplier, starting from 1.00x.</li>
+                <li>The "Cash Out" button is only available while the game is running.</li>
+            </ul>
+
+             <div class="image-placeholder">
+                <p>Image Placeholder: Crypto Crash Game with Graph and Multiplier</p>
+                <img src="crash1.png" alt="Example of Crypto Crash game in progress">
+            </div>
+        </div>
+
+        <div id="roulette-game" class="game-section">
+            <h2>Bitflash Roulette</h2>
+            <p>Bet on Red or Black and see where the ball lands!</p>
+
+            <h3>How to Play:</h3>
+            <ol>
+                <li>Enter the amount of Bitflash Bucks you want to bet in the "Bet Amount" input field.</li>
+                <li>Click either the "Bet Red" or "Bet Black" button to place your bet.</li>
+                <li>Once a bet is placed, click the "Spin Roulette" button.</li>
+                <li>The wheel and ball will spin and eventually settle into a colored segment.</li>
+            </ol>
+
+            <h3>Winning:</h3>
+            <ul>
+                <li>If the ball lands on the color you bet on, you win!</li>
+                <li>A win pays out 2 times your initial bet amount.</li>
+            </ul>
+
+            <h3>Losing:</h3>
+            <ul>
+                <li>If the ball lands on the color opposite to your bet (e.g., lands on Black when you bet on Red), you lose your entire bet amount.</li>
+            </ul>
+
+            <h3>Important Notes:</h3>
+            <ul>
+                <li>Roulette bets use Bitflash Bucks, not Spins.</li>
+                <li>You must place a bet before you can spin the roulette wheel.</li>
+                <li>The visual spin of the wheel is an animation; the result (Red or Black) is determined by the game logic.</li>
+            </ul>
+
+             <div class="image-placeholder">
+                <p>Image Placeholder: Roulette Wheel</p>
+                <img src="roulette1.png" alt="Example of Roulette wheel">
+            </div>
+        </div>
+
+        <div id="plinko-game" class="game-section">
+            <h2>Plinko Drop</h2>
+            <p>Drop a ball from the top and watch it bounce through the pegs to land in a multiplier slot at the bottom!</p>
+
+            <h3>How to Play:</h3>
+            <ol>
+                <li>Enter the amount of Bitflash Bucks you want to bet in the "Bet Amount" input field.</li>
+                <li>Click the "Drop Ball" button.</li>
+                <li>A ball will be dropped from the top of the board and fall through the maze of pegs.</li>
+                <li>The ball will eventually land in one of the multiplier slots at the bottom.</li>
+            </ol>
+
+            <h3>Winning:</h3>
+            <ul>
+                <li>Your bet amount is multiplied by the value of the slot the ball lands in.</li>
+                <li>The total multiplier displayed accumulates if you drop multiple balls before the round finalizes (though the standard play seems to be one ball per round based on the code).</li>
+                <li>The multipliers are displayed along the bottom of the board.</li>
+                <li>After the ball lands and the result is calculated, your winnings (Bet Amount * Multiplier) are added to your Bitflash Bucks.</li>
+            </ul>
+
+            <h3>Important Notes:</h3>
+            <ul>
+                <li>Plinko bets use Bitflash Bucks, not Spins.</li>
+                <li>You must place a bet before you can drop a ball.</li>
+                <li>The ball's path is determined by physics simulation (Matter.js).</li>
+            </ul>
+
+             <div class="image-placeholder">
+                <p>Image Placeholder: Plinko Board with Pegs and Multipliers</p>
+                <img src="plinko1.png" alt="Example of Plinko board">
+            </div>
+        </div>
+
+        <div id="blackjack-game" class="game-section">
+            <h2>Classic Blackjack</h2>
+            <p>Beat the dealer's hand without going over 21!</p>
+
+            <h3>How to Play:</h3>
+            <ol>
+                <li>Enter the amount of Bitflash Bucks you want to bet in the "Bet Amount" input field.</li>
+                <li>Click the "Place Bet" button to start the round. You and the dealer will each receive two cards. One of the dealer's cards will be face down.</li>
+                <li>Your goal is to get a hand total closer to 21 than the dealer's hand, without exceeding 21.</li>
+                <li><strong>Hit:</strong> Click "Hit" to take another card.</li>
+                <li><strong>Stand:</strong> Click "Stand" to keep your current hand. The dealer will then reveal their face-down card and take cards until their hand is 17 or higher.</li>
+                <li><strong>Double Down:</strong> (If available) Double your bet and receive exactly one more card, then automatically stand.</li>
+            </ol>
+
+            <h3>Card Values:</h3>
+            <ul>
+                <li>Numbered cards (2-10) are worth their face value.</li>
+                <li>Face cards (J, Q, K) are worth 10.</li>
+                <li>Aces (A) are worth 11, but can change to 1 if taking an 11 would make the hand go over 21.</li>
+            </ul>
+
+            <h3>Winning:</h3>
+            <ul>
+                <li>Get a hand total higher than the dealer's without exceeding 21.</li>
+                <li>The dealer's hand goes over 21 (busts).</li>
+                <li>Get a Blackjack (an Ace and a 10-value card totaling 21 on your initial two cards).</li>
+                <li>Standard wins pay 1.5x your bet (configured as 1.5 in admin, code uses 1.5x for normal wins, 2x for blackjack). Code seems to apply blackjack payout for 21 on two cards.</li>
+                <li>Blackjack pays 2x your bet.</li>
+            </ul>
+
+            <h3>Losing:</h3>
+            <ul>
+                <li>Your hand total goes over 21 (busts).</li>
+                <li>The dealer's hand is higher than yours without busting.</li>
+                <li>The dealer gets a Blackjack.</li>
+            </ul>
+
+            <h3>Important Notes:</h3>
+            <ul>
+                <li>Blackjack bets use Bitflash Bucks, not Spins.</li>
+                <li>Double Down is only available on certain hands (typically your initial two cards) and requires having enough Bucks to double your bet.</li>
+                <li>The dealer must hit until their hand is 17 or higher.</li>
+            </ul>
+
+             <div class="image-placeholder">
+                <p>Image Placeholder: Blackjack Table with Cards</p>
+                <img src="bj1.png" alt="Example of Blackjack game in progress">
+            </div>
+        </div>
+
+        <div id="jackpot-game" class="game-section">
+            <h2>Jackpot Wheel</h2>
+            <p>Triggered randomly, spin the special Jackpot Wheel for a chance to win massive amounts of Bitflash Bucks!</p>
+
+            <h3>How to Play:</h3>
+            <ul>
+                <li>The Jackpot Wheel is triggered automatically when your Jackpot Progress reaches 100% (primarily gained from winning in other games).</li>
+                <li>When the popup appears, click the "SPIN JACKPOT" button.</li>
+                <li>The wheel will spin and land on a segment.</li>
+            </ul>
+
+            <h3>Winning:</h3>
+            <ul>
+                <li>The segment the wheel lands on determines the amount of Bitflash Bucks you win. The code shows a payout between 1,000 and 50,000 Bucks.</li>
+            </ul>
+
+            <h3>Important Notes:</h3>
+            <ul>
+                <li>Triggering the Jackpot Wheel resets your Jackpot Progress to 0%.</li>
+                <li>This is a bonus game and does not cost Spins or Bitflash Bucks to play once triggered.</li>
+            </ul>
+
+             <div class="image-placeholder">
+                <p>Image Placeholder: Jackpot Wheel Popup</p>
+                <img src="placeholder_jackpot_wheel.png" alt="Example of Jackpot Wheel popup">
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuButtons = document.querySelectorAll('.game-menu-btn');
+            const gameSections = document.querySelectorAll('.game-section');
+
+            function showGame(gameId) {
+                gameSections.forEach(section => {
+                    section.classList.remove('active');
+                    section.style.display = 'none'; // Ensure only one is displayed
+                });
+                const activeSection = document.getElementById(gameId + '-game');
+                if (activeSection) {
+                    activeSection.style.display = 'block';
+                    setTimeout(() => { // Allow display change before adding active class for animation
+                         activeSection.classList.add('active');
+                    }, 10);
+                }
+            }
+
+            menuButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    menuButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    showGame(button.dataset.game);
+                });
+            });
+
+            // Show default game on load
+            showGame('slots');
+        });
+    </script>
+</body>
+</html>
