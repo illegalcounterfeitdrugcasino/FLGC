@@ -1059,7 +1059,7 @@ document.addEventListener('dragstart', event => event.preventDefault());
 document.addEventListener('keydown', event => {
     if (
         (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'i') || // Blocks Ctrl+Shift+I
-        (event.ctrlKey && ['s', 'u'].includes(event.key.toLowerCase())) ||      // Blocks Ctrl+S and Ctrl+U
+        (event.ctrlKey && ['r', 's', 'u'].includes(event.key.toLowerCase())) ||      // Blocks Ctrl+R, Ctrl+S and Ctrl+U
         event.key === 'F12'                                                      // Blocks F12
     ) {
         event.preventDefault();
@@ -2539,16 +2539,15 @@ document.addEventListener('keydown', event => {
     <div id="setup-content">
         <h1>Create your Account</h1>
         <div id="setup-step-1">
-    <p>Enter your name and location for chat.</p>
     <label for="setup-name">Name:</label>
     <input id="setup-name" type="text" placeholder="Your Name" value="">
 
     <label for="setup-location">Location:</label>
     <input id="setup-location" type="text" placeholder="Your Location/City" value="">
 
-    <label for="setup-account-key">Account Key (Optional):</label>
+    <label for="setup-account-key">Account Key:</label>
     <div style="display: flex; align-items: center;">
-        <input id="setup-account-key" type="text" placeholder="Choose your Account Key" style="flex-grow: 1; margin-right: 5px;">
+        <input id="setup-account-key" type="text" placeholder="Leave blank to auto-generate" style="flex-grow: 1; margin-right: 5px;">
         <span id="account-key-status" style="font-size: 1.5em;"></span> </div>
     <div id="account-key-feedback" style="font-size: 0.9em; height: 1.2em; margin-top: 2px;"></div> <button class="setup-btn" onclick="nextSetupStep()">Create Account</button>
 </div>
@@ -5403,39 +5402,6 @@ async function pasteSavedData() {
         initGame();
         showPopup("Welcome Back to FLGC!", "OK");
     }, 10);
-}
-
-function startAutoSave() {
-    setInterval(() => {
-        const userData = {
-            spinsLeft,
-            bitflashBucks,
-            jackpotProgress,
-            streakProgress,
-            streakCount,
-            vipLevel,
-            spinsToday,
-            winChance,
-            defaultPrizeSpins,
-            defaultPrizeBucks,
-            userName,
-            userLocation,
-            autoSpinDelay,
-            autoSpinSkipPrize,
-            adminPassword,
-            soundEnabled,
-            notificationPreference,
-            notificationPrefs
-        };
-
-        try {
-            const jsonData = JSON.stringify(userData);
-            localStorage.setItem('savedLoginData', jsonData);
-            console.log("Auto-saved user data to localStorage.");
-        } catch (err) {
-            console.error("Auto-save failed:", err);
-        }
-    }, 1000); // every 1000 ms = 1 second
 }
 
         function initGame() {
