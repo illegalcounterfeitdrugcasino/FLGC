@@ -7431,21 +7431,37 @@ function performRepair(option) {
             setTimeout(() => window.location.reload(), 500);
             break;
         case 'reload-clear-cache':
-            showPopup("Clearing cache and reloading...", "", "");
+    showPopup("Clearing cache and reloading...", "", "");
+
+    // Try to clear caches and service workers
+    const clearCachesAndReload = async () => {
+        try {
+            // Clear all caches
             if ('caches' in window) {
-                caches.keys().then(cacheNames => {
-                    return Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
-                }).then(() => {
-                    setTimeout(() => window.location.reload(true), 500); // true forces a reload from the server, not cache
-                }).catch(err => {
-                    console.error("Failed to clear cache:", err);
-                    showPopup("Failed to clear cache. Reloading...", "OK");
-                     setTimeout(() => window.location.reload(true), 1000);
-                });
-            } else {
-                 setTimeout(() => window.location.reload(true), 500);
+                const cacheNames = await caches.keys();
+                await Promise.all(cacheNames.map(name => caches.delete(name)));
             }
-            break;
+
+            // Unregister all service workers
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                await Promise.all(registrations.map(reg => reg.unregister()));
+            }
+
+            // Do a "hard" reload by appending a timestamp
+            const url = new URL(window.location.href);
+            url.searchParams.set('reload', Date.now());
+            window.location.replace(url.toString());
+
+        } catch (err) {
+            console.error("Failed to clear cache:", err);
+            showPopup("Failed to clear cache. Reloading...", "OK");
+            setTimeout(() => window.location.reload(), 1000);
+        }
+    };
+
+    clearCachesAndReload();
+    break;
         case 'reload-clear-localstorage':
             showPopup("Clearing local storage and reloading...<br><br><strong>WARNING:</strong> If you haven't saved your Account Key, you may lose your automatic login.", "", "");
             setTimeout(() => {
