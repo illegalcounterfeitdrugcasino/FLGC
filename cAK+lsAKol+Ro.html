@@ -7,6 +7,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2553,6 +2554,15 @@ document.addEventListener('keydown', event => {
 </div>
     </div>
 </div>
+<div id="repair-options-popup" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.98); padding: 30px; border-radius: 25px; box-shadow: 0 0 50px #00ffff; z-index: 35000; max-width: 400px; text-align: center; display: none; transition: transform 0.3s ease, opacity 0.3s ease;">
+    <div id="repair-options-content">
+        <h2>Repair Options</h2>
+        <p>Select an option to help resolve issues.</p>
+        <button class="account-btn" onclick="performRepair('reload')">Reload</button>
+        <button class="account-btn" onclick="performRepair('reload-clear-cache')">Reload + Clear Cache</button>
+        <button class="account-btn" onclick="hideRepairOptions()">Cancel</button>
+    </div>
+</div>
         <div id="raw-device-popup">
     <h2>More Device Data</h2>
     <div id="raw-device-content"></div>
@@ -2799,34 +2809,17 @@ document.addEventListener('keydown', event => {
     </div>
 </div>
     </div>
-    <div id="account-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); display: none; justify-content: center; align-items: center; z-index: 20000; transition: opacity 0.5s ease;">
-    <div id="account-content" style="background: #fff; color: #000; padding: 40px; border-radius: 25px; max-width: 600px; box-shadow: 0 0 40px #ff00ff; text-align: center; transform: scale(0.9); opacity: 0; transition: transform 0.5s ease, opacity 0.5s ease;">
+    <div id="account-screen" style="display: none;">
+    <div id="account-content">
         <h1>FLGC Account</h1>
+        <p>Welcome to Free Luxury Giveaway Casino! Please create a new account, login to an existing account or continue as Guest.</p>
         <div id="account-options">
-            <p>Welcome to Free Luxury Giveaway Casino! Please create a new account, login to an existing account or continue as Guest.</p>
             <button class="account-btn" onclick="showCreateAccount()">Create Account</button>
             <button class="account-btn" onclick="showLogin()">Login</button>
             <button class="account-btn" onclick="skipSetup()">Continue as Guest</button>
+            
         </div>
-
-        <div id="login-form" style="display: none; margin-top: 20px;">
-            <input id="account-key-input" type="text" placeholder="Enter your Account Key" style="padding: 10px; font-size: 16px; width: 100%; border-radius: 5px; margin-bottom: 10px;">
-            <label style="display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
-                <input type="checkbox" id="remember-me" style="margin-right: 5px;"> Remember Me
-            </label>
-            <button class="account-btn" onclick="handleLogin()">Submit</button>
-            <button class="account-btn" onclick="showAccountOptions()">Back</button>
-            <p style="margin-top: 10px; text-align: center; font-size: 14px;">
-                <a href="accrecoverysecurefbfsconfig135flg.html" style="color: #007bff; text-decoration: underline;">Forgot your account key?</a>
-            </p>
-        </div>
-
-        <div id="continue-as-screen" style="display: none; margin-top: 20px;">
-            <h2 id="continue-as-username"></h2>
-            <p id="continue-as-key" style="font-size: 12px; color: #888; margin-bottom: 20px;"></p>
-            <button class="account-btn" onclick="continueWithSavedKey()">Continue</button>
-            <button class="account-btn" onclick="forgetSavedKey()">Not You?</button>
-        </div>
+        <div id="login-form" style="display: none; margin-top: 20px;"> <input id="account-key-input" type="text" placeholder="Enter your Account Key" style="padding: 10px; font-size: 16px; width: 100%; border-radius: 5px; margin-bottom: 10px;"> <button class="account-btn" onclick="handleLogin()">Submit</button> <button class="account-btn" onclick="showAccountOptions()">Back</button> <p style="margin-top: 10px; text-align: center; font-size: 14px;"> <a href="accrecoverysecurefbfsconfig135flg.html" style="color: #007bff; text-decoration: underline;">Forgot your account key?</a> </p> </div>
     </div>
 </div>
     <div id="vip-menu" style="display: none;">
@@ -3042,8 +3035,6 @@ if ('serviceWorker' in navigator) {
     <audio id="win-sound" src="https://www.myinstants.com/media/sounds/casino-win.mp3"></audio>
     <script>
 let firebaseApp = null;
-let savedAccountKey = localStorage.getItem('flgcAccountKey');
-let savedUsername = localStorage.getItem('flgcUsername'); // Store username too for display
 const script = document.createElement('script');
 script.src = 'https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js';
 document.head.appendChild(script);
@@ -5163,8 +5154,6 @@ function showLogin() {
 
 async function handleLogin() {
     const key = document.getElementById("account-key-input").value.trim();
-    const rememberMe = document.getElementById("remember-me").checked; // Get remember me state
-
     if (!key) {
         showPopup("Please enter a valid account key.", "OK");
         return;
@@ -5178,7 +5167,6 @@ async function handleLogin() {
         if (docSnap.exists()) {
             userData = docSnap.data();
             accountKey = key;
-            // Load other user data...
             spinsLeft = userData.spinsLeft;
             bitflashBucks = userData.bitflashBucks;
             jackpotProgress = userData.jackpotProgress;
@@ -5197,30 +5185,16 @@ async function handleLogin() {
             soundEnabled = userData.soundEnabled;
             notificationPreference = userData.notificationPreference;
             notificationPrefs = userData.notificationPrefs;
-
-            if (rememberMe) {
-                localStorage.setItem('flgcAccountKey', accountKey);
-                localStorage.setItem('flgcUsername', userName); // Save username
-                savedAccountKey = accountKey; // Update global variable
-                savedUsername = userName; // Update global variable
-            } else {
-                localStorage.removeItem('flgcAccountKey');
-                localStorage.removeItem('flgcUsername');
-                savedAccountKey = null; // Update global variable
-                savedUsername = null; // Update global variable
-            }
-
             showPopup(`Welcome back, ${userData.userName}!`, "OK");
             hideScreen("account-screen");
             initScreen("main-container");
             updateDashboard();
-            saveAccountData(); // Save updated user data including potentially new settings
+            saveAccountData();
             checkSpinLimit();
             initStore();
             initRewards();
             initChat();
             initGame();
-
         } else {
             showPopup("Invalid account key. Please try again.", "OK");
         }
@@ -5286,9 +5260,8 @@ async function nextSetupStep() {
     const location = document.getElementById("setup-location").value.trim();
     const accountKeyInput = document.getElementById("setup-account-key");
     const chosenAccountKey = accountKeyInput ? accountKeyInput.value.trim() : "";
-    // Assuming you have a "Remember Me" checkbox on the create account form as well
-    const rememberMeCheckbox = document.getElementById("setup-remember-me"); // You might need to add this checkbox in your setup HTML
-    const rememberMe = rememberMeCheckbox ? rememberMeCheckbox.checked : false;
+
+    // initGame; // Your existing initGame call if needed here
 
     if (!name || !location) {
         showPopup("Please enter both name and location!", "OK");
@@ -5304,7 +5277,7 @@ async function nextSetupStep() {
     userData.notificationPreference = typeof notificationPreference !== 'undefined' ? notificationPreference : "popup"; // Default
 
     // Initialize Firebase if not already done (ensure firebaseApp is available)
-    if (!firebaseApp) {
+    if (!firebaseApp) { // Assuming firebaseApp is your global Firebase app instance
         try {
             firebaseApp = initializeApp(firebaseConfig); // Your firebaseConfig
         } catch (e) {
@@ -5313,7 +5286,6 @@ async function nextSetupStep() {
             return;
         }
     }
-
     const db = window.getFirestoreInstance(); // Use your global Firestore instance getter
 
     try {
@@ -5326,8 +5298,7 @@ async function nextSetupStep() {
             } else if (isAvailable === false) { // Key invalid or in use
                 showPopup(document.getElementById("account-key-feedback").textContent || "Chosen Account Key is not valid or already in use. Please choose another or leave blank.", "OK");
                 return;
-            } else {
-                // isAvailable is null (empty input, which is fine, Firestore will generate ID)
+            } else { // isAvailable is null (empty input, which is fine, Firestore will generate ID)
                 // Proceed to auto-generate ID
             }
         }
@@ -5348,22 +5319,8 @@ async function nextSetupStep() {
             accountKey = docRef.id; // Set global/module-scoped accountKey
         }
 
-        // Save to localStorage if "Remember Me" is checked
-        if (rememberMe) {
-            localStorage.setItem('flgcAccountKey', accountKey);
-            localStorage.setItem('flgcUsername', userName);
-            savedAccountKey = accountKey; // Update global variable
-            savedUsername = userName; // Update global variable
-        } else {
-             localStorage.removeItem('flgcAccountKey');
-             localStorage.removeItem('flgcUsername');
-             savedAccountKey = null;
-             savedUsername = null;
-        }
-
-
         showPopup(`Welcome to FLGC, ${userName}! Your Account Key is: <strong>${accountKey}</strong><br>Please save this key, as you will need it to log in. Do not lose it!`, "OK");
-
+        
         // Your existing post-creation logic
         // if (typeof startDataSync === 'function') startDataSync(); // If you have this function
         hideScreen("setup-screen");
@@ -5377,56 +5334,11 @@ async function nextSetupStep() {
         if (typeof initChat === 'function') initChat();
         initGame();
 
+
     } catch (e) {
         console.error("Account creation error:", e);
         showPopup("Error creating account: " + e.message, "OK");
     }
-}
-
-function checkSavedAccount() {
-    savedAccountKey = localStorage.getItem('flgcAccountKey');
-    savedUsername = localStorage.getItem('flgcUsername');
-
-    if (savedAccountKey && savedUsername) {
-        // If a key is found, show the "Continue as" screen
-        initScreen('account-screen'); // Show the account screen container
-        document.getElementById('account-options').style.display = 'none'; // Hide initial options
-        document.getElementById('login-form').style.display = 'none'; // Hide login form
-        document.getElementById('continue-as-screen').style.display = 'block'; // Show continue as screen
-        document.getElementById('continue-as-username').textContent = `Continue as ${savedUsername}?`;
-        document.getElementById('continue-as-key').textContent = `(${savedAccountKey})`;
-    } else {
-        // No saved key, show the default account options
-        initScreen('account-screen');
-        document.getElementById('account-options').style.display = 'block';
-        document.getElementById('login-form').style.display = 'none';
-        document.getElementById('continue-as-screen').style.display = 'none';
-    }
-}
-
-// Add these functions to handle the "Continue as" actions
-async function continueWithSavedKey() {
-    if (savedAccountKey) {
-        // Attempt to log in with the saved key
-        document.getElementById("account-key-input").value = savedAccountKey; // Put key into login form input
-        document.getElementById("remember-me").checked = true; // Assume remember me is still desired
-        await handleLogin(); // Use the existing login function
-    } else {
-        // Should not happen if checkSavedAccount works correctly, but as a fallback
-        showPopup("No saved account key found.", "OK");
-        forgetSavedKey(); // Go back to standard options
-    }
-}
-
-function forgetSavedKey() {
-    localStorage.removeItem('flgcAccountKey');
-    localStorage.removeItem('flgcUsername');
-    savedAccountKey = null;
-    savedUsername = null;
-    // Show the standard account options
-    document.getElementById('account-options').style.display = 'block';
-    document.getElementById('login-form').style.display = 'none';
-    document.getElementById('continue-as-screen').style.display = 'none';
 }
 
 function loadFromLocalSave() {
@@ -7476,6 +7388,8 @@ function openSettings() {
         <br><br>
         <button onclick="window.location.href='mailto:bitflashelp@gmail.com'">Contact Us</button>
         <br><br>
+        <button onclick="showRepairOptions()">Repair</button>
+        <br><br>
         <button onclick="openAdminModePrompt()">Admin Mode</button>
     `, "Close");
 }
@@ -7490,6 +7404,85 @@ function openSettings() {
 
 function toggleLightMode(checkbox) {
     document.body.classList.toggle('light-mode', checkbox.checked);
+}
+
+function showRepairOptions() {
+    const popup = document.getElementById("repair-options-popup");
+    if (popup) {
+        popup.style.display = "flex";
+        setTimeout(() => popup.classList.add("active"), 10);
+    }
+}
+
+function hideRepairOptions() {
+    const popup = document.getElementById("repair-options-popup");
+    if (popup) {
+        popup.classList.remove("active");
+        setTimeout(() => popup.style.display = "none", 300);
+    }
+}
+
+function performRepair(option) {
+    hideRepairOptions(); // Hide the repair options popup immediately
+
+    switch (option) {
+        case 'reload':
+            showPopup("Reloading...", "", ""); // Show a simple message
+            setTimeout(() => window.location.reload(), 500);
+            break;
+        case 'reload-clear-cache':
+            showPopup("Clearing cache and reloading...", "", "");
+            if ('caches' in window) {
+                caches.keys().then(cacheNames => {
+                    return Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+                }).then(() => {
+                    setTimeout(() => window.location.reload(true), 500); // true forces a reload from the server, not cache
+                }).catch(err => {
+                    console.error("Failed to clear cache:", err);
+                    showPopup("Failed to clear cache. Reloading...", "OK");
+                     setTimeout(() => window.location.reload(true), 1000);
+                });
+            } else {
+                 setTimeout(() => window.location.reload(true), 500);
+            }
+            break;
+        case 'reload-clear-localstorage':
+            showPopup("Clearing local storage and reloading...<br><br><strong>WARNING:</strong> If you haven't saved your Account Key, you may lose your automatic login.", "", "");
+            setTimeout(() => {
+                localStorage.clear();
+                 // Also clear session storage just in case
+                sessionStorage.clear();
+                window.location.reload(true);
+            }, 2000); // Give user a moment to read the warning
+            break;
+        case 'reload-clear-all':
+            showPopup("Clearing cache, local storage, and reloading...<br><br><strong>WARNING:</strong> This will remove all local data. If you haven't saved your Account Key, you may lose your automatic login and local progress.", "", "");
+             setTimeout(() => {
+                if ('caches' in window) {
+                    caches.keys().then(cacheNames => {
+                        return Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+                    }).then(() => {
+                         localStorage.clear();
+                         sessionStorage.clear();
+                         window.location.reload(true);
+                    }).catch(err => {
+                        console.error("Failed to clear cache:", err);
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        showPopup("Failed to clear cache. Clearing local storage and reloading...", "OK");
+                         setTimeout(() => window.location.reload(true), 1000);
+                    });
+                } else {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.reload(true);
+                }
+            }, 2000); // Give user a moment to read the warning
+            break;
+        default:
+            console.error("Unknown repair option:", option);
+            break;
+    }
 }
 
         function openAdminModePrompt() {
@@ -8032,7 +8025,6 @@ window.addEventListener("load", () => {
         if (isOlderDevice()) {
             showCompatibilityWarning();
         } else {
-            checkSavedAccount();
             initScreen("initial-terms-screen");
         }
     }, 3000);
