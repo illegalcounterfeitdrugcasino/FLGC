@@ -155,7 +155,7 @@
         }
 
         .faq-item.active .faq-answer {
-            max-height: 300px;
+            max-height: 300px; /* Adjusted for potentially longer content */
             padding: 1.2rem;
         }
 
@@ -205,8 +205,7 @@
 <body>
     <header>
         <h1>FLGC Terms of Service</h1>
-        <p>Effective Date: May 10, 2025</p>
-    </header>
+        <p>Effective Date: May 24, 2025</p> </header>
 
     <nav>
         <ul>
@@ -263,7 +262,7 @@
             <ul>
                 <li>Anyone with access to your <code>accountKey</code> can log in to your account, view your data, and modify your gameplay progress (e.g., spend Bitflash Bucks, use spins).</li>
                 <li>Bitflash Enterprises does not store or manage your <code>accountKey</code> on your behalf. If you lose your key, you may lose access to your account unless you have saved it locally (e.g., via <code>localStorage</code> or clipboard).</li>
-                <li>If you suspect unauthorized access to your account, contact <a href="bitflashelp@gmail.com"><span class="__cf_email__" data-cfemail="3e5c574a585255475c5158497e59535f5752105d5153">[email&#160;protected]</span></a> immediately. Note that recovery options are limited due to the frontend-only architecture.</li>
+                <li>If you suspect unauthorized access to your account, contact <a href="mailto:bitflashelp@gmail.com"><span class="__cf_email__" data-cfemail="3e5c574a585255475c5158497e59535f5752105d5153">[email&#160;protected]</span></a> immediately. Note that recovery options are limited due to the frontend-only architecture.</li>
             </ul>
             <h3>Account Data Management</h3>
             <p>
@@ -453,7 +452,7 @@
             <ul>
                 <li>Data collection occurs only after your explicit agreement during the initial terms screen, as implemented in the <code>handleInitialTermsAgree</code> function.</li>
                 <li>Data is stored securely in Firebase Firestore with encryption and access controls, as detailed in the <a href="/privacypolicy.html">Privacy Policy</a>.</li>
-                <li>Data is not sold, shared with third parties for marketing, or used for advertising purposes beyond FLGC’s fictional promotional content.</li>
+                <li>All data collected upon your agreement to these Terms is visible on the site. You can view this data by clicking "More" and then selecting "View Collected Data" within the platform's interface.</li> <li>Data is not sold, shared with third parties for marketing, or used for advertising purposes beyond FLGC’s fictional promotional content.</li>
                 <li>You have the right to request access to, deletion of, or objection to the processing of your data, subject to legal requirements, by contacting <a href="/cdn-cgi/l/email-protection#8ae8e3feece6ebf9e2efe6facae3e9e5ede8a4e9e5e7"><span class="__cf_email__" data-cfemail="7c1e1508111b16041f121b073c151f131b1e521f1311">[email&#160;protected]</span></a>.</li>
                 <li>You are responsible for reviewing the full scope of data collection in the <a href="/privacypolicy.html">Privacy Policy</a> before agreeing to these Terms.</li>
             </ul>
@@ -532,7 +531,7 @@
             </p>
             <ul>
                 <li>FLGC is not liable for any psychological, financial, or legal consequences arising from your participation or misinterpretation of the platform as real gambling.</li>
-                <li>If you or someone you know struggles with gambling addiction, you should seek help from professional organizations, such as Gamblers Anonymous (<a href="https://www.gamblersanonymous.org">www.gamblersanonymous.org</a>) or the National Council on Problem Gambling (<a href="https://www.ncpgambling.org">www.ncpgambling.org</a>).</li>
+                <li>If you or someone you know struggles with gambling addiction, you should seek help from professional organizations, such as Gamblers Anonymous (<a href="https://www.gamblersanonymous.org" target="_blank" rel="noopener noreferrer">www.gamblersanonymous.org</a>) or the National Council on Problem Gambling (<a href="https://www.ncpgambling.org" target="_blank" rel="noopener noreferrer">www.ncpgambling.org</a>).</li>
             </ul>
         </section>
 
@@ -713,8 +712,7 @@
                     <span class="toggle-icon">+</span>
                 </div>
                 <div class="faq-answer">
-                    <p>FLGC collects extensive device, IP, geolocation, usage, account, and browser capability data via Firebase Firestore, as detailed in the Data Collection section and the <a href="/privacypolicy.html">Privacy Policy</a>. This data is used for analytics, security, compatibility checks, and account management.</p>
-                </div>
+                    <p>FLGC collects extensive device, IP, geolocation, usage, account, and browser capability data via Firebase Firestore, as detailed in the Data Collection section and the <a href="/privacypolicy.html">Privacy Policy</a>. This data is used for analytics, security, compatibility checks, and account management. You can view all collected data by clicking "More" and then "View Collected Data" on the site.</p> </div>
             </div>
             <div class="faq-item">
                 <div class="faq-question">
@@ -735,7 +733,7 @@
             <p>
                 Bitflash Enterprises<br>
                 Email: <a href="/cdn-cgi/l/email-protection#3f1d160b19131e0c171a130f3f18121e1613511c1012"><span class="__cf_email__" data-cfemail="1e7c776a78727f6d767b726e5e79737f7772307d7173">[email&#160;protected]</span></a><br>
-                Website: <a href="https://www.sites.google.com/view/bitflash-home">www.sites.google.com/view/bitflash-home</a>
+                Website: <a href="https://www.sites.google.com/view/bitflash-home" target="_blank" rel="noopener noreferrer">www.sites.google.com/view/bitflash-home</a>
             </p>
             <p>
                 We aim to respond to all inquiries within 5 business days.
@@ -748,31 +746,45 @@
     </footer>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Script for FAQ accordion functionality
         document.querySelectorAll('.faq-question').forEach(item => {
             item.addEventListener('click', () => {
                 const parent = item.parentElement;
                 const isActive = parent.classList.contains('active');
                 
-                document.querySelectorAll('.faq-item').forEach(faq => {
-                    faq.classList.remove('active');
+                // Close all other FAQ items before opening the clicked one
+                document.querySelectorAll('.faq-item.active').forEach(faq => {
+                    if (faq !== parent) { // Only remove 'active' if it's not the current parent
+                        faq.classList.remove('active');
+                    }
                 });
 
+                // Toggle active class for the clicked item
                 if (!isActive) {
                     parent.classList.add('active');
+                } else {
+                    parent.classList.remove('active'); // Allows closing the currently open item
                 }
             });
         });
 
+        // Script for fade-in animation on scroll
         window.addEventListener('scroll', () => {
-            const sections = document.querySelectorAll('section');
+            const sections = document.querySelectorAll('main section'); // Target sections within main for animation
             sections.forEach(section => {
                 const rect = section.getBoundingClientRect();
-                if (rect.top < window.innerHeight * 0.8) {
+                // Trigger animation when the top of the section is within 80% of the viewport height
+                if (rect.top < window.innerHeight * 0.8 && rect.bottom >= 0) { // Also check if bottom is visible
                     section.style.opacity = '1';
                     section.style.transform = 'translateY(0)';
                 }
             });
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93e39454bdeb53da',t:'MTc0Njk4NjQ2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    <!-- Note: The Cloudflare script at the end of the original HTML was related to challenge platforms and email decoding. 
+         It's generally added by Cloudflare itself and not something you'd typically include manually unless specifically needed for their services. 
+         I've kept the email decoding script as it was present. The other script seemed like a dynamic injection by Cloudflare.
+         If you are using Cloudflare, it will likely handle these injections automatically.
+    -->
+</body>
 </html>
