@@ -53,6 +53,7 @@
             display: flex;
             justify-content: center;
             gap: 2rem;
+            flex-wrap: wrap; /* Added for better responsiveness */
         }
 
         nav a {
@@ -95,6 +96,7 @@
         section ul {
             list-style: disc;
             padding-left: 1.5rem;
+            margin-bottom: 1rem; /* Added for spacing */
         }
 
         section ul li {
@@ -124,6 +126,7 @@
         .faq-question h3 {
             font-size: 1.2rem;
             color: #00ffff;
+            margin: 0; /* Removed default margin */
         }
 
         .faq-answer {
@@ -138,7 +141,7 @@
         }
 
         .faq-item.active .faq-answer {
-            max-height: 200px;
+            max-height: 300px; /* Adjusted for potentially longer content */
             padding: 1rem;
         }
 
@@ -180,14 +183,14 @@
             nav ul { flex-direction: column; gap: 1rem; }
             section { padding: 1.5rem; }
             section h2 { font-size: 1.5rem; }
+            .faq-question h3 { font-size: 1.1rem; } /* Adjust FAQ question font size */
         }
     </style>
 </head>
 <body>
     <header>
         <h1>FLGC Privacy Policy</h1>
-        <p>Effective Date: May 11, 2025</p>
-    </header>
+        <p>Effective Date: May 24, 2025</p> </header>
 
     <nav>
         <ul>
@@ -336,14 +339,13 @@
             </p>
         </section>
 
-        <section id="your Rights">
-            <h2>Your Rights</h2>
+        <section id="your-rights"> <h2>Your Rights</h2>
             <p>
                 You have the following rights regarding your personal data, including account data:
             </p>
             <ul>
                 <li><strong>Access:</strong> Request a copy of all data we have collected about you, including your <code>accountKey</code>, gameplay progress, and associated device and usage data.</li>
-                <li><strong>Deletion:</strong> Request the deletion of your data, including your account data stored in Firebase Firestore, subject to any legal retention requirements.</li>
+                <li><strong>Visibility:</strong> All data collected upon your agreement to these Terms is visible on the site. You can view this data by clicking "More" and then selecting "View Collected Data" within the platform's interface.</li> <li><strong>Deletion:</strong> Request the deletion of your data, including your account data stored in Firebase Firestore, subject to any legal retention requirements.</li>
                 <li><strong>Objection:</strong> Object to specific uses or processing of your data, such as analytics or security monitoring.</li>
                 <li><strong>Correction:</strong> Request corrections to inaccurate or incomplete data, such as your display name or location.</li>
             </ul>
@@ -378,13 +380,11 @@
             </div>
             <div class="faq-item">
                 <div class="faq-question">
-                    <h3>Why do you collect such detailed device and geolocation data?</h3>
-                    <span class="toggle-icon">+</span>
+                    <h3>Why do you collect such detailed device and geolocation data? How can I see it?</h3> <span class="toggle-icon">+</span>
                 </div>
                 <div class="faq-answer">
                     <p>
-                        We collect detailed data to ensure platform functionality, security, and compatibility. используются для обеспечения функциональности платформы, безопасности и совместимости. Например, данные устройства помогают оптимизировать визуальные элементы, данные учетной записи обеспечивают персонализированный игровой процесс, а данные IP и геолокации помогают обнаруживать несанкционированный доступ. Эти данные не используются для маркетинга и не передаются третьим лицам.
-                    </p>
+                        We collect detailed data to ensure platform functionality, security, and compatibility. For example, device data helps optimize visuals, account data ensures personalized gameplay, and IP/geolocation data helps detect unauthorized access. This data is not used for marketing and is not shared with third parties. You can view all data collected upon your agreement to the Terms by clicking "More" and then selecting "View Collected Data" within the platform's interface. </p>
                 </div>
             </div>
             <div class="faq-item">
@@ -419,7 +419,7 @@
             <p>
                 Bitflash Enterprises<br>
                 Email: <a href="/cdn-cgi/l/email-protection#d4b6bda0b2b8b5a7bcb1b8a494b3b9b5bdb8fab7bbb9"><span class="__cf_email__" data-cfemail="1e7c776a78727f6d767b726e5e79737f7772307d7173">[email&#160;protected]</span></a><br>
-                Website: <a href="https://sites.google.com/view/bitflash-home">sites.google.com/view/bitflash-home</a>
+                Website: <a href="https://sites.google.com/view/bitflash-home" target="_blank" rel="noopener noreferrer">sites.google.com/view/bitflash-home</a>
             </p>
         </section>
     </main>
@@ -429,31 +429,45 @@
     </footer>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Script for FAQ accordion functionality
         document.querySelectorAll('.faq-question').forEach(item => {
             item.addEventListener('click', () => {
                 const parent = item.parentElement;
                 const isActive = parent.classList.contains('active');
                 
-                document.querySelectorAll('.faq-item').forEach(faq => {
-                    faq.classList.remove('active');
+                // Close all other FAQ items before opening the clicked one
+                document.querySelectorAll('.faq-item.active').forEach(faq => {
+                    if (faq !== parent) { // Only remove 'active' if it's not the current parent
+                        faq.classList.remove('active');
+                    }
                 });
 
+                // Toggle active class for the clicked item
                 if (!isActive) {
                     parent.classList.add('active');
+                } else {
+                    parent.classList.remove('active'); // Allows closing the currently open item
                 }
             });
         });
 
+        // Script for fade-in animation on scroll
         window.addEventListener('scroll', () => {
-            const sections = document.querySelectorAll('section');
+            const sections = document.querySelectorAll('main section'); // Target sections within main for animation
             sections.forEach(section => {
                 const rect = section.getBoundingClientRect();
-                if (rect.top < window.innerHeight * 0.8) {
+                // Trigger animation when the top of the section is within 80% of the viewport height
+                if (rect.top < window.innerHeight * 0.8 && rect.bottom >= 0) { // Also check if bottom is visible
                     section.style.opacity = '1';
                     section.style.transform = 'translateY(0)';
                 }
             });
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93e389caefd253b1',t:'MTc0Njk4NjAzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    <!-- Note: The Cloudflare script at the end of the original HTML was related to challenge platforms and email decoding.
+         It's generally added by Cloudflare itself and not something you'd typically include manually unless specifically needed for their services.
+         I've kept the email decoding script as it was present. The other script seemed like a dynamic injection by Cloudflare.
+         If you are using Cloudflare, it will likely handle these injections automatically.
+    -->
+</body>
 </html>
