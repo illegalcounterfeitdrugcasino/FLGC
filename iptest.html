@@ -323,7 +323,7 @@ try {
     if (VERBOSE_LOGGING) addStatusLog(`WebRTC enabled: ${webRTCEnabled}`);
 
     if (webRTCEnabled) {
-        if (VERBOSE_LOGGING) addStatusLog("🌐 Collecting private candidates via WebRTC (final approach)...");
+        if (VERBOSE_LOGGING) addStatusLog("🌐 Collecting private candidates via WebRTC...");
 
         // This promise will resolve when the ICE gathering is complete or timed out.
         // It wraps the entire asynchronous operation.
