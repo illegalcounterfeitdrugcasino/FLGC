@@ -333,7 +333,6 @@ try {
 
             // Set a fallback timeout to ensure the process doesn't hang.
             const fallbackTimeout = setTimeout(() => {
-                if (VERBOSE_LOGGING) addStatusLog("🟡 WebRTC gathering timed out (fallback).");
                 pc.close();
                 resolve([...uniqueCandidates]); // Resolve with whatever we found
             }, 2000);
