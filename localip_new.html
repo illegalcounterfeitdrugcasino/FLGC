@@ -404,7 +404,6 @@ try {
         // INTEGRATED LEGACY WEBRTC TEST LOGIC STARTS HERE
         // -----------------------------------------------------------
         if (VERBOSE_LOGGING) addStatusLog("🌐 Running legacy WebRTC IP collection...");
-        updateStatus('Legacy IP Collection', 'running');
         await new Promise((resolve) => {
             try {
                 const pcLegacy = new RTCPeerConnection({ iceServers: [] });
@@ -438,13 +437,11 @@ try {
 
                 setTimeout(() => {
                     try { pcLegacy.close(); } catch (e) {}
-                    updateStatus('Legacy IP Collection', 'completed');
                     resolve();
                 }, testTimeout); // testTimeout must be defined in your scope
 
             } catch (e) {
                 console.error(`Failed to start legacy test: Legacy IP Collection`, e);
-                updateStatus('Legacy IP Collection', 'failed');
                 resolve();
             }
         });
