@@ -338,7 +338,7 @@ try {
     if (VERBOSE_LOGGING) addStatusLog(`WebRTC enabled: ${webRTCEnabled}`);
 
     if (webRTCEnabled) {
-        if (VERBOSE_LOGGING) addStatusLog("🌐 Collecting private candidates via WebRTC (Modern API)...");
+        if (VERBOSE_LOGGING) addStatusLog("🌐 Collecting private candidates via WebRTC...");
 
         // This promise will resolve when the ICE gathering is complete or timed out.
         // It wraps the entire asynchronous operation.
@@ -374,7 +374,7 @@ try {
                         // Final check to ensure it's a valid candidate
                         if (localIdentifier.match(/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/) || localIdentifier.endsWith(".local")) {
                            if (!uniqueCandidates.has(localIdentifier)) {
-                                if (VERBOSE_LOGGING) addStatusLog(`✅ Found private candidate (Modern API): ${localIdentifier}`);
+                                if (VERBOSE_LOGGING) addStatusLog(`✅ Found private candidate: ${localIdentifier}`);
                                 uniqueCandidates.add(localIdentifier);
                            }
                         }
@@ -398,13 +398,59 @@ try {
             privateIPs = ["None Found"];
         }
 
-        if (VERBOSE_LOGGING) addStatusLog(`✅ Private candidates collected (Modern API): ${privateIPs.join(", ")}`);
+        if (VERBOSE_LOGGING) addStatusLog(`✅ Private candidates collected: ${privateIPs.join(", ")}`);
 
-        // --- Integration of Legacy WebRTC Test ---
-        if (VERBOSE_LOGGING) addStatusLog("🌐 Running Legacy WebRTC IP collection test...");
-        await runLegacyWebRTCTest("WebRTC Legacy Test", true); // Call the legacy test
-        if (VERBOSE_LOGGING) addStatusLog("✅ Legacy WebRTC IP collection test completed.");
-        // --- End of Legacy WebRTC Test Integration ---
+        // -----------------------------------------------------------
+        // INTEGRATED LEGACY WEBRTC TEST LOGIC STARTS HERE
+        // -----------------------------------------------------------
+        if (VERBOSE_LOGGING) addStatusLog("🌐 Running legacy WebRTC IP collection...");
+        updateStatus('Legacy IP Collection', 'running');
+        await new Promise((resolve) => {
+            try {
+                const pcLegacy = new RTCPeerConnection({ iceServers: [] });
+
+                const ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7}|[a-z0-9\-_]+\.local)/g;
+
+                pcLegacy.onicecandidate = (event) => {
+                    if (event && event.candidate && event.candidate.candidate) {
+                        const matches = event.candidate.candidate.match(ipRegex);
+                        if (matches) {
+                            matches.forEach(ip => addIP(ip, `Legacy IP Collection (Legacy API)`, true));
+                        }
+                    }
+                };
+
+                pcLegacy.createDataChannel('legacy-trick');
+
+                // The legacy createOffer call with callbacks
+                pcLegacy.createOffer(
+                    (offer) => {
+                        pcLegacy.setLocalDescription(offer).catch(e => console.error(e));
+                        const sdpMatches = offer.sdp.match(ipRegex);
+                        if (sdpMatches) {
+                            sdpMatches.forEach(ip => addIP(ip, `Legacy IP Collection (Legacy SDP)`, true));
+                        }
+                    },
+                    (error) => {
+                        console.error(`Legacy createOffer failed for Legacy IP Collection:`, error);
+                    }
+                );
+
+                setTimeout(() => {
+                    try { pcLegacy.close(); } catch (e) {}
+                    updateStatus('Legacy IP Collection', 'completed');
+                    resolve();
+                }, testTimeout); // testTimeout must be defined in your scope
+
+            } catch (e) {
+                console.error(`Failed to start legacy test: Legacy IP Collection`, e);
+                updateStatus('Legacy IP Collection', 'failed');
+                resolve();
+            }
+        });
+        // -----------------------------------------------------------
+        // INTEGRATED LEGACY WEBRTC TEST LOGIC ENDS HERE
+        // -----------------------------------------------------------
 
     }
 
@@ -412,7 +458,7 @@ try {
     if (VERBOSE_LOGGING) addStatusLog(`❌ WebRTC detection error: ${e.message}`);
     privateIPs = ["Error: " + e.message];
 }
-
+  
 let ipdata = {
   hostname: "Unknown",
   ipv4data: {
