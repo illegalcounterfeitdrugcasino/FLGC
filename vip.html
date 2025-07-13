@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FLGC VIP Membership</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #0a0a0a;
+      color: #ffffff;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Animated Background */
+    .background-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .gradient-bg {
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(
+        from 0deg at 50% 50%, 
+        transparent 0deg, 
+        rgba(147, 51, 234, 0.1) 60deg,
+        rgba(59, 130, 246, 0.1) 120deg,
+        rgba(16, 185, 129, 0.1) 180deg,
+        rgba(245, 101, 101, 0.1) 240deg,
+        rgba(251, 191, 36, 0.1) 300deg,
+        transparent 360deg
+      );
+      animation: rotate 30s linear infinite;
+    }
+
+    .floating-particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    /* Main Container */
+    .main-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    /* Account Section */
+    .account-section {
+      background: linear-gradient(135deg, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.95));
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      max-width: 500px;
+      width: 100%;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    .account-section h2 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .account-section p {
+      color: #a1a1aa;
+      margin-bottom: 30px;
+      font-size: 1.1rem;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    .account-input {
+      width: 100%;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 12px;
+      color: #ffffff;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .account-input:focus {
+      outline: none;
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .account-input::placeholder {
+      color: #6b7280;
+    }
+
+    /* VIP Content */
+    .vip-content {
+      display: none;
+      max-width: 1200px;
+      width: 100%;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    .vip-content.active {
+      display: block;
+    }
+
+    .vip-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .vip-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #ffffff, #8b5cf6, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: titlePulse 4s ease-in-out infinite;
+    }
+
+    .vip-subtitle {
+      font-size: 1.2rem;
+      color: #a1a1aa;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .current-tier {
+      display: inline-block;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      border-radius: 20px;
+      font-weight: 600;
+      margin: 20px 0;
+      font-size: 1rem;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    /* Tiers Grid */
+    .tiers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .tier-card {
+      background: linear-gradient(135deg, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.95));
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 30px;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tier-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, transparent, rgba(139, 92, 246, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .tier-card:hover::before {
+      opacity: 1;
+    }
+
+    .tier-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 30px 80px rgba(139, 92, 246, 0.3);
+      border-color: #8b5cf6;
+    }
+
+    .tier-card.selected {
+      border-color: #06b6d4;
+      box-shadow: 0 25px 70px rgba(6, 182, 212, 0.4);
+      transform: translateY(-5px);
+    }
+
+    .tier-card.unavailable {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: linear-gradient(135deg, rgba(50, 50, 50, 0.5), rgba(30, 30, 30, 0.5));
+      border-color: rgba(100, 100, 100, 0.3);
+    }
+
+    .tier-card.unavailable:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .tier-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .tier-selector {
+      width: 24px;
+      height: 24px;
+      border: 2px solid rgba(139, 92, 246, 0.5);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .tier-selector-dot {
+      width: 12px;
+      height: 12px;
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      border-radius: 50%;
+      transform: scale(0);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .tier-card.selected .tier-selector {
+      border-color: #06b6d4;
+    }
+
+    .tier-card.selected .tier-selector-dot {
+      transform: scale(1);
+    }
+
+    .tier-info {
+      flex: 1;
+    }
+
+    .tier-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: #ffffff;
+    }
+
+    .tier-price {
+      font-size: 1.1rem;
+      color: #a1a1aa;
+      font-weight: 500;
+    }
+
+    .tier-description {
+      color: #d1d5db;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .tier-perks {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    .tier-card.active .tier-perks {
+      max-height: 300px;
+    }
+
+    .perk-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 8px 0;
+      transition: all 0.3s ease;
+    }
+
+    .perk-icon {
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      font-size: 12px;
+    }
+
+    .perk-text {
+      color: #e5e7eb;
+      font-size: 1rem;
+    }
+
+    .tier-badge {
+      position: absolute;
+      top: -10px;
+      right: 20px;
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transform: rotate(5deg);
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
+
+    /* Footer */
+    .vip-footer {
+      text-align: center;
+      padding: 30px;
+      background: linear-gradient(135deg, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.95));
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .selection-display {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      color: #a1a1aa;
+    }
+
+    .selected-tier-name {
+      color: #06b6d4;
+      font-weight: 700;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      border: none;
+      padding: 16px 32px;
+      border-radius: 12px;
+      color: #ffffff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 0 10px;
+      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(139, 92, 246, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      padding: 16px 32px;
+      border-radius: 12px;
+      color: #ffffff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 0 10px;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(139, 92, 246, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* Animations */
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes titlePulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.02);
+      }
+    }
+
+    @keyframes glow {
+      0% {
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+      }
+      100% {
+        box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
+      }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .main-container {
+        padding: 10px;
+      }
+
+      .account-section {
+        padding: 30px 20px;
+      }
+
+      .tiers-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .tier-card {
+        padding: 20px;
+      }
+
+      .tier-name {
+        font-size: 1.5rem;
+      }
+
+      .btn-primary, .btn-secondary {
+        width: 100%;
+        margin: 10px 0;
+      }
+    }
+
+    /* Status Messages */
+    .status-message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+    }
+
+    .status-message.show {
+      transform: translateX(0);
+    }
+
+    .status-message.success {
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      color: #ffffff;
+    }
+
+    .status-message.error {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: #ffffff;
+    }
+
+    /* Loading State */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #ffffff;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-container">
+    <div class="gradient-bg"></div>
+    <div class="floating-particles" id="particles"></div>
+  </div>
+
+  <div class="main-container">
+    <!-- Account Section -->
+    <div class="account-section" id="account-section">
+      <h2>Enter Your Account Key</h2>
+      <p>Access your premium VIP membership options</p>
+      <div class="input-group">
+        <input type="text" class="account-input" id="account-key-input" placeholder="Enter your account key...">
+      </div>
+      <button class="btn-primary" onclick="proceedToTiers()">
+        Continue to VIP Options
+      </button>
+    </div>
+
+    <!-- VIP Content -->
+    <div class="vip-content" id="vip-content">
+      <div class="vip-header">
+        <h1 class="vip-title">FLGC VIP MEMBERSHIP</h1>
+        <p class="vip-subtitle">
+          Unlock exclusive perks and elevate your experience to the next level
+        </p>
+        <div class="current-tier" id="current-tier-display">
+          Current Tier: Loading...
+        </div>
+      </div>
+
+      <div class="tiers-grid" id="tiers-grid">
+        <!-- Tier cards will be dynamically generated -->
+      </div>
+
+      <div class="vip-footer">
+        <p class="selection-display" id="selection-display">
+          No tier selected
+        </p>
+        <div class="button-group">
+          <button class="btn-primary" onclick="confirmUpgrade()">
+            Upgrade VIP Tier
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-message" id="status-message"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAR5ZNjlqMDSu6nTLEYrTQZrFhSODply8s",
+      authDomain: "flgcas.firebaseapp.com",
+      projectId: "flgcas",
+      storageBucket: "flgcas.firebasestorage.app",
+      messagingSenderId: "756441459947",
+      appId: "1:756441459947:web:82e6aaa245c5cea95ae2ae",
+      measurementId: "G-WT7712F2DP"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // VIP tiers configuration
+    const vipTiers = [
+      {
+        id: 1,
+        name: "SILVER",
+        price: 1000,
+        description: "Your first step into the world of luxury gaming",
+        perks: [
+          "5% Black Market Discount",
+          "+10% Bucks & Spins Per Win",
+          "Skip All Ads",
+          "Unlock Auto-Spin"
+        ],
+        badge: "STARTER"
+      },
+      {
+        id: 2,
+        name: "GOLD",
+        price: 10000,
+        description: "The preferred choice for our dedicated players",
+        perks: [
+          "10% Black Market Discount",
+          "+20% Bucks & Spins Per Win",
+          "Disable Ad Popups",
+          "Faster Jackpot Accumulation"
+        ],
+        badge: "POPULAR"
+      },
+      {
+        id: 4,
+        name: "DIAMOND",
+        price: 100000,
+        description: "The ultimate status for the high roller",
+        perks: [
+          "20% Black Market Discount",
+          "+50% Bucks & Spins Per Win",
+          "Maximized Jackpot Rate",
+        ],
+        badge: "PREMIUM"
+      }
+    ];
+
+    let currentUser = null;
+    let selectedTier = null;
+
+    // Initialize floating particles
+    function initParticles() {
+      const container = document.getElementById('particles');
+      const particleCount = 50;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 6 + 's';
+        particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+        container.appendChild(particle);
+      }
+    }
+
+    // Show status message
+    function showStatus(message, type = 'success') {
+      const statusEl = document.getElementById('status-message');
+      statusEl.textContent = message;
+      statusEl.className = `status-message ${type}`;
+      statusEl.classList.add('show');
+      
+      setTimeout(() => {
+        statusEl.classList.remove('show');
+      }, 4000);
+    }
+
+    // Proceed to VIP tiers
+    async function proceedToTiers() {
+      const key = document.getElementById('account-key-input').value.trim();
+      
+      if (!key) {
+        showStatus('Please enter your account key', 'error');
+        return;
+      }
+
+      try {
+        // Add loading state
+        const button = event.target;
+        button.innerHTML = 'Loading...<span class="loading"></span>';
+        button.disabled = true;
+
+        const docRef = db.collection('accounts').doc(key);
+        const doc = await docRef.get();
+        
+        if (!doc.exists) {
+          showStatus('Account not found. Please check your key.', 'error');
+          button.innerHTML = 'Continue to VIP Options';
+          button.disabled = false;
+          return;
+        }
+
+        currentUser = { key, ...doc.data() };
+        
+        // Hide account section and show VIP content
+        document.getElementById('account-section').style.display = 'none';
+        document.getElementById('vip-content').classList.add('active');
+        
+        // Generate tier cards
+        generateTierCards();
+        
+        showStatus('Account loaded successfully!', 'success');
+        
+      } catch (error) {
+        console.error('Error loading account:', error);
+        showStatus('Error loading account. Please try again.', 'error');
+        button.innerHTML = 'Continue to VIP Options';
+        button.disabled = false;
+      }
+    }
+
+    // Generate tier cards based on current user level
+    function generateTierCards() {
+      const container = document.getElementById('tiers-grid');
+      const currentTierDisplay = document.getElementById('current-tier-display');
+      
+      const currentLevel = currentUser.vipLevel || 0;
+      const tierNames = ['None', 'Silver', 'Gold', 'Gold+', 'Diamond'];
+      
+      currentTierDisplay.textContent = `Current Tier: ${tierNames[currentLevel]}`;
+      
+      container.innerHTML = '';
+      
+      vipTiers.forEach((tier, index) => {
+        const isAvailable = tier.id > currentLevel;
+        const isMaxTier = currentLevel >= 4;
+        
+        const card = document.createElement('div');
+        card.className = `tier-card ${!isAvailable ? 'unavailable' : ''}`;
+        card.innerHTML = `
+          ${tier.badge ? `<div class="tier-badge">${tier.badge}</div>` : ''}
+          <div class="tier-header">
+            <div class="tier-selector">
+              <div class="tier-selector-dot"></div>
+            </div>
+            <div class="tier-info">
+              <h3 class="tier-name">${tier.name} TIER</h3>
+              <p class="tier-price">${tier.price.toLocaleString()} Bucks</p>
+            </div>
+          </div>
+          <p class="tier-description">${tier.description}</p>
+          <div class="tier-perks">
+            ${tier.perks.map(perk => `
+              <div class="perk-item">
+                <div class="perk-icon">✓</div>
+                <span class="perk-text">${perk}</span>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        
+        if (isAvailable && !isMaxTier) {
+          card.addEventListener('click', () => selectTier(card, tier));
+        }
+        
+        container.appendChild(card);
+        
+        // Add staggered animation
+        setTimeout(() => {
+          card.style.animation = 'slideUp 0.6s ease-out';
+        }, index * 100);
+      });
+      
+      if (currentLevel >= 4) {
+        const maxTierMessage = document.createElement('div');
+        maxTierMessage.className = 'tier-card';
+        maxTierMessage.innerHTML = `
+          <div class="tier-header">
+            <div class="tier-info">
+              <h3 class="tier-name">MAXIMUM TIER REACHED</h3>
+              <p class="tier-description">You've achieved the highest VIP status available!</p>
+            </div>
+          </div>
+        `;
+        container.appendChild(maxTierMessage);
+      }
+    }
+
+    // Select a tier
+    function selectTier(cardElement, tier) {
+      // Remove previous selection
+      document.querySelectorAll('.tier-card').forEach(card => {
+        card.classList.remove('selected', 'active');
+      });
+      
+      // Select new tier
+      cardElement.classList.add('selected');
+      
+      // Toggle perks visibility
+      const wasActive = cardElement.classList.contains('active');
+      if (!wasActive) {
+        cardElement.classList.add('active');
+      }
+      
+      selectedTier = tier;
+      
+      // Update selection display
+      document.getElementById('selection-display').innerHTML = `
+        Selected: <span class="selected-tier-name">${tier.name} TIER</span> - ${tier.price.toLocaleString()} Bucks
+      `;
+    }
+
+    // Confirm upgrade
+    async function confirmUpgrade() {
+      if (!selectedTier) {
+        showStatus('Please select a VIP tier first', 'error');
+        return;
+      }
+      
+      if (currentUser.bitflashBucks < selectedTier.price) {
+        showStatus('Insufficient Bucks for this upgrade', 'error');
+        return;
+      }
+      
+      try {
+        const button = event.target;
+        button.innerHTML = 'Processing...<span class="loading"></span>';
+        button.disabled = true;
+        
+        const docRef = db.collection('accounts').doc(currentUser.key);
+        await docRef.update({
+          bitflashBucks: currentUser.bitflashBucks - selectedTier.price,
+          vipLevel: selectedTier.id
+        });
+        
+        showStatus('VIP upgrade successful! Redirecting...', 'success');
+        
+        setTimeout(() => {
+          window.location.href = 'https://flgc.xyz/app';
+        }, 2000);
+        
+      } catch (error) {
+        console.error('Error upgrading VIP:', error);
+        showStatus('Upgrade failed. Please try again.', 'error');
+        button.innerHTML = 'Upgrade VIP Tier';
+        button.disabled = false;
+      }
+    }
+
+    // Go back to account section
+    function goBack() {
+      document.getElementById('vip-content').classList.remove('active');
+      document.getElementById('account-section').style.display = 'block';
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      initParticles();
+      
+      // Add enter key support for account input
+      document.getElementById('account-key-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          proceedToTiers();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
